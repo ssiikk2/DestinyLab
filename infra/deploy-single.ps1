@@ -1,0 +1,89 @@
+param(
+  [string]$ResourceGroup = "destinylab-rg",
+  [string]$Location = "eastus",
+  [string]$AcrName = "",
+  [string]$ContainerEnvName = "destinylab-env",
+  [string]$ContainerAppName = "destinylab-main",
+  [string]$ImageName = "destinylab:latest"
+)
+
+$ErrorActionPreference = "Stop"
+
+if (-not $AcrName) {
+  $AcrName = "destinylab" + (Get-Random -Minimum 10000 -Maximum 99999)
+}
+
+Write-Host "Using ACR name: $AcrName"
+
+az account show 1>$null
+
+$containerExt = az extension show --name containerapp 2>$null
+if (-not $containerExt) {
+  az extension add --name containerapp --upgrade 1>$null
+} else {
+  az extension update --name containerapp 1>$null
+}
+
+$rgExists = az group exists --name $ResourceGroup
+if ($rgExists -ne "true") {
+  az group create --name $ResourceGroup --location $Location 1>$null
+}
+
+$acr = az acr show --name $AcrName --resource-group $ResourceGroup 2>$null
+if (-not $acr) {
+  az acr create --name $AcrName --resource-group $ResourceGroup --location $Location --sku Basic 1>$null
+}
+
+$workspaceName = "$ContainerEnvName-law"
+$workspace = az monitor log-analytics workspace show --resource-group $ResourceGroup --workspace-name $workspaceName 2>$null
+if (-not $workspace) {
+  az monitor log-analytics workspace create --resource-group $ResourceGroup --workspace-name $workspaceName --location $Location 1>$null
+}
+
+$workspaceId = az monitor log-analytics workspace show --resource-group $ResourceGroup --workspace-name $workspaceName --query customerId -o tsv
+$workspaceKey = az monitor log-analytics workspace get-shared-keys --resource-group $ResourceGroup --workspace-name $workspaceName --query primarySharedKey -o tsv
+
+$envExists = az containerapp env show --name $ContainerEnvName --resource-group $ResourceGroup 2>$null
+if (-not $envExists) {
+  az containerapp env create --name $ContainerEnvName --resource-group $ResourceGroup --location $Location --logs-workspace-id $workspaceId --logs-workspace-key $workspaceKey 1>$null
+}
+
+az acr build --registry $AcrName --image $ImageName .
+
+$acrLoginServer = az acr show --name $AcrName --resource-group $ResourceGroup --query loginServer -o tsv
+$fullImage = "$acrLoginServer/$ImageName"
+
+$app = az containerapp show --name $ContainerAppName --resource-group $ResourceGroup 2>$null
+if (-not $app) {
+  az containerapp create --name $ContainerAppName --resource-group $ResourceGroup --environment $ContainerEnvName --image $fullImage --ingress external --target-port 3000 --cpu 0.25 --memory 0.5Gi --min-replicas 0 --max-replicas 3 --system-assigned --registry-server $acrLoginServer --registry-identity system --env-vars NODE_ENV=production PORT=3000 1>$null
+} else {
+  az containerapp update --name $ContainerAppName --resource-group $ResourceGroup --image $fullImage --ingress external --target-port 3000 --cpu 0.25 --memory 0.5Gi --min-replicas 0 --max-replicas 3 --registry-server $acrLoginServer --registry-identity system --env-vars NODE_ENV=production PORT=3000 1>$null
+}
+
+az containerapp identity assign --name $ContainerAppName --resource-group $ResourceGroup --system-assigned 1>$null
+
+$appPrincipalId = ""
+for ($i = 0; $i -lt 10; $i++) {
+  $appPrincipalId = az containerapp show --name $ContainerAppName --resource-group $ResourceGroup --query identity.principalId -o tsv
+  if ($appPrincipalId) {
+    break
+  }
+  Start-Sleep -Seconds 3
+}
+
+if (-not $appPrincipalId) {
+  throw "Could not resolve Container App system identity principalId."
+}
+
+$acrId = az acr show --name $AcrName --resource-group $ResourceGroup --query id -o tsv
+$roleCount = az role assignment list --assignee-object-id $appPrincipalId --scope $acrId --query "[?roleDefinitionName=='AcrPull'] | length(@)" -o tsv
+if ($roleCount -eq "0") {
+  az role assignment create --assignee-object-id $appPrincipalId --assignee-principal-type ServicePrincipal --role AcrPull --scope $acrId 1>$null
+}
+
+$appInfo = az containerapp show --name $ContainerAppName --resource-group $ResourceGroup | ConvertFrom-Json
+
+Write-Host ""
+Write-Host "App name : $($appInfo.name)"
+Write-Host "FQDN     : $($appInfo.properties.configuration.ingress.fqdn)"
+Write-Host "Revision : $($appInfo.properties.latestRevisionName)"
