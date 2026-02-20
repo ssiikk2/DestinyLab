@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -30,7 +30,7 @@ export function ToolFormDestiny() {
       };
 
       if (!response.ok || !json.route || !json.stored) {
-        throw new Error(json.error || "Failed to generate reading.");
+        throw new Error(json.error || "Could not generate a reading right now.");
       }
 
       saveReadingLocal(json.stored);
@@ -39,7 +39,7 @@ export function ToolFormDestiny() {
       setError(
         submitError instanceof Error
           ? submitError.message
-          : "Unexpected error while generating reading.",
+          : "Unexpected error while generating your reading.",
       );
     } finally {
       setIsLoading(false);
@@ -47,36 +47,47 @@ export function ToolFormDestiny() {
   }
 
   return (
-    <form
-      onSubmit={onSubmit}
-      id="destiny-form"
-      className="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-lg"
-    >
-      <h2 className="text-xl font-bold text-slate-900">Destiny Reading</h2>
-      <p className="text-sm text-slate-600">
-        Enter one birth date and get personality, love style, money pattern, career strength, and hidden traits.
+    <section className="premium-card soft-hover p-6" id="destiny-form">
+      <p className="label-caps">Tool B</p>
+      <h2 className="mt-2 text-2xl font-semibold text-text-main">Destiny</h2>
+      <p className="mt-2 text-sm text-text-muted">
+        A quick profile from one birth date.
+        <br />
+        See your core style, strengths, and one thing to tighten.
       </p>
-      <div className="grid gap-3">
-        <label className="text-sm font-medium text-slate-700" htmlFor="birthDate">
-          Birth date
-        </label>
-        <input
-          id="birthDate"
-          type="date"
-          required
-          value={birthDate}
-          onChange={(event) => setBirthDate(event.target.value)}
-          className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900"
-        />
+
+      <form onSubmit={onSubmit} className="mt-5 space-y-4">
+        <div className="grid gap-2">
+          <label className="text-sm font-semibold text-text-main" htmlFor="birthDate">
+            Birth date
+          </label>
+          <input
+            id="birthDate"
+            type="date"
+            required
+            value={birthDate}
+            onChange={(event) => setBirthDate(event.target.value)}
+            className="rounded-xl border border-border-soft bg-white px-3 py-2 text-text-main outline-none transition focus:border-brand-primary"
+          />
+        </div>
+
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-full rounded-full bg-brand-primary px-4 py-3 text-sm font-bold text-white transition hover:bg-[#2b2f8f] disabled:opacity-60"
+        >
+          {isLoading ? "Generating..." : "Get my reading"}
+        </button>
+        {error ? <p className="text-sm font-medium text-rose-700">{error}</p> : null}
+      </form>
+
+      <div className="mt-5 rounded-2xl border border-border-soft bg-bg-muted p-4 text-sm">
+        <p className="font-semibold text-text-main">Example output</p>
+        <p className="mt-1 text-text-muted">
+          You do best with structure, direct talk, and fewer active priorities.
+        </p>
       </div>
-      {error ? <p className="text-sm text-rose-700">{error}</p> : null}
-      <button
-        type="submit"
-        disabled={isLoading}
-        className="w-full rounded-xl bg-slate-900 px-4 py-3 font-semibold text-white transition hover:bg-slate-700 disabled:opacity-60"
-      >
-        {isLoading ? "Generating..." : "Generate Destiny Result"}
-      </button>
-    </form>
+      <p className="mt-3 text-xs font-semibold text-text-tertiary">No signup. No saving your inputs.</p>
+    </section>
   );
 }

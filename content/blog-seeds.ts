@@ -168,8 +168,33 @@ const seeds: BlogSeed[] = [
   },
 ];
 
+function pickVariant(seed: string, variants: string[]): string {
+  const index =
+    Math.abs(seed.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0)) %
+    variants.length;
+  return variants[index];
+}
+
 function createParagraph(keyword: string, angle: string, action: string): string {
-  return `${keyword} works best when you treat it as a decision tool instead of a final verdict. ${angle} gives context for why the same pair can feel easy in one season and difficult in another. The strongest couples translate insights into routines, because routines remove guesswork and reduce emotional noise. ${action} If progress feels slow, focus on one behavior for two weeks before changing anything else. Over time, this method produces measurable trust and clearer communication. This keeps interpretation grounded in observable behavior and makes future readings more useful.`;
+  const opener = pickVariant(keyword + angle, [
+    `Use ${keyword} as a lens, not a verdict.`,
+    `${keyword} is most useful when it guides decisions, not ego.`,
+    `Treat ${keyword} like a pattern check, not a fixed label.`,
+  ]);
+
+  const bridge = pickVariant(keyword + action, [
+    "The point is not prediction. The point is cleaner decisions.",
+    "This works when insight becomes behavior in real life.",
+    "You get value only when interpretation turns into a weekly habit.",
+  ]);
+
+  const closer = pickVariant(angle + action, [
+    "If results feel mixed, narrow the focus to one repeatable behavior for two weeks and review together.",
+    "Progress tends to compound when both people run short feedback loops instead of one-off emotional talks.",
+    "Keep it practical: one action, one review window, one adjustment. Then repeat.",
+  ]);
+
+  return `${opener} ${angle}. ${bridge} ${action} Most friction in couples comes from fuzzy expectations, vague timing, and assumptions made under stress. Strong pairs remove that noise with clear asks, short check-ins, and simple rules for conflict recovery. ${closer}`;
 }
 
 function buildFaqs(keyword: string): BlogFAQ[] {
@@ -177,32 +202,32 @@ function buildFaqs(keyword: string): BlogFAQ[] {
     {
       question: `How accurate is ${keyword}?`,
       answer:
-        "It is best used as a reflective framework. Accuracy improves when you combine it with honest communication and practical behavior changes.",
+        "Think of it as a reflection tool. It gets more useful when paired with direct communication and specific actions.",
     },
     {
       question: "Can a low score still lead to a healthy relationship?",
       answer:
-        "Yes. A lower score often highlights where attention is needed. Skills, timing, and values alignment can change outcomes significantly.",
+        "Yes. A lower score usually points to pressure zones. Good habits and clear expectations can change the outcome.",
     },
     {
       question: "How often should we generate a new reading?",
       answer:
-        "Monthly or after major life changes is usually enough. The value comes from applying insights, not from checking scores every day.",
+        "Monthly is enough for most couples, or after a major life shift. The real value is what you do next.",
     },
     {
       question: "What should we do first after reading the report?",
       answer:
-        "Pick one do and one do-not item, then review results after one week. Short cycles create momentum and avoid overwhelm.",
+        "Pick one action to start and one habit to stop. Review in a week and adjust based on what actually happened.",
     },
     {
       question: "Are destiny readings a substitute for professional advice?",
       answer:
-        "No. Destiny readings are for entertainment and self-reflection. They should not replace medical, legal, or financial professionals.",
+        "No. Readings are for entertainment and reflection. They should not replace medical, legal, or financial advice.",
     },
     {
       question: "How can this content help with long-term planning?",
       answer:
-        "Use it to surface communication preferences, conflict triggers, and shared priorities. Then convert those into weekly habits.",
+        "Use it to identify communication patterns, conflict triggers, and priorities, then convert those into weekly routines.",
     },
   ];
 }
@@ -211,7 +236,7 @@ function buildSections(seed: BlogSeed): BlogSection[] {
   return [
     {
       heading: "What This Reading Actually Measures",
-      subheading: "Signal vs noise in relationship interpretation",
+      subheading: "Signal over noise",
       paragraphs: [
         createParagraph(
           seed.keyword,
@@ -259,7 +284,7 @@ function buildSections(seed: BlogSeed): BlogSection[] {
     },
     {
       heading: "Long-Term Planning Without Pressure",
-      subheading: "Planning can feel supportive, not rigid",
+      subheading: "Structure without rigidity",
       paragraphs: [
         createParagraph(
           seed.keyword,
@@ -275,7 +300,7 @@ function buildSections(seed: BlogSeed): BlogSection[] {
     },
     {
       heading: "Conflict Recovery and Trust Rebuild",
-      subheading: "Repair speed matters more than never arguing",
+      subheading: "Repair speed beats perfect wording",
       paragraphs: [
         createParagraph(
           seed.keyword,
@@ -291,7 +316,7 @@ function buildSections(seed: BlogSeed): BlogSection[] {
     },
     {
       heading: "Action Plan for the Next 30 Days",
-      subheading: "Turn insight into repeatable behavior",
+      subheading: "Turn insight into routine",
       paragraphs: [
         createParagraph(
           seed.keyword,
@@ -319,3 +344,4 @@ export const blogPosts: BlogPost[] = seeds.map((seed) => ({
 export function getBlogBySlug(slug: string): BlogPost | undefined {
   return blogPosts.find((post) => post.slug === slug);
 }
+

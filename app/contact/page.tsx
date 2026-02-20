@@ -4,13 +4,17 @@ export default function ContactPage() {
   const email = appEnv.contactEmail || "support@example.com";
 
   return (
-    <article className="space-y-4 rounded-3xl border border-white/40 bg-white/80 p-7 shadow-lg">
-      <h1 className="text-3xl font-bold text-slate-900">Contact</h1>
-      <p className="text-slate-700">For support, feedback, and partnership requests, contact us via email.</p>
-      <a href={`mailto:${email}`} className="inline-flex rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700">
+    <article className="premium-card space-y-4 p-7 md:p-9">
+      <p className="label-caps">Contact</p>
+      <h1 className="text-4xl font-semibold text-text-main">Need help?</h1>
+      <p className="text-text-muted">Questions, bug reports, and partnership notes are all welcome.</p>
+      <a
+        href={`mailto:${email}`}
+        className="inline-flex rounded-full bg-brand-primary px-5 py-2.5 text-sm font-bold text-white hover:bg-[#2b2f8f]"
+      >
         {email}
       </a>
-      <p className="text-sm text-slate-500">For entertainment purposes only.</p>
+      <p className="text-sm font-semibold text-text-tertiary">For entertainment purposes only.</p>
     </article>
   );
 }

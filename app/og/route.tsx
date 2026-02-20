@@ -17,29 +17,49 @@ export async function GET(request: Request) {
           width: "100%",
           display: "flex",
           flexDirection: "column",
-          background: "linear-gradient(135deg,#4f46e5,#a855f7,#ec4899)",
-          color: "white",
-          padding: "48px",
           justifyContent: "space-between",
-          fontFamily: "sans-serif",
+          background:
+            "radial-gradient(circle at 0% 0%, rgba(255,255,255,0.2), transparent 42%), linear-gradient(135deg,#1f2330 0%,#3438a8 48%,#c95b7b 100%)",
+          color: "white",
+          padding: "52px",
+          fontFamily: "serif",
+          position: "relative",
         }}
       >
-        <div style={{ fontSize: 36, fontWeight: 700 }}>{appEnv.siteName}</div>
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage:
+              "radial-gradient(rgba(255,255,255,0.12) 1px, transparent 1px)",
+            backgroundSize: "5px 5px",
+            opacity: 0.2,
+          }}
+        />
+
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ fontSize: 38, fontWeight: 700, letterSpacing: "0.01em" }}>
+            {appEnv.siteName}
+          </div>
+          <div style={{ fontSize: 24, opacity: 0.88, textTransform: "uppercase" }}>{tool}</div>
+        </div>
+
         <div
           style={{
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            gap: 8,
+            gap: 12,
           }}
         >
-          <div style={{ fontSize: 30, opacity: 0.9, textTransform: "uppercase" }}>{tool}</div>
-          <div style={{ fontSize: 160, fontWeight: 800, lineHeight: 1 }}>{score}</div>
-          <div style={{ fontSize: 42 }}>{label}</div>
+          <div style={{ fontSize: 158, fontWeight: 800, lineHeight: 0.95 }}>{score}</div>
+          <div style={{ fontSize: 42, textAlign: "center", maxWidth: "86%" }}>{label}</div>
         </div>
-        <div style={{ fontSize: 24, opacity: 0.8, alignSelf: "flex-end" }}>
-          {appEnv.siteDomain || "destinylab"}
+
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 24, opacity: 0.86 }}>
+          <span>Fast readings you can share</span>
+          <span>{appEnv.siteDomain || "destinylab"}</span>
         </div>
       </div>
     ),

@@ -5,12 +5,13 @@ interface InsightListProps {
 
 export function InsightList({ title, items }: InsightListProps) {
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <h3 className="text-lg font-bold text-slate-900">{title}</h3>
-      <ul className="mt-3 space-y-2 text-slate-700">
+    <section className="premium-card p-5 fade-up">
+      <p className="label-caps">Section Snapshot</p>
+      <h3 className="mt-1 text-2xl font-semibold text-text-main">{title}</h3>
+      <ul className="mt-3 space-y-2 text-sm text-text-muted">
         {items.map((item) => (
           <li key={item} className="flex gap-2">
-            <span className="mt-1 h-2 w-2 rounded-full bg-slate-900" />
+            <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-brand-primary" />
             <span>{item}</span>
           </li>
         ))}

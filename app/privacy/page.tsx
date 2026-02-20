@@ -1,21 +1,26 @@
 export default function PrivacyPage() {
   return (
-    <article className="space-y-4 rounded-3xl border border-white/40 bg-white/80 p-7 shadow-lg">
-      <h1 className="text-3xl font-bold text-slate-900">Privacy Policy</h1>
-      <p className="text-slate-700">
-        DestinyLab collects minimal usage data to keep tools reliable, prevent abuse, and improve product quality.
+    <article className="premium-card space-y-4 p-7 md:p-9">
+      <p className="label-caps">Policy</p>
+      <h1 className="text-4xl font-semibold text-text-main">Privacy</h1>
+      <p className="text-text-muted">
+        We keep data collection minimal. The goal is reliability, abuse prevention, and product improvement.
       </p>
-      <h2 className="text-2xl font-bold text-slate-900">What we collect</h2>
-      <p className="text-slate-700">
-        We may process IP address, request metadata, and browser-level analytics. Reading inputs are processed to generate results and are stored in memory for a limited period.
+
+      <h2 className="text-2xl font-semibold text-text-main">What we process</h2>
+      <p className="text-text-muted">
+        We may process IP, device metadata, and request logs. Inputs are used to generate readings and may be held temporarily for result links.
       </p>
-      <h2 className="text-2xl font-bold text-slate-900">Cookies</h2>
-      <p className="text-slate-700">
-        We use a consent banner and may use cookies for analytics and advertising when enabled.
+
+      <h2 className="text-2xl font-semibold text-text-main">Cookies</h2>
+      <p className="text-text-muted">
+        Cookies may be used for analytics and advertising when enabled.
       </p>
-      <h2 className="text-2xl font-bold text-slate-900">Contact</h2>
-      <p className="text-slate-700">For privacy requests, use the Contact page.</p>
-      <p className="text-sm text-slate-500">For entertainment purposes only.</p>
+
+      <h2 className="text-2xl font-semibold text-text-main">Your choice</h2>
+      <p className="text-text-muted">If you do not want cookies, decline via browser controls and avoid accepting the cookie banner.</p>
+
+      <p className="text-sm font-semibold text-text-tertiary">For entertainment purposes only.</p>
     </article>
   );
 }

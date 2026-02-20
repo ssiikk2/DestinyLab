@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { DoDontCards } from "@/components/DoDontCards";
@@ -8,6 +9,12 @@ import { ReadingTabs } from "@/components/ReadingTabs";
 import { ScoreCard } from "@/components/ScoreCard";
 import { ShareButtons } from "@/components/ShareButtons";
 import { loadReadingLocal, saveReadingLocal } from "@/lib/reading-browser";
+import {
+  buildOgLabel,
+  buildResultSummary,
+  getTabActions,
+  toTabInsights,
+} from "@/lib/copy";
 import { getDefaultSection, getSectionText, getTabs } from "@/lib/reading-view";
 import type { StoredReading } from "@/lib/types";
 
@@ -42,7 +49,7 @@ export function ReadingView({ id, section }: ReadingViewProps) {
           return;
         }
       } catch {
-        // Ignore network errors and use local fallback below.
+        // If API lookup fails, use local fallback.
       }
 
       const local = loadReadingLocal(id);
@@ -77,36 +84,42 @@ export function ReadingView({ id, section }: ReadingViewProps) {
       getSectionText(reading, fallbackSection) ||
       "";
 
+    const insights = toTabInsights(activeSection, sectionText);
+    const actions = getTabActions(activeSection);
+    const summary = buildResultSummary(reading);
+
+    const ogLabel = buildOgLabel(reading);
+    const ogScore = reading.kind === "compatibility" ? String(reading.score) : "D";
+    const ogTool = reading.kind === "compatibility" ? "compatibility" : "destiny";
+    const ogPreviewUrl = `/og?tool=${encodeURIComponent(ogTool)}&score=${encodeURIComponent(ogScore)}&label=${encodeURIComponent(ogLabel)}`;
+
     return {
       reading,
       tabs,
       activeSection,
-      sectionText,
-      ctaLabel:
-        reading.kind === "compatibility"
-          ? "Try another match"
-          : "Generate another reading",
+      insights,
+      actions,
+      summary,
+      ogPreviewUrl,
     };
   }, [section, state]);
 
   if (state.status === "loading") {
     return (
-      <section className="rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-lg">
-        <p className="text-sm font-medium text-slate-500">Loading your reading...</p>
+      <section className="premium-card p-8 text-center">
+        <p className="text-sm font-semibold text-text-tertiary">Loading your reading...</p>
       </section>
     );
   }
 
   if (state.status === "not-found" || !content) {
     return (
-      <section className="rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-lg">
-        <h1 className="text-3xl font-bold text-slate-900">Reading not found</h1>
-        <p className="mt-2 text-slate-600">
-          Your result may have expired on the server. Generate a new one below.
-        </p>
+      <section className="premium-card p-8 text-center">
+        <h1 className="text-3xl font-semibold text-text-main">Reading not found</h1>
+        <p className="mt-2 text-text-muted">That link has likely expired. Run a new reading in one step.</p>
         <Link
           href="/"
-          className="mt-5 inline-flex rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700"
+          className="mt-5 inline-flex rounded-full bg-brand-primary px-5 py-2 text-sm font-bold text-white hover:bg-[#2b2f8f]"
         >
           Create a new reading
         </Link>
@@ -114,19 +127,28 @@ export function ReadingView({ id, section }: ReadingViewProps) {
     );
   }
 
-  const { reading, tabs, activeSection, sectionText, ctaLabel } = content;
+  const { reading, tabs, activeSection, insights, actions, summary, ogPreviewUrl } = content;
+
+  const secondaryHref = reading.kind === "compatibility" ? "/#destiny-form" : "/#compatibility-form";
+  const secondaryLabel =
+    reading.kind === "compatibility" ? "Get my destiny reading" : "Run another match";
 
   return (
-    <article className="space-y-6">
-      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-lg">
-        <h1 className="text-3xl font-bold text-slate-900 md:text-4xl">{reading.title}</h1>
-        <p className="mt-3 text-slate-700">{reading.summary}</p>
-        <p className="mt-2 text-xs text-slate-500">
-          Created at {new Date(state.stored.createdAt).toLocaleString()}
-        </p>
+    <article className="space-y-6 md:space-y-7">
+      <section className="premium-card p-6 md:p-8 fade-up">
+        <p className="label-caps">Your Result</p>
+        <h1 className="mt-2 text-3xl font-semibold text-text-main md:text-4xl">{reading.title}</h1>
+        <p className="mt-3 text-base text-text-muted">{summary}</p>
       </section>
 
-      {reading.kind === "compatibility" ? <ScoreCard score={reading.score} /> : null}
+      {reading.kind === "compatibility" ? (
+        <ScoreCard score={reading.score} summary={summary} />
+      ) : (
+        <section className="premium-card p-6 md:p-8 fade-up">
+          <p className="label-caps">Destiny Snapshot</p>
+          <p className="mt-3 text-lg text-text-main">{summary}</p>
+        </section>
+      )}
 
       <ReadingTabs
         basePath={`/reading/${id}`}
@@ -134,29 +156,56 @@ export function ReadingView({ id, section }: ReadingViewProps) {
         tabs={tabs.map((tab) => ({ key: tab.key, label: tab.label }))}
       />
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="text-2xl font-bold text-slate-900">
+      <section className="premium-card p-6 fade-up">
+        <p className="label-caps">Where you&apos;ll feel it most</p>
+        <h2 className="mt-2 text-3xl font-semibold text-text-main">
           {tabs.find((tab) => tab.key === activeSection)?.label || "Section"}
         </h2>
-        <p className="mt-3 leading-8 text-slate-700">{sectionText}</p>
+        <p className="mt-2 text-sm text-text-muted">Four sharp takeaways for this section.</p>
       </section>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <InsightList title="Key Insights" items={reading.highlights} />
-        <DoDontCards dos={reading.dos} donts={reading.donts} />
-      </div>
+      <InsightList title="Key insights" items={insights} />
+      <DoDontCards dos={actions.dos} donts={actions.donts} />
 
-      <section className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-5 md:flex-row md:items-center md:justify-between">
-        <Link
-          href="/"
-          className="inline-flex rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700"
-        >
-          {ctaLabel}
-        </Link>
-        <ShareButtons title={reading.title} />
+      <section className="premium-card p-5 fade-up">
+        <p className="label-caps">Share</p>
+        <div className="mt-3 grid gap-4 md:grid-cols-[280px_1fr] md:items-center">
+          <div className="overflow-hidden rounded-2xl border border-border-soft bg-white">
+            <Image
+              src={ogPreviewUrl}
+              alt="Open Graph preview"
+              width={1200}
+              height={630}
+              className="h-auto w-full"
+              unoptimized
+            />
+          </div>
+          <div className="space-y-3">
+            <p className="text-sm text-text-muted">
+              Share this result as a card. Easy to post, easy to compare.
+            </p>
+            <ShareButtons title={reading.title} />
+          </div>
+        </div>
       </section>
 
-      <p className="text-sm text-slate-600">For entertainment purposes only.</p>
+      <section className="premium-card flex flex-col gap-3 p-5 md:flex-row md:items-center md:justify-between fade-up">
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href="/#compatibility-form"
+            className="rounded-full bg-brand-primary px-5 py-2 text-sm font-bold text-white hover:bg-[#2b2f8f]"
+          >
+            Compare another person
+          </Link>
+          <Link
+            href={secondaryHref}
+            className="rounded-full border border-border-strong bg-white px-5 py-2 text-sm font-bold text-text-main hover:bg-bg-muted"
+          >
+            {secondaryLabel}
+          </Link>
+        </div>
+        <p className="text-xs font-semibold text-text-tertiary">For entertainment purposes only.</p>
+      </section>
     </article>
   );
 }

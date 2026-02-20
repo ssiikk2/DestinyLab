@@ -42,34 +42,38 @@ export function buildCompatibilityFallback(
   const score = seededNumber(seed, 58, 96);
 
   const sections: Record<CompatibilitySectionKey, string> = {
-    emotional: `${signA} brings emotional intensity while ${signB} adds perspective. Your best moments happen when one shares openly and the other listens without fixing everything. Weekly check-ins keep trust high and prevent silent assumptions.`,
-    communication: `You both respond well to direct but gentle wording. Keep messages simple during stressful days and avoid interpreting short texts as rejection. If a topic matters, move from chat to a real conversation quickly.`,
-    "long-term": `This pairing is strongest when goals are visible: savings target, travel plan, and a shared timeline. Small rituals such as a monthly review make the relationship feel stable and progressive.`,
-    conflict: `Arguments usually come from timing, not values. Pause for twenty minutes before reacting, then return with one clear point each. Focus on the current issue instead of collecting past examples.`,
-    advice: `Protect your momentum by celebrating tiny wins. Give compliments in public, discuss hard topics in private, and leave room for each person to keep independent interests.`,
+    emotional:
+      `${signA} tends to lead with intensity while ${signB} often stabilizes the tone. You will feel closest when both people say what they need early, not after frustration builds. Short weekly check-ins keep trust from drifting.`,
+    communication:
+      "This match works best with direct wording and fast clarification. Text is fine for logistics, but important topics should move to voice or in-person quickly. Most friction here comes from timing, not intent.",
+    "long-term":
+      "You gain momentum when priorities are visible. Shared plans around time, money, and routines reduce noise. A quick monthly review helps you stay aligned without over-managing each other.",
+    conflict:
+      "When pressure rises, pause first and return with one clear point each. Keep discussions on the current issue and avoid stacking old examples. Repair is usually easier when both sides summarize before defending.",
+    advice:
+      "Keep the relationship simple: one weekly reset, one shared goal, one habit to improve. Ask directly, praise specifically, and leave room for individual space.",
   };
 
   return {
     kind: "compatibility",
     score,
     title: `${signA} + ${signB} Compatibility Reading`,
-    summary:
-      "A practical, entertainment-focused reading based on your birth date dynamics.",
+    summary: "A quick compatibility read with practical sections you can use right away.",
     sections,
     highlights: [
-      "Strong potential for emotional growth",
-      "Communication improves with clear timing",
-      "Shared planning increases long-term harmony",
+      "Chemistry is strong when timing is clear",
+      "Communication quality will decide the pace",
+      "Shared routines create long-term stability",
     ],
     dos: [
-      "Schedule one focused conversation per week",
-      "Define one shared monthly goal",
-      "Name needs directly instead of hinting",
+      "Schedule one honest check-in each week",
+      "Name needs in plain language",
+      "Review one shared goal every month",
     ],
     donts: [
-      "Do not reopen solved arguments",
-      "Do not rely on text for serious topics",
-      "Do not compare your pace with other couples",
+      "Do not turn serious topics into text threads",
+      "Do not reopen solved conflicts",
+      "Do not assume silence means agreement",
     ],
     birthDateA,
     birthDateB,
@@ -80,34 +84,39 @@ export function buildDestinyFallback(birthDate: string): DestinyReading {
   const sign = zodiacOf(birthDate);
 
   const sections: Record<DestinySectionKey, string> = {
-    "personality-core": `${sign} energy in your chart points to a builder mindset. You gain confidence from progress and become most magnetic when your day has structure and clear purpose.`,
-    "love-style": `You love with loyalty and visible effort. You prefer consistency over drama and respond best to partners who communicate expectations early.`,
-    "money-pattern": `Your money pattern improves when cash flow is automated. You do well with simple systems: fixed savings rate, focused spending categories, and low-friction investing habits.`,
-    "career-strength": `Career growth comes from reliability plus pattern recognition. You spot what can be optimized and often become the person others trust to stabilize complex projects.`,
-    "hidden-talent": `Your hidden talent is translating chaos into action. In teams, you can convert abstract ideas into practical plans without losing creative intent.`,
-    weakness: `Your main weakness is overcommitting when motivated. Protect energy by limiting active priorities and using weekly review blocks to reset boundaries.`,
+    "personality-core":
+      `${sign} energy here points to a practical builder mindset. You feel best when priorities are clear and progress is visible. Structure gives you confidence, and consistency multiplies your results.`,
+    "love-style":
+      "You value direct care over drama. Reliability matters more than grand gestures, and mixed signals drain you quickly. Relationships improve when expectations are explicit from the start.",
+    "money-pattern":
+      "Simple systems suit you best: automatic savings, clear spending lanes, and regular reviews. You tend to do better with boring consistency than high-risk bursts.",
+    "career-strength":
+      "Your edge is dependable execution with sharp pattern recognition. You often spot what is inefficient and know how to make it cleaner without unnecessary complexity.",
+    "hidden-talent":
+      "You are good at turning messy ideas into usable plans. In teams, this makes you a stabilizer when others are stuck between possibilities.",
+    weakness:
+      "Overcommitting is the pattern to watch. Protecting your energy and narrowing active priorities helps you sustain quality without burnout.",
   };
 
   return {
     kind: "destiny",
     title: `${sign} Destiny Reading`,
-    summary:
-      "An entertainment-focused personal profile shaped around your birth date rhythm.",
+    summary: "A practical profile focused on strengths, pressure points, and next steps.",
     sections,
     highlights: [
-      "You are strongest with clear systems",
-      "Consistency multiplies your outcomes",
-      "Boundary management unlocks better results",
+      "Your best output comes from clear structure",
+      "Consistency beats intensity for your profile",
+      "Boundaries protect your long-term momentum",
     ],
     dos: [
-      "Use one planning method for 90 days",
-      "Protect deep-work hours",
-      "Track one growth metric every week",
+      "Keep your weekly plan short and realistic",
+      "Protect one deep-focus block each day",
+      "Review progress before adding new goals",
     ],
     donts: [
-      "Do not chase too many goals at once",
-      "Do not ignore rest cycles",
-      "Do not delay difficult conversations",
+      "Do not stack too many priorities at once",
+      "Do not ignore recovery time",
+      "Do not postpone difficult decisions",
     ],
     birthDate,
   };

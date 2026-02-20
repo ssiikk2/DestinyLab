@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -31,7 +31,7 @@ export function ToolFormCompatibility() {
       };
 
       if (!response.ok || !json.route || !json.stored) {
-        throw new Error(json.error || "Failed to generate reading.");
+        throw new Error(json.error || "Could not generate a match right now.");
       }
 
       saveReadingLocal(json.stored);
@@ -40,7 +40,7 @@ export function ToolFormCompatibility() {
       setError(
         submitError instanceof Error
           ? submitError.message
-          : "Unexpected error while generating reading.",
+          : "Unexpected error while generating your reading.",
       );
     } finally {
       setIsLoading(false);
@@ -48,49 +48,60 @@ export function ToolFormCompatibility() {
   }
 
   return (
-    <form
-      onSubmit={onSubmit}
-      id="compatibility-form"
-      className="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-lg"
-    >
-      <h2 className="text-xl font-bold text-slate-900">Compatibility Reading</h2>
-      <p className="text-sm text-slate-600">
-        Enter two birth dates and get a score, section-by-section breakdown, and practical do and avoid actions.
+    <section className="premium-card soft-hover p-6" id="compatibility-form">
+      <p className="label-caps">Tool A</p>
+      <h2 className="mt-2 text-2xl font-semibold text-text-main">Compatibility</h2>
+      <p className="mt-2 text-sm text-text-muted">
+        Two birth dates in, one clear readout out.
+        <br />
+        You&apos;ll get a score, section breakdown, and what to watch.
       </p>
-      <div className="grid gap-3">
-        <label className="text-sm font-medium text-slate-700" htmlFor="birthDateA">
-          First person birth date
-        </label>
-        <input
-          id="birthDateA"
-          type="date"
-          required
-          value={birthDateA}
-          onChange={(event) => setBirthDateA(event.target.value)}
-          className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900"
-        />
+
+      <form onSubmit={onSubmit} className="mt-5 space-y-4">
+        <div className="grid gap-2">
+          <label className="text-sm font-semibold text-text-main" htmlFor="birthDateA">
+            Person one
+          </label>
+          <input
+            id="birthDateA"
+            type="date"
+            required
+            value={birthDateA}
+            onChange={(event) => setBirthDateA(event.target.value)}
+            className="rounded-xl border border-border-soft bg-white px-3 py-2 text-text-main outline-none transition focus:border-brand-primary"
+          />
+        </div>
+        <div className="grid gap-2">
+          <label className="text-sm font-semibold text-text-main" htmlFor="birthDateB">
+            Person two
+          </label>
+          <input
+            id="birthDateB"
+            type="date"
+            required
+            value={birthDateB}
+            onChange={(event) => setBirthDateB(event.target.value)}
+            className="rounded-xl border border-border-soft bg-white px-3 py-2 text-text-main outline-none transition focus:border-brand-primary"
+          />
+        </div>
+
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-full rounded-full bg-brand-primary px-4 py-3 text-sm font-bold text-white transition hover:bg-[#2b2f8f] disabled:opacity-60"
+        >
+          {isLoading ? "Generating..." : "Check compatibility"}
+        </button>
+        {error ? <p className="text-sm font-medium text-rose-700">{error}</p> : null}
+      </form>
+
+      <div className="mt-5 rounded-2xl border border-border-soft bg-bg-muted p-4 text-sm">
+        <p className="font-semibold text-text-main">Example output</p>
+        <p className="mt-1 text-text-muted">
+          82/100. Strong chemistry. Communication is the one thing to watch.
+        </p>
       </div>
-      <div className="grid gap-3">
-        <label className="text-sm font-medium text-slate-700" htmlFor="birthDateB">
-          Second person birth date
-        </label>
-        <input
-          id="birthDateB"
-          type="date"
-          required
-          value={birthDateB}
-          onChange={(event) => setBirthDateB(event.target.value)}
-          className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-900"
-        />
-      </div>
-      {error ? <p className="text-sm text-rose-700">{error}</p> : null}
-      <button
-        type="submit"
-        disabled={isLoading}
-        className="w-full rounded-xl bg-slate-900 px-4 py-3 font-semibold text-white transition hover:bg-slate-700 disabled:opacity-60"
-      >
-        {isLoading ? "Generating..." : "Generate Compatibility Result"}
-      </button>
-    </form>
+      <p className="mt-3 text-xs font-semibold text-text-tertiary">No signup. No saving your inputs.</p>
+    </section>
   );
 }

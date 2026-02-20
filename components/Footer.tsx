@@ -3,23 +3,25 @@ import { appEnv } from "@/lib/env";
 
 export function Footer() {
   return (
-    <footer className="border-t border-slate-200 bg-white/80">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 py-8 text-sm text-slate-600 md:flex-row md:items-center md:justify-between">
-        <p>{appEnv.siteName} - For entertainment purposes only.</p>
+    <footer className="mt-12 border-t border-border-soft bg-[#f6f4edcc] backdrop-blur-sm">
+      <div className="app-shell flex flex-col gap-4 py-8 text-sm text-text-muted md:flex-row md:items-center md:justify-between">
+        <p>
+          {appEnv.siteName}. Fast readings you can share. <span className="font-semibold">For entertainment.</span>
+        </p>
         <nav className="flex flex-wrap items-center gap-3">
-          <Link href="/privacy" className="hover:text-slate-900">
+          <Link href="/privacy" className="hover:text-text-main">
             Privacy
           </Link>
-          <Link href="/terms" className="hover:text-slate-900">
+          <Link href="/terms" className="hover:text-text-main">
             Terms
           </Link>
-          <Link href="/disclaimer" className="hover:text-slate-900">
+          <Link href="/disclaimer" className="hover:text-text-main">
             Disclaimer
           </Link>
-          <Link href="/contact" className="hover:text-slate-900">
+          <Link href="/contact" className="hover:text-text-main">
             Contact
           </Link>
-          <Link href="/about" className="hover:text-slate-900">
+          <Link href="/about" className="hover:text-text-main">
             About
           </Link>
         </nav>

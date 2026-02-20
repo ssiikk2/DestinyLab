@@ -31,16 +31,16 @@ export const compatibilityPairPages: CompatibilityPairPage[] = pairList.map(
     slug: `${signA}-and-${signB}`,
     signA: cap(signA),
     signB: cap(signB),
-    intro: `${cap(signA)} and ${cap(signB)} can build strong chemistry when they align communication timing, emotional language, and practical planning. This guide focuses on habits you can test in daily life.`,
+    intro: `${cap(signA)} and ${cap(signB)} often click when both people keep communication direct and timing intentional. This page focuses on practical dynamics, not vague labels.`,
     strengths: [
-      "High motivation when both people feel seen",
-      "Fast growth through explicit expectations",
-      "Strong bond potential with consistent conflict repair",
+      "Mutual momentum when goals are clear",
+      "Good upside when feedback stays honest",
+      "High growth potential through small routines",
     ],
     watchouts: [
-      "Escalation from text-based misunderstandings",
-      "Different pacing around commitment decisions",
-      "Silent assumptions replacing direct requests",
+      "Assumptions made through short text messages",
+      "Different decision speed under pressure",
+      "Letting unresolved tension carry into new issues",
     ],
   }),
 );
