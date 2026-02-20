@@ -40,7 +40,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${grotesk.variable} ${cormorant.variable} app-bg min-h-screen text-slate-900 antialiased`}>
+      <body
+        className={`${grotesk.variable} ${cormorant.variable} app-bg min-h-screen text-slate-900 antialiased`}
+      >
         {appEnv.adsEnabled && appEnv.adsenseClient ? (
           <Script
             strategy="afterInteractive"
@@ -50,12 +52,30 @@ export default function RootLayout({
           />
         ) : null}
         <div className="mx-auto flex min-h-screen max-w-6xl flex-col px-4">
-          <header className="py-6">
-            <Link href="/" className="inline-flex items-center gap-2 text-xl font-bold tracking-tight text-slate-900">
-              <span className="rounded-full bg-slate-900 px-3 py-1 text-xs uppercase tracking-[0.15em] text-white">Destiny</span>
-              {appEnv.siteName}
-            </Link>
-            <p className="mt-2 text-sm text-slate-600">{appEnv.siteTagline}</p>
+          <header className="flex flex-col gap-4 py-6 md:flex-row md:items-center md:justify-between">
+            <div>
+              <Link
+                href="/"
+                className="inline-flex items-center gap-2 text-xl font-bold tracking-tight text-slate-900"
+              >
+                <span className="rounded-full bg-slate-900 px-3 py-1 text-xs uppercase tracking-[0.15em] text-white">
+                  Lab
+                </span>
+                {appEnv.siteName}
+              </Link>
+              <p className="mt-2 text-sm text-slate-600">Compatibility and destiny readings in under 60 seconds.</p>
+            </div>
+            <nav className="flex items-center gap-3 text-sm font-semibold text-slate-700">
+              <Link href="/#compatibility-form" className="hover:text-slate-900">
+                Compatibility
+              </Link>
+              <Link href="/#destiny-form" className="hover:text-slate-900">
+                Destiny
+              </Link>
+              <Link href="/blog/destiny-reading-birth-date-basics" className="hover:text-slate-900">
+                Guide
+              </Link>
+            </nav>
           </header>
           <main className="flex-1 pb-12">{children}</main>
         </div>

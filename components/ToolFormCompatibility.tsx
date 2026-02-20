@@ -2,6 +2,8 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import type { StoredReading } from "@/lib/types";
+import { saveReadingLocal } from "@/lib/reading-browser";
 
 export function ToolFormCompatibility() {
   const router = useRouter();
@@ -22,12 +24,17 @@ export function ToolFormCompatibility() {
         body: JSON.stringify({ birthDateA, birthDateB }),
       });
 
-      const json = (await response.json()) as { route?: string; error?: string };
+      const json = (await response.json()) as {
+        route?: string;
+        error?: string;
+        stored?: StoredReading;
+      };
 
-      if (!response.ok || !json.route) {
+      if (!response.ok || !json.route || !json.stored) {
         throw new Error(json.error || "Failed to generate reading.");
       }
 
+      saveReadingLocal(json.stored);
       router.push(json.route);
     } catch (submitError) {
       setError(
@@ -41,12 +48,18 @@ export function ToolFormCompatibility() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4 rounded-3xl border border-white/40 bg-white/80 p-6 shadow-lg backdrop-blur">
-      <h2 className="text-xl font-bold text-slate-900">Compatibility Tool</h2>
-      <p className="text-sm text-slate-600">Enter two birth dates to generate a score and section-based reading.</p>
+    <form
+      onSubmit={onSubmit}
+      id="compatibility-form"
+      className="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-lg"
+    >
+      <h2 className="text-xl font-bold text-slate-900">Compatibility Reading</h2>
+      <p className="text-sm text-slate-600">
+        Enter two birth dates and get a score, section-by-section breakdown, and practical do and avoid actions.
+      </p>
       <div className="grid gap-3">
         <label className="text-sm font-medium text-slate-700" htmlFor="birthDateA">
-          Birth date A
+          First person birth date
         </label>
         <input
           id="birthDateA"
@@ -59,7 +72,7 @@ export function ToolFormCompatibility() {
       </div>
       <div className="grid gap-3">
         <label className="text-sm font-medium text-slate-700" htmlFor="birthDateB">
-          Birth date B
+          Second person birth date
         </label>
         <input
           id="birthDateB"
@@ -76,7 +89,7 @@ export function ToolFormCompatibility() {
         disabled={isLoading}
         className="w-full rounded-xl bg-slate-900 px-4 py-3 font-semibold text-white transition hover:bg-slate-700 disabled:opacity-60"
       >
-        {isLoading ? "Generating..." : "Get Compatibility Reading"}
+        {isLoading ? "Generating..." : "Generate Compatibility Result"}
       </button>
     </form>
   );

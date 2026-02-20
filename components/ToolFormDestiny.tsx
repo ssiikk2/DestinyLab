@@ -2,6 +2,8 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import type { StoredReading } from "@/lib/types";
+import { saveReadingLocal } from "@/lib/reading-browser";
 
 export function ToolFormDestiny() {
   const router = useRouter();
@@ -21,12 +23,17 @@ export function ToolFormDestiny() {
         body: JSON.stringify({ birthDate }),
       });
 
-      const json = (await response.json()) as { route?: string; error?: string };
+      const json = (await response.json()) as {
+        route?: string;
+        error?: string;
+        stored?: StoredReading;
+      };
 
-      if (!response.ok || !json.route) {
+      if (!response.ok || !json.route || !json.stored) {
         throw new Error(json.error || "Failed to generate reading.");
       }
 
+      saveReadingLocal(json.stored);
       router.push(json.route);
     } catch (submitError) {
       setError(
@@ -40,9 +47,15 @@ export function ToolFormDestiny() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4 rounded-3xl border border-white/40 bg-white/80 p-6 shadow-lg backdrop-blur">
-      <h2 className="text-xl font-bold text-slate-900">Destiny Tool</h2>
-      <p className="text-sm text-slate-600">Enter one birth date to generate personality and life-pattern insights.</p>
+    <form
+      onSubmit={onSubmit}
+      id="destiny-form"
+      className="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-lg"
+    >
+      <h2 className="text-xl font-bold text-slate-900">Destiny Reading</h2>
+      <p className="text-sm text-slate-600">
+        Enter one birth date and get personality, love style, money pattern, career strength, and hidden traits.
+      </p>
       <div className="grid gap-3">
         <label className="text-sm font-medium text-slate-700" htmlFor="birthDate">
           Birth date
@@ -62,7 +75,7 @@ export function ToolFormDestiny() {
         disabled={isLoading}
         className="w-full rounded-xl bg-slate-900 px-4 py-3 font-semibold text-white transition hover:bg-slate-700 disabled:opacity-60"
       >
-        {isLoading ? "Generating..." : "Generate Destiny Reading"}
+        {isLoading ? "Generating..." : "Generate Destiny Result"}
       </button>
     </form>
   );

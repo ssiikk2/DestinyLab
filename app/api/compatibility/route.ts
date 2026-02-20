@@ -40,12 +40,13 @@ export async function POST(request: NextRequest) {
   }
 
   const reading = await createCompatibilityReading(body.birthDateA, body.birthDateB);
-  const id = saveReading(reading);
+  const stored = saveReading(reading);
 
   return NextResponse.json({
-    id,
-    route: `/reading/${id}`,
+    id: stored.id,
+    route: `/reading/${stored.id}`,
     kind: reading.kind,
     score: reading.score,
+    stored,
   });
 }

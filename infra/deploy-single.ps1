@@ -29,13 +29,17 @@ if ($rgExists -ne "true") {
   az group create --name $ResourceGroup --location $Location 1>$null
 }
 
-$acr = az acr show --name $AcrName --resource-group $ResourceGroup 2>$null
+$acr = $null
+try { $acr = az acr show --name $AcrName --resource-group $ResourceGroup -o json 2>$null } catch { $acr = $null }
+
 if (-not $acr) {
   az acr create --name $AcrName --resource-group $ResourceGroup --location $Location --sku Basic 1>$null
 }
 
 $workspaceName = "$ContainerEnvName-law"
-$workspace = az monitor log-analytics workspace show --resource-group $ResourceGroup --workspace-name $workspaceName 2>$null
+$workspace = $null
+try { $workspace = az monitor log-analytics workspace show --resource-group $ResourceGroup --workspace-name $workspaceName -o json 2>$null } catch { $workspace = $null }
+
 if (-not $workspace) {
   az monitor log-analytics workspace create --resource-group $ResourceGroup --workspace-name $workspaceName --location $Location 1>$null
 }
@@ -43,9 +47,24 @@ if (-not $workspace) {
 $workspaceId = az monitor log-analytics workspace show --resource-group $ResourceGroup --workspace-name $workspaceName --query customerId -o tsv
 $workspaceKey = az monitor log-analytics workspace get-shared-keys --resource-group $ResourceGroup --workspace-name $workspaceName --query primarySharedKey -o tsv
 
-$envExists = az containerapp env show --name $ContainerEnvName --resource-group $ResourceGroup 2>$null
+$envExists = $null
+try {
+  $envExists = az containerapp env show `
+    --name $ContainerEnvName `
+    --resource-group $ResourceGroup `
+    --only-show-errors -o json 2>$null
+} catch {
+  $envExists = $null
+}
+
 if (-not $envExists) {
-  az containerapp env create --name $ContainerEnvName --resource-group $ResourceGroup --location $Location --logs-workspace-id $workspaceId --logs-workspace-key $workspaceKey 1>$null
+  az containerapp env create `
+    --name $ContainerEnvName `
+    --resource-group $ResourceGroup `
+    --location $Location `
+    --logs-workspace-id $workspaceId `
+    --logs-workspace-key $workspaceKey `
+    --only-show-errors 1>$null
 }
 
 az acr build --registry $AcrName --image $ImageName .
