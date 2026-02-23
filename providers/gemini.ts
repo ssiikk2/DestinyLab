@@ -1,12 +1,20 @@
-import { appEnv } from "@/lib/env";
+﻿import { appEnv } from "@/lib/env";
+import type { GenerateTextOptions } from "@/lib/ai/provider";
 
-export async function generateWithGemini(prompt: string): Promise<string | null> {
+export async function generateWithGemini(
+  prompt: string,
+  options: GenerateTextOptions = {},
+): Promise<string> {
   if (!appEnv.geminiApiKey) {
-    return null;
+    throw new Error("[gemini] Missing GEMINI_API_KEY configuration.");
   }
 
   const model = appEnv.aiMode === "draft" ? "gemini-1.5-flash" : "gemini-1.5-pro";
   const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${appEnv.geminiApiKey}`;
+
+  const systemPrompt = options.json
+    ? "Return ONLY valid JSON. No markdown."
+    : "Be concise and avoid legal or medical guarantees.";
 
   const response = await fetch(endpoint, {
     method: "POST",
@@ -17,17 +25,21 @@ export async function generateWithGemini(prompt: string): Promise<string | null>
       contents: [
         {
           role: "user",
-          parts: [{ text: `${prompt}\n\nReturn only valid JSON.` }],
+          parts: [{ text: `${systemPrompt}\n\n${prompt}` }],
         },
       ],
       generationConfig: {
-        temperature: appEnv.aiMode === "draft" ? 0.7 : 0.4,
+        temperature: options.temperature ?? (appEnv.aiMode === "draft" ? 0.7 : 0.4),
+        maxOutputTokens: options.maxTokens ?? 1200,
       },
     }),
   });
 
   if (!response.ok) {
-    return null;
+    const detail = (await response.text()).slice(0, 500);
+    throw new Error(
+      `[gemini] Request failed (HTTP ${response.status}). ${detail}`,
+    );
   }
 
   const json = (await response.json()) as {
@@ -38,5 +50,11 @@ export async function generateWithGemini(prompt: string): Promise<string | null>
     }>;
   };
 
-  return json.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || null;
+  const content = json.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+
+  if (!content) {
+    throw new Error("[gemini] Empty response content.");
+  }
+
+  return content;
 }

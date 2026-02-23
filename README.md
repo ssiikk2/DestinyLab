@@ -172,6 +172,46 @@ https://<출력된-fqdn>
 - 콘텐츠 생성 시 `npm run generate:content:ping` 사용
 - 또는 `/api/indexnow`로 URL 목록을 직접 전송
 
+## Azure OpenAI 사용하기
+
+1. Azure OpenAI 리소스를 생성하고 모델을 배포합니다.
+2. 배포한 모델의 **Deployment 이름**을 확인합니다.
+3. 아래 환경변수를 설정합니다.
+
+```env
+AI_PROVIDER=azure-openai
+AZURE_OPENAI_ENDPOINT=https://<resource>.openai.azure.com
+AZURE_OPENAI_API_KEY=<your-key>
+AZURE_OPENAI_DEPLOYMENT=<deployment-name>
+AZURE_OPENAI_API_VERSION=2024-10-21
+```
+
+4. ACA 환경변수 반영 예시:
+
+```bash
+az containerapp update \
+  --name destinylab-main \
+  --resource-group destinylab-rg \
+  --set-env-vars \
+AI_PROVIDER=azure-openai \
+AZURE_OPENAI_ENDPOINT=https://<resource>.openai.azure.com \
+AZURE_OPENAI_API_KEY=<your-key> \
+AZURE_OPENAI_DEPLOYMENT=<deployment-name> \
+AZURE_OPENAI_API_VERSION=2024-10-21
+```
+
+※ 실제 키는 저장소에 커밋하지 마세요.
+
+## 로컬에서 Azure OpenAI 확인
+
+1. `.env.local`에 Azure OpenAI 환경변수를 설정합니다.
+2. `npm run dev` 실행 후 `/api/compatibility`, `/api/destiny`를 호출합니다.
+3. 정상 응답이 나오면 Azure OpenAI 연동이 완료된 상태입니다.
+
+기존 제공자 확인 방법:
+- OpenAI: `AI_PROVIDER=openai` + `OPENAI_API_KEY`
+- Gemini: `AI_PROVIDER=gemini` + `GEMINI_API_KEY`
+
 ## 운영 팁
 
 1. 광고는 점진적으로 늘리고 사용자 체류 지표를 먼저 확인합니다.

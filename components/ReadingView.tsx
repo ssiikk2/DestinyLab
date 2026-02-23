@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -27,6 +27,20 @@ type ViewState =
   | { status: "loading" }
   | { status: "not-found" }
   | { status: "ready"; stored: StoredReading };
+
+function getDisplayTitle(stored: StoredReading): string {
+  return stored.data.kind === "compatibility"
+    ? "Compatibility result"
+    : "Destiny result";
+}
+
+function cleanInsight(line: string): string {
+  return line
+    .replace(/â/g, "'")
+    .replace(/\b(cosmic|universe|star|stars|fate|destiny|celestial|zodiac)\b/gi, "overall")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
 export function ReadingView({ id, section }: ReadingViewProps) {
   const [state, setState] = useState<ViewState>({ status: "loading" });
@@ -84,7 +98,7 @@ export function ReadingView({ id, section }: ReadingViewProps) {
       getSectionText(reading, fallbackSection) ||
       "";
 
-    const insights = toTabInsights(activeSection, sectionText);
+    const insights = toTabInsights(activeSection, sectionText).map(cleanInsight);
     const actions = getTabActions(activeSection);
     const summary = buildResultSummary(reading);
 
@@ -107,7 +121,7 @@ export function ReadingView({ id, section }: ReadingViewProps) {
   if (state.status === "loading") {
     return (
       <section className="premium-card p-8 text-center">
-        <p className="text-sm font-semibold text-text-tertiary">Loading your reading...</p>
+        <p className="text-sm font-semibold text-text-tertiary">Loading your result...</p>
       </section>
     );
   }
@@ -116,12 +130,12 @@ export function ReadingView({ id, section }: ReadingViewProps) {
     return (
       <section className="premium-card p-8 text-center">
         <h1 className="text-3xl font-semibold text-text-main">Reading not found</h1>
-        <p className="mt-2 text-text-muted">That link has likely expired. Run a new reading in one step.</p>
+        <p className="mt-2 text-text-muted">That link is expired or from another device session.</p>
         <Link
           href="/"
-          className="mt-5 inline-flex rounded-full bg-brand-primary px-5 py-2 text-sm font-bold text-white hover:bg-[#2b2f8f]"
+          className="btn-primary mt-5 inline-flex px-5 py-2 text-sm"
         >
-          Create a new reading
+          Create new reading
         </Link>
       </section>
     );
@@ -132,12 +146,13 @@ export function ReadingView({ id, section }: ReadingViewProps) {
   const secondaryHref = reading.kind === "compatibility" ? "/#destiny-form" : "/#compatibility-form";
   const secondaryLabel =
     reading.kind === "compatibility" ? "Get my destiny reading" : "Run another match";
+  const displayTitle = getDisplayTitle(state.stored);
 
   return (
     <article className="space-y-6 md:space-y-7">
       <section className="premium-card p-6 md:p-8 fade-up">
-        <p className="label-caps">Your Result</p>
-        <h1 className="mt-2 text-3xl font-semibold text-text-main md:text-4xl">{reading.title}</h1>
+        <p className="label-caps">Your result</p>
+        <h1 className="mt-2 text-3xl font-semibold text-text-main md:text-4xl">{displayTitle}</h1>
         <p className="mt-3 text-base text-text-muted">{summary}</p>
       </section>
 
@@ -145,7 +160,7 @@ export function ReadingView({ id, section }: ReadingViewProps) {
         <ScoreCard score={reading.score} summary={summary} />
       ) : (
         <section className="premium-card p-6 md:p-8 fade-up">
-          <p className="label-caps">Destiny Snapshot</p>
+          <p className="label-caps">Snapshot</p>
           <p className="mt-3 text-lg text-text-main">{summary}</p>
         </section>
       )}
@@ -157,11 +172,11 @@ export function ReadingView({ id, section }: ReadingViewProps) {
       />
 
       <section className="premium-card p-6 fade-up">
-        <p className="label-caps">Where you&apos;ll feel it most</p>
+        <p className="label-caps">Active tab</p>
         <h2 className="mt-2 text-3xl font-semibold text-text-main">
           {tabs.find((tab) => tab.key === activeSection)?.label || "Section"}
         </h2>
-        <p className="mt-2 text-sm text-text-muted">Four sharp takeaways for this section.</p>
+        <p className="mt-2 text-sm text-text-muted">4 short insights. No fluff.</p>
       </section>
 
       <InsightList title="Key insights" items={insights} />
@@ -181,10 +196,8 @@ export function ReadingView({ id, section }: ReadingViewProps) {
             />
           </div>
           <div className="space-y-3">
-            <p className="text-sm text-text-muted">
-              Share this result as a card. Easy to post, easy to compare.
-            </p>
-            <ShareButtons title={reading.title} />
+            <p className="text-sm text-text-muted">Share this as a card.</p>
+            <ShareButtons title={displayTitle} />
           </div>
         </div>
       </section>
@@ -193,13 +206,13 @@ export function ReadingView({ id, section }: ReadingViewProps) {
         <div className="flex flex-wrap gap-2">
           <Link
             href="/#compatibility-form"
-            className="rounded-full bg-brand-primary px-5 py-2 text-sm font-bold text-white hover:bg-[#2b2f8f]"
+            className="btn-primary px-5 py-2 text-sm"
           >
             Compare another person
           </Link>
           <Link
             href={secondaryHref}
-            className="rounded-full border border-border-strong bg-white px-5 py-2 text-sm font-bold text-text-main hover:bg-bg-muted"
+            className="btn-ghost px-5 py-2 text-sm"
           >
             {secondaryLabel}
           </Link>

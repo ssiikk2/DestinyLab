@@ -1,26 +1,26 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { compatibilityPairPages } from "@/content/compatibility-pages";
 
 const trendNotes = [
-  "High spark, high growth",
-  "Strong long-term rhythm",
+  "High spark",
+  "Good long-term fit",
   "Fast chemistry",
-  "Great communication upside",
-  "Emotionally steady",
-  "Magnetic but needs pacing",
-  "Good balance of fire and calm",
-  "Best with clear boundaries",
+  "Strong talk flow",
+  "Steady emotional pace",
+  "Magnetic but intense",
+  "Balanced energy",
+  "Needs clear boundaries",
 ];
 
 export function TrendingPairs() {
   const topPairs = compatibilityPairPages.slice(0, 8);
 
   return (
-    <section className="premium-card p-6">
+    <section className="premium-card p-6 fade-up">
       <div className="flex items-center justify-between">
         <div>
-          <p className="label-caps">Trending</p>
-          <h2 className="mt-1 text-2xl font-semibold text-text-main">Pairings people are checking</h2>
+          <p className="label-caps">Trending pairings</p>
+          <h2 className="mt-1 text-2xl font-semibold text-text-main">Popular match checks</h2>
         </div>
       </div>
 
@@ -34,7 +34,7 @@ export function TrendingPairs() {
             <p className="text-base font-semibold text-text-main">
               {pair.signA} + {pair.signB}
             </p>
-            <p className="mt-1 text-sm text-text-muted">{trendNotes[index] || "Worth a quick check"}</p>
+            <p className="mt-1 text-sm text-text-muted">{trendNotes[index] || "Quick check"}</p>
           </Link>
         ))}
       </div>

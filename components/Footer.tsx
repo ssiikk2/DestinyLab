@@ -1,12 +1,12 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { appEnv } from "@/lib/env";
 
 export function Footer() {
   return (
-    <footer className="mt-12 border-t border-border-soft bg-[#f6f4edcc] backdrop-blur-sm">
+    <footer className="mt-12 border-t border-border-soft bg-[#f0ece4cc] backdrop-blur-sm">
       <div className="app-shell flex flex-col gap-4 py-8 text-sm text-text-muted md:flex-row md:items-center md:justify-between">
         <p>
-          {appEnv.siteName}. Fast readings you can share. <span className="font-semibold">For entertainment.</span>
+          {appEnv.siteName}. Quick tests. Shareable results. <span className="font-semibold">For entertainment.</span>
         </p>
         <nav className="flex flex-wrap items-center gap-3">
           <Link href="/privacy" className="hover:text-text-main">

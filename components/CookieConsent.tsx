@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useState, useSyncExternalStore } from "react";
@@ -34,15 +34,15 @@ export function CookieConsent() {
     <div className="fixed inset-x-0 bottom-0 z-50 border-t border-border-soft bg-white/95 p-4 shadow-2xl backdrop-blur-sm">
       <div className="app-shell flex flex-col gap-3 text-sm text-text-muted md:flex-row md:items-center md:justify-between">
         <p>
-          We use cookies for analytics and ads. Nothing dramatic.
+          We use cookies for analytics and ads.
           <Link className="ml-1 font-semibold text-text-main underline" href="/privacy">
-            See privacy details
+            Privacy details
           </Link>
           .
         </p>
         <button
           onClick={accept}
-          className="rounded-full bg-brand-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#2b2f8f]"
+          className="btn-primary px-4 py-2 text-sm"
         >
           Accept
         </button>

@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "generate:content": "tsx scripts/generate-content.ts",
-    "generate:content:ping": "tsx scripts/generate-content.ts --ping-indexnow"
+    "generate:seo": "tsx scripts/generate-content.ts",
+    "check:aoai": "tsx scripts/check-aoai.ts"
   },
   "dependencies": {
     "next": "16.1.6",

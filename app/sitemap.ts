@@ -1,34 +1,26 @@
-import type { MetadataRoute } from "next";
-import { blogPosts } from "@/content/blog-seeds";
-import { compatibilityPairPages } from "@/content/compatibility-pages";
+﻿import type { MetadataRoute } from "next";
+import { allSeoPages } from "@/content/seo-data";
 import { getBaseUrl } from "@/lib/env";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = getBaseUrl();
-  const now = new Date();
+  const now = new Date("2026-02-23T00:00:00.000Z");
 
-  const fixedRoutes = ["", "/about", "/contact", "/privacy", "/terms", "/disclaimer"].map(
+  const staticRoutes = ["", "/tests", "/blog", "/zodiac", "/privacy", "/terms", "/disclaimer", "/contact"].map(
     (path) => ({
       url: `${baseUrl}${path}`,
       lastModified: now,
       changeFrequency: "weekly" as const,
-      priority: path === "" ? 1 : 0.6,
+      priority: path === "" ? 1 : 0.8,
     }),
   );
 
-  const blogRoutes = blogPosts.map((post) => ({
-    url: `${baseUrl}/blog/${post.slug}`,
-    lastModified: now,
+  const seoRoutes = allSeoPages.map((page) => ({
+    url: `${baseUrl}${page.path}`,
+    lastModified: new Date(page.lastUpdated),
     changeFrequency: "weekly" as const,
-    priority: 0.75,
+    priority: page.kind === "tool" ? 0.95 : 0.85,
   }));
 
-  const pairRoutes = compatibilityPairPages.map((pair) => ({
-    url: `${baseUrl}/compatibility/${pair.slug}`,
-    lastModified: now,
-    changeFrequency: "weekly" as const,
-    priority: 0.7,
-  }));
-
-  return [...fixedRoutes, ...blogRoutes, ...pairRoutes];
+  return [...staticRoutes, ...seoRoutes];
 }

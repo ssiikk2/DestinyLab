@@ -48,13 +48,9 @@ export function ToolFormDestiny() {
 
   return (
     <section className="premium-card soft-hover p-6" id="destiny-form">
-      <p className="label-caps">Tool B</p>
-      <h2 className="mt-2 text-2xl font-semibold text-text-main">Destiny</h2>
-      <p className="mt-2 text-sm text-text-muted">
-        A quick profile from one birth date.
-        <br />
-        See your core style, strengths, and one thing to tighten.
-      </p>
+      <p className="label-caps">Test B · solo</p>
+      <h2 className="mt-2 text-2xl font-semibold text-text-main">Destiny test</h2>
+      <p className="mt-2 text-sm text-text-muted">Enter one birth date for a personal snapshot.</p>
 
       <form onSubmit={onSubmit} className="mt-5 space-y-4">
         <div className="grid gap-2">
@@ -74,20 +70,18 @@ export function ToolFormDestiny() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full rounded-full bg-brand-primary px-4 py-3 text-sm font-bold text-white transition hover:bg-[#2b2f8f] disabled:opacity-60"
+          className="btn-primary w-full px-4 py-3 text-sm disabled:opacity-60"
         >
-          {isLoading ? "Generating..." : "Get my reading"}
+          {isLoading ? "Running test..." : "Run destiny test"}
         </button>
         {error ? <p className="text-sm font-medium text-rose-700">{error}</p> : null}
       </form>
 
       <div className="mt-5 rounded-2xl border border-border-soft bg-bg-muted p-4 text-sm">
-        <p className="font-semibold text-text-main">Example output</p>
-        <p className="mt-1 text-text-muted">
-          You do best with structure, direct talk, and fewer active priorities.
-        </p>
+        <p className="font-semibold text-text-main">Example</p>
+        <p className="mt-1 text-text-muted">Best with structure and direct communication. Watch overcommitment.</p>
       </div>
-      <p className="mt-3 text-xs font-semibold text-text-tertiary">No signup. No saving your inputs.</p>
+      <p className="mt-3 text-xs font-semibold text-text-tertiary">No signup. No long-term input storage.</p>
     </section>
   );
 }

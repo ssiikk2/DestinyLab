@@ -1,0 +1,42 @@
+{
+  "generatedAt": "2026-02-23T03:01:56.479Z",
+  "total": 32,
+  "tools": [
+    "love-compatibility-calculator",
+    "name-compatibility",
+    "initials-compatibility",
+    "crush-compatibility",
+    "friendship-compatibility",
+    "zodiac-compatibility",
+    "birthday-compatibility",
+    "destiny-calculator"
+  ],
+  "zodiac": [
+    "aries-and-taurus-compatibility",
+    "aries-and-scorpio-compatibility",
+    "taurus-and-libra-compatibility",
+    "gemini-and-sagittarius-compatibility",
+    "cancer-and-leo-compatibility",
+    "leo-and-scorpio-compatibility",
+    "virgo-and-pisces-compatibility",
+    "libra-and-capricorn-compatibility",
+    "scorpio-and-aries-compatibility",
+    "sagittarius-and-gemini-compatibility",
+    "capricorn-and-cancer-compatibility",
+    "aquarius-and-virgo-compatibility",
+    "pisces-and-cancer-compatibility",
+    "leo-and-aries-compatibility",
+    "taurus-and-scorpio-compatibility",
+    "libra-and-aries-compatibility",
+    "virgo-and-capricorn-compatibility",
+    "gemini-and-aquarius-compatibility"
+  ],
+  "blog": [
+    "what-is-a-good-love-compatibility-score",
+    "soulmate-vs-twin-flame-difference",
+    "twin-flame-signs-and-symptoms",
+    "how-accurate-are-compatibility-calculators",
+    "love-compatibility-by-name-explained",
+    "zodiac-compatibility-chart-explained"
+  ]
+}

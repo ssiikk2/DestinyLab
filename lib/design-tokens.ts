@@ -1,25 +1,25 @@
-export const designTokens = {
+﻿export const designTokens = {
   color: {
     bg: {
-      base: "#f7f6f2",
+      base: "#f4f2ee",
       elevated: "#ffffff",
-      muted: "#f1efe8",
+      muted: "#ece8df",
     },
     text: {
-      primary: "#1f2330",
-      secondary: "#4d5568",
-      tertiary: "#7b8190",
+      primary: "#1a2230",
+      secondary: "#445064",
+      tertiary: "#6f7888",
       inverse: "#f9fafb",
     },
     brand: {
-      primary: "#3438a8",
-      primaryHover: "#2b2f8f",
-      accent: "#c95b7b",
-      accentSoft: "#f1dbe2",
+      primary: "#244a87",
+      primaryHover: "#1c3f77",
+      accent: "#b46d45",
+      accentSoft: "#f0ddcf",
     },
     border: {
-      soft: "#e4e1d9",
-      strong: "#cbc6ba",
+      soft: "#dfd8ca",
+      strong: "#c8bfaf",
     },
   },
   radius: {
@@ -30,9 +30,9 @@ export const designTokens = {
     pill: "999px",
   },
   shadow: {
-    card: "0 10px 30px rgba(28, 35, 54, 0.08)",
-    cardHover: "0 14px 36px rgba(28, 35, 54, 0.13)",
-    glow: "0 0 0 1px rgba(201, 91, 123, 0.14), 0 16px 46px rgba(52, 56, 168, 0.22)",
+    card: "0 10px 28px rgba(19, 28, 45, 0.09)",
+    cardHover: "0 16px 38px rgba(19, 28, 45, 0.14)",
+    glow: "0 0 0 1px rgba(180, 109, 69, 0.12), 0 16px 42px rgba(36, 74, 135, 0.22)",
   },
   type: {
     scale: {
@@ -50,7 +50,7 @@ export const designTokens = {
       tight: "-0.02em",
     },
     leading: {
-      copy: "1.68",
+      copy: "1.62",
       heading: "1.08",
     },
   },

@@ -1,45 +1,32 @@
-import type { Metadata } from "next";
-import Script from "next/script";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
-import { Manrope, Fraunces } from "next/font/google";
-import { Footer } from "@/components/Footer";
-import { CookieConsent } from "@/components/CookieConsent";
-import { appEnv, getBaseUrl } from "@/lib/env";
+import Script from "next/script";
+import { getBaseUrl, appEnv } from "@/lib/env";
 import "./globals.css";
-
-const bodyFont = Manrope({
-  subsets: ["latin"],
-  variable: "--font-body",
-});
-
-const headingFont = Fraunces({
-  subsets: ["latin"],
-  variable: "--font-heading",
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseUrl()),
   title: {
-    default: `${appEnv.siteName} | ${appEnv.siteTagline}`,
-    template: `%s | ${appEnv.siteName}`,
+    default: "Love Compatibility Calculator",
+    template: "%s | Love Compatibility Calculator",
   },
   description: appEnv.siteTagline,
+  alternates: {
+    canonical: getBaseUrl(),
+  },
   openGraph: {
-    title: appEnv.siteName,
+    title: "Love Compatibility Calculator",
     description: appEnv.siteTagline,
     type: "website",
     url: getBaseUrl(),
+    siteName: "Love Compatibility Calculator",
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${bodyFont.variable} ${headingFont.variable} min-h-screen text-text-main antialiased`}>
+      <body>
         {appEnv.adsEnabled && appEnv.adsenseClient ? (
           <Script
             strategy="afterInteractive"
@@ -49,33 +36,53 @@ export default function RootLayout({
           />
         ) : null}
 
-        <header className="sticky top-0 z-40 border-b border-border-soft/70 bg-[#f7f6f2cc] backdrop-blur-xl">
-          <div className="app-shell flex h-16 items-center justify-between gap-4">
-            <Link href="/" className="inline-flex items-center gap-2 text-base font-semibold text-text-main">
-              <span className="rounded-full bg-brand-primary px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.15em] text-white">
-                DL
-              </span>
-              <span>{appEnv.siteName}</span>
+        <header className="border-b border-slate-200 bg-white">
+          <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-3 text-sm text-slate-700">
+            <Link href="/" className="font-semibold text-slate-900">
+              lovecompatibilitycalculator.com
             </Link>
-
-            <nav className="flex items-center gap-3 text-sm font-semibold text-text-muted">
-              <Link href="/#compatibility-form" className="rounded-full px-3 py-1.5 transition hover:bg-white hover:text-text-main">
-                Compatibility
-              </Link>
-              <Link href="/#destiny-form" className="rounded-full px-3 py-1.5 transition hover:bg-white hover:text-text-main">
-                Destiny
-              </Link>
-              <Link href="/blog/destiny-reading-birth-date-basics" className="rounded-full px-3 py-1.5 transition hover:bg-white hover:text-text-main">
-                Guide
-              </Link>
-            </nav>
+            <Link href="/love-compatibility-calculator" className="hover:text-slate-900">
+              Love Calculator
+            </Link>
+            <Link href="/tests" className="hover:text-slate-900">
+              Tests
+            </Link>
+            <Link href="/zodiac-compatibility" className="hover:text-slate-900">
+              Zodiac
+            </Link>
+            <Link href="/name-compatibility" className="hover:text-slate-900">
+              Name
+            </Link>
+            <Link href="/birthday-compatibility" className="hover:text-slate-900">
+              Birthday
+            </Link>
+            <Link href="/destiny-calculator" className="hover:text-slate-900">
+              Destiny
+            </Link>
+            <Link href="/blog" className="hover:text-slate-900">
+              Blog
+            </Link>
           </div>
         </header>
 
-        <main className="app-shell flex-1 py-8 md:py-10">{children}</main>
+        <main>{children}</main>
 
-        <Footer />
-        <CookieConsent />
+        <footer className="border-t border-slate-200 bg-white">
+          <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-4 px-4 py-6 text-xs text-slate-600">
+            <Link href="/privacy" className="hover:text-slate-900">
+              Privacy
+            </Link>
+            <Link href="/terms" className="hover:text-slate-900">
+              Terms
+            </Link>
+            <Link href="/disclaimer" className="hover:text-slate-900">
+              Disclaimer
+            </Link>
+            <Link href="/contact" className="hover:text-slate-900">
+              Contact
+            </Link>
+          </div>
+        </footer>
       </body>
     </html>
   );

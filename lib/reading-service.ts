@@ -1,4 +1,4 @@
-import { requestStructuredJson } from "@/lib/ai-client";
+﻿import { requestStructuredJson } from "@/lib/ai-client";
 import {
   buildCompatibilityFallback,
   buildDestinyFallback,
@@ -91,11 +91,16 @@ Schema:
   "birthDateA": "${birthDateA}",
   "birthDateB": "${birthDateB}"
 }
-Rules:
-- Keep each section practical and concise.
-- Use entertainment tone only.
-- No medical or legal claims.
-- Score must be 0-100.`;
+Style rules:
+- Plain modern English.
+- No mystical words (cosmic, universe, fate, stars, destiny, zodiac, celestial).
+- No hype, no exclamation marks.
+- title must be exactly "Compatibility result".
+- summary: one sentence, max 14 words.
+- each section: max 2 short sentences.
+- highlights, dos, donts: short action-focused lines.
+- score must be 0-100.
+- entertainment only, no medical/legal/financial claims.`;
 
   const aiResult = await requestStructuredJson<CompatibilityReading>(prompt);
 
@@ -128,10 +133,15 @@ Schema:
   "donts": string[3],
   "birthDate": "${birthDate}"
 }
-Rules:
-- Keep language engaging but grounded.
-- Entertainment only.
-- No medical or legal guarantees.`;
+Style rules:
+- Plain modern English.
+- No mystical words (cosmic, universe, fate, stars, destiny, zodiac, celestial).
+- No hype, no exclamation marks.
+- title must be exactly "Destiny result".
+- summary: one sentence, max 14 words.
+- each section: max 2 short sentences.
+- highlights, dos, donts: short action-focused lines.
+- entertainment only, no medical/legal/financial claims.`;
 
   const aiResult = await requestStructuredJson<DestinyReading>(prompt);
 

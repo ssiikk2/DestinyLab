@@ -18,7 +18,7 @@ export function ShareButtons({ title }: ShareButtonsProps) {
   }
 
   function shareOnX() {
-    const text = encodeURIComponent(`${title} on DestinyLab`);
+    const text = encodeURIComponent(`${title} • DestinyLab`);
     const url = encodeURIComponent(window.location.href);
     window.open(
       `https://twitter.com/intent/tweet?text=${text}&url=${url}`,
@@ -39,20 +39,20 @@ export function ShareButtons({ title }: ShareButtonsProps) {
     <div className="flex flex-wrap items-center gap-2">
       <button
         onClick={copyLink}
-        className="rounded-full border border-border-soft bg-white px-4 py-2 text-sm font-semibold text-text-main transition hover:bg-bg-muted"
+        className="btn-primary px-4 py-2 text-sm"
       >
         {copied ? "Copied" : "Copy link"}
       </button>
       <button
         onClick={shareOnX}
-        className="rounded-full border border-border-soft bg-white px-4 py-2 text-sm font-semibold text-text-main transition hover:bg-bg-muted"
+        className="btn-ghost px-4 py-2 text-sm"
       >
         Share on X
       </button>
       {canNativeShare ? (
         <button
           onClick={nativeShare}
-          className="rounded-full border border-border-soft bg-white px-4 py-2 text-sm font-semibold text-text-main transition hover:bg-bg-muted"
+          className="btn-ghost px-4 py-2 text-sm"
         >
           Share
         </button>

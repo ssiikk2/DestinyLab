@@ -1,4 +1,4 @@
-import type { ReadingData } from "@/lib/types";
+﻿import type { ReadingData } from "@/lib/types";
 
 const sectionFallbacks: Record<string, string[]> = {
   emotional: [
@@ -281,10 +281,10 @@ export function buildResultSummary(reading: ReadingData): string {
 
 export function buildOgLabel(reading: ReadingData): string {
   if (reading.kind === "compatibility") {
-    return reading.title.replace(" Compatibility Reading", "");
+    return "Compatibility";
   }
 
-  return reading.title.replace(" Destiny Reading", "");
+  return "Destiny";
 }
 
 /**

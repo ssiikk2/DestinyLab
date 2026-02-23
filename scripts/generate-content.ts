@@ -1,191 +1,356 @@
-import { mkdir, readFile, writeFile } from "fs/promises";
+﻿import { existsSync } from "fs";
+import { mkdir, writeFile } from "fs/promises";
 import { resolve } from "path";
-import { appEnv, getBaseUrl } from "../lib/env";
-import { generateWithGemini } from "../providers/gemini";
-import { generateWithOpenAI } from "../providers/openai";
+import {
+  allSeoPages,
+  getBlogPages,
+  getToolPages,
+  getZodiacPages,
+  type SeoPageRecord,
+  type SeoSections,
+  type SeoFaq,
+} from "../content/seo-data";
+import {
+  generateTextWithAzureMultiRegion,
+  type AzureModelTier,
+  type UsageStats,
+} from "../lib/server/azure-openai-multi-region";
 
-interface KeywordRow {
-  keyword: string;
+interface GeneratedContent {
   slug: string;
-}
-
-interface GeneratedPost {
-  slug: string;
+  path: string;
   keyword: string;
   title: string;
   description: string;
-  sections: Array<{ heading: string; content: string }>;
-  faqs: Array<{ question: string; answer: string }>;
+  intro: string;
+  sections: SeoSections;
+  faqs: SeoFaq[];
+  lastUpdated: string;
 }
 
-function parseCsv(input: string): KeywordRow[] {
-  return input
-    .split(/\r?\n/)
-    .slice(1)
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .map((line) => {
-      const [keyword, slug] = line.split(",");
-      return { keyword, slug };
-    });
+interface ScriptArgs {
+  force: boolean;
+  keywords?: string[];
+  targetWords?: number;
 }
 
-function normalizeJson(raw: string): string {
-  const clean = raw.replace(/^```json\s*/i, "").replace(/```$/i, "").trim();
-  const start = clean.indexOf("{");
-  const end = clean.lastIndexOf("}");
-
-  return start >= 0 && end > start ? clean.slice(start, end + 1) : clean;
+interface GenerationStats {
+  generated: number;
+  skipped: number;
+  failed: number;
+  usageTotals: UsageStats;
 }
 
-function localFallback(row: KeywordRow): GeneratedPost {
-  const longText = `${row.keyword} content performs best when it combines clarity, practical examples, and explicit disclaimers. Treat each section as a behavior guide that helps users take one concrete action today. Reinforce the same core value in different wording: clarity before reaction, routine before emotion, and review before assumption. This pattern keeps pages useful while avoiding repetitive phrasing. Include internal links to related guides and compatibility pages so the article supports discovery and repeat usage.`;
+const CONTENT_DIR = resolve(process.cwd(), "content", "generated");
+const DEFAULT_BATCH_SIZE = 3;
+
+function parseArgs(): ScriptArgs {
+  const args = process.argv.slice(2);
+  const force = args.includes("--force");
+  const keywordsArg = args.find((arg) => arg.startsWith("--keywords="));
+  const wordsArg = args.find((arg) => arg.startsWith("--words="));
+
+  const keywords = keywordsArg
+    ? keywordsArg
+        .replace("--keywords=", "")
+        .split(",")
+        .map((entry) => entry.trim().toLowerCase())
+        .filter(Boolean)
+    : undefined;
+
+  const targetWords = wordsArg
+    ? Number.parseInt(wordsArg.replace("--words=", ""), 10)
+    : undefined;
 
   return {
-    slug: row.slug,
-    keyword: row.keyword,
-    title: `${row.keyword.replace(/-/g, " ")} guide`,
-    description:
-      "A practical, SEO-focused guide for compatibility and destiny readers.",
-    sections: [
-      { heading: "Core idea", content: `${longText} ${longText}` },
-      { heading: "Communication actions", content: `${longText} ${longText}` },
-      { heading: "Long-term strategy", content: `${longText} ${longText}` },
-      { heading: "Conflict recovery", content: `${longText} ${longText}` },
-      { heading: "Growth plan", content: `${longText} ${longText}` },
-      { heading: "30-day checklist", content: `${longText} ${longText}` },
-    ],
-    faqs: [
-      {
-        question: `How should I use ${row.keyword}?`,
-        answer:
-          "Use it as an entertainment-focused reflection framework and turn one insight into a weekly action.",
-      },
-      {
-        question: "How often should content be updated?",
-        answer:
-          "Update monthly or when search trends shift to keep examples and internal links fresh.",
-      },
-      {
-        question: "Is this medical or legal advice?",
-        answer:
-          "No. This content is for entertainment and educational context only.",
-      },
-      {
-        question: "What improves engagement the fastest?",
-        answer:
-          "Clear CTAs, sectioned structure, and shareable result pages with practical summaries.",
-      },
-      {
-        question: "Can this help SEO growth?",
-        answer:
-          "Yes, when paired with consistent publishing, internal links, and sitemap updates.",
-      },
-      {
-        question: "Should we add ads aggressively?",
-        answer:
-          "No. Keep ad placement moderate to protect trust and retention.",
-      },
-    ],
+    force,
+    keywords,
+    targetWords: Number.isFinite(targetWords) ? targetWords : undefined,
   };
 }
 
-async function generatePost(row: KeywordRow): Promise<GeneratedPost> {
-  const prompt = `Create one English JSON blog post for keyword: ${row.keyword}
-Schema:
-{
-  "slug": "${row.slug}",
-  "keyword": "${row.keyword}",
-  "title": string,
-  "description": string,
-  "sections": [
-    { "heading": string, "content": string }
-  ],
-  "faqs": [
-    { "question": string, "answer": string }
-  ]
+function chooseModel(targetWords: number): AzureModelTier {
+  return targetWords < 900 ? "gpt-5-nano" : "gpt-5-mini";
 }
-Rules:
-- 6 sections, each section content 180-240 words.
-- 6 FAQs.
-- Non-repetitive phrasing.
-- No medical/legal guarantees.
-- English only.
-- Return JSON only.`;
 
-  const raw =
-    appEnv.aiProvider === "openai"
-      ? await generateWithOpenAI(prompt)
-      : await generateWithGemini(prompt);
-
-  if (!raw) {
-    return localFallback(row);
+function defaultTargetWords(page: SeoPageRecord): number {
+  if (page.kind === "zodiac") {
+    return 900;
   }
+
+  if (page.kind === "tool") {
+    return 980;
+  }
+
+  return 1020;
+}
+
+function pickTargets(args: ScriptArgs): SeoPageRecord[] {
+  if (!args.keywords || args.keywords.length === 0) {
+    return allSeoPages;
+  }
+
+  const wanted = new Set(args.keywords);
+
+  return allSeoPages.filter((page) => wanted.has(page.keyword.toLowerCase()));
+}
+
+function stripFences(input: string): string {
+  return input.replace(/^```json\s*/i, "").replace(/```$/i, "").trim();
+}
+
+function parseJson<T>(input: string): T | null {
+  try {
+    return JSON.parse(stripFences(input)) as T;
+  } catch {
+    return null;
+  }
+}
+
+function asParagraphs(input: unknown): string[] {
+  if (!Array.isArray(input)) {
+    return [];
+  }
+
+  return input
+    .map((item) => (typeof item === "string" ? item.trim() : ""))
+    .filter(Boolean)
+    .slice(0, 4);
+}
+
+function asFaqs(input: unknown): SeoFaq[] {
+  if (!Array.isArray(input)) {
+    return [];
+  }
+
+  return input
+    .map((item) => {
+      if (!item || typeof item !== "object") {
+        return null;
+      }
+
+      const question = "question" in item && typeof item.question === "string" ? item.question.trim() : "";
+      const answer = "answer" in item && typeof item.answer === "string" ? item.answer.trim() : "";
+
+      if (!question || !answer) {
+        return null;
+      }
+
+      return { question, answer };
+    })
+    .filter((item): item is SeoFaq => Boolean(item))
+    .slice(0, 6);
+}
+
+function buildPrompt(page: SeoPageRecord, targetWords: number): string {
+  return [
+    `Keyword: ${page.keyword}`,
+    `Page type: ${page.kind}`,
+    `Target words: ${targetWords}`,
+    "Return JSON only with this schema:",
+    '{"intro":string,"sections":{"breakdown":[string],"pros":[string],"challenges":[string],"tips":[string]},"faqs":[{"question":string,"answer":string}]}',
+    "Rules:",
+    "- Total article body 800 to 1200 words.",
+    "- Intro must include exact keyword once.",
+    "- Keep reading level simple with short paragraphs.",
+    "- 5 FAQ entries minimum.",
+    "- Use wording: 'This calculator estimates...' and 'For reflection and entertainment purposes.' where relevant.",
+    "- Do not use these terms: AI-generated, Powered by AI, Advanced algorithm, Machine learning, ChatGPT.",
+    "- Keep each section actionable and non-repetitive.",
+  ].join("\n");
+}
+
+function fallbackGenerated(page: SeoPageRecord): GeneratedContent {
+  return {
+    slug: page.slug,
+    path: page.path,
+    keyword: page.keyword,
+    title: page.title,
+    description: page.description,
+    intro: page.intro,
+    sections: page.sections,
+    faqs: page.faqs,
+    lastUpdated: page.lastUpdated,
+  };
+}
+
+function validateGenerated(page: SeoPageRecord, payload: unknown): GeneratedContent | null {
+  if (!payload || typeof payload !== "object") {
+    return null;
+  }
+
+  const intro = "intro" in payload && typeof payload.intro === "string" ? payload.intro.trim() : "";
+  const sectionsRaw = "sections" in payload && payload.sections ? payload.sections : null;
+  const faqsRaw = "faqs" in payload ? payload.faqs : null;
+
+  const sections = {
+    breakdown:
+      sectionsRaw && typeof sectionsRaw === "object" && "breakdown" in sectionsRaw
+        ? asParagraphs(sectionsRaw.breakdown)
+        : [],
+    pros:
+      sectionsRaw && typeof sectionsRaw === "object" && "pros" in sectionsRaw
+        ? asParagraphs(sectionsRaw.pros)
+        : [],
+    challenges:
+      sectionsRaw && typeof sectionsRaw === "object" && "challenges" in sectionsRaw
+        ? asParagraphs(sectionsRaw.challenges)
+        : [],
+    tips:
+      sectionsRaw && typeof sectionsRaw === "object" && "tips" in sectionsRaw
+        ? asParagraphs(sectionsRaw.tips)
+        : [],
+  };
+
+  const faqs = asFaqs(faqsRaw);
+
+  if (!intro || sections.breakdown.length < 3 || sections.pros.length < 3 || sections.challenges.length < 3 || sections.tips.length < 3 || faqs.length < 5) {
+    return null;
+  }
+
+  return {
+    slug: page.slug,
+    path: page.path,
+    keyword: page.keyword,
+    title: page.title,
+    description: page.description,
+    intro,
+    sections,
+    faqs,
+    lastUpdated: new Date().toISOString().slice(0, 10),
+  };
+}
+
+function sumUsage(current: UsageStats, incoming: UsageStats): UsageStats {
+  return {
+    promptTokens: current.promptTokens + incoming.promptTokens,
+    completionTokens: current.completionTokens + incoming.completionTokens,
+    totalTokens: current.totalTokens + incoming.totalTokens,
+  };
+}
+
+async function generateOne(page: SeoPageRecord, args: ScriptArgs): Promise<{ file: string; usage: UsageStats; skipped: boolean; failed: boolean }> {
+  const outputPath = resolve(CONTENT_DIR, `${page.slug}.json`);
+
+  if (!args.force && existsSync(outputPath)) {
+    return {
+      file: outputPath,
+      usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
+      skipped: true,
+      failed: false,
+    };
+  }
+
+  const targetWords = args.targetWords ?? defaultTargetWords(page);
+  const model = chooseModel(targetWords);
 
   try {
-    const json = JSON.parse(normalizeJson(raw)) as GeneratedPost;
+    const completion = await generateTextWithAzureMultiRegion({
+      prompt: buildPrompt(page, targetWords),
+      systemPrompt: "Return compact JSON only.",
+      model,
+      maxOutputTokens: targetWords < 900 ? 1300 : 1800,
+      jsonMode: true,
+      cacheNamespace: "seo-generation",
+      forceRefresh: args.force,
+    });
 
-    if (!json.sections || !json.faqs) {
-      return localFallback(row);
-    }
+    const parsed = parseJson<unknown>(completion.text);
+    const validated = validateGenerated(page, parsed);
+    const payload = validated || fallbackGenerated(page);
+
+    await writeFile(outputPath, JSON.stringify(payload, null, 2), "utf-8");
+
+    process.stdout.write(
+      `[generated] ${page.slug} | model=${model} | endpoint=${completion.endpointUsed} | tokens=${completion.usage.totalTokens} | cached=${completion.cached}\n`,
+    );
 
     return {
-      ...json,
-      slug: row.slug,
-      keyword: row.keyword,
+      file: outputPath,
+      usage: completion.usage,
+      skipped: false,
+      failed: false,
     };
-  } catch {
-    return localFallback(row);
+  } catch (error) {
+    const fallback = fallbackGenerated(page);
+    await writeFile(outputPath, JSON.stringify(fallback, null, 2), "utf-8");
+
+    process.stdout.write(`[fallback] ${page.slug} | ${(error as Error).message}\n`);
+
+    return {
+      file: outputPath,
+      usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
+      skipped: false,
+      failed: true,
+    };
   }
 }
 
-async function pingIndexNow(urls: string[]) {
-  if (!appEnv.indexNowKey) {
-    return;
-  }
-
-  const baseUrl = getBaseUrl();
-  const key = appEnv.indexNowKey;
-  const payload = {
-    host: new URL(baseUrl).host,
-    key,
-    keyLocation: `${baseUrl}/${key}.txt`,
-    urlList: urls,
+async function runBatch(pages: SeoPageRecord[], args: ScriptArgs): Promise<GenerationStats> {
+  const stats: GenerationStats = {
+    generated: 0,
+    skipped: 0,
+    failed: 0,
+    usageTotals: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
   };
 
-  await fetch("https://api.indexnow.org/indexnow", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
+  for (let index = 0; index < pages.length; index += DEFAULT_BATCH_SIZE) {
+    const batch = pages.slice(index, index + DEFAULT_BATCH_SIZE);
+    const batchResults = await Promise.all(batch.map((page) => generateOne(page, args)));
+
+    for (const result of batchResults) {
+      if (result.skipped) {
+        stats.skipped += 1;
+      } else {
+        stats.generated += 1;
+      }
+
+      if (result.failed) {
+        stats.failed += 1;
+      }
+
+      stats.usageTotals = sumUsage(stats.usageTotals, result.usage);
+    }
+  }
+
+  return stats;
+}
+
+async function writeCombinedIndex(): Promise<void> {
+  const combined = {
+    generatedAt: new Date().toISOString(),
+    total: allSeoPages.length,
+    tools: getToolPages().map((page) => page.slug),
+    zodiac: getZodiacPages().map((page) => page.slug),
+    blog: getBlogPages().map((page) => page.slug),
+  };
+
+  await writeFile(resolve(CONTENT_DIR, "seo-pages.index.json"), JSON.stringify(combined, null, 2), "utf-8");
 }
 
 async function main() {
-  const csvPath = resolve(process.cwd(), "keywords.csv");
-  const outputPath = resolve(process.cwd(), "content", "blog.generated.json");
-  const shouldPing = process.argv.includes("--ping-indexnow");
+  const args = parseArgs();
+  const targets = pickTargets(args);
 
-  const raw = await readFile(csvPath, "utf-8");
-  const rows = parseCsv(raw);
-  const posts: GeneratedPost[] = [];
+  await mkdir(CONTENT_DIR, { recursive: true });
 
-  for (const row of rows) {
-    const post = await generatePost(row);
-    posts.push(post);
-    process.stdout.write(`Generated: ${row.slug}\n`);
+  if (targets.length === 0) {
+    process.stdout.write("No matching keywords were found.\n");
+    return;
   }
 
-  await mkdir(resolve(process.cwd(), "content"), { recursive: true });
-  await writeFile(outputPath, JSON.stringify(posts, null, 2), "utf-8");
+  process.stdout.write(`Generating ${targets.length} pages...\n`);
 
-  if (shouldPing) {
-    const base = getBaseUrl();
-    const urls = posts.map((post) => `${base}/blog/${post.slug}`);
-    await pingIndexNow(urls);
-    process.stdout.write(`IndexNow ping submitted for ${urls.length} URLs\n`);
-  }
+  const stats = await runBatch(targets, args);
+  await writeCombinedIndex();
 
-  process.stdout.write(`Saved content to ${outputPath}\n`);
+  process.stdout.write("\nGeneration summary\n");
+  process.stdout.write(`generated: ${stats.generated}\n`);
+  process.stdout.write(`skipped: ${stats.skipped}\n`);
+  process.stdout.write(`failed (fallback used): ${stats.failed}\n`);
+  process.stdout.write(`prompt tokens: ${stats.usageTotals.promptTokens}\n`);
+  process.stdout.write(`completion tokens: ${stats.usageTotals.completionTokens}\n`);
+  process.stdout.write(`total tokens: ${stats.usageTotals.totalTokens}\n`);
 }
 
 main().catch((error) => {
