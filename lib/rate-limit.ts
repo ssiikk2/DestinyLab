@@ -7,7 +7,7 @@ const buckets = new Map<string, Bucket>();
 
 export function checkRateLimit(
   key: string,
-  limit = 12,
+  limit = 5,
   windowMs = 60_000,
 ): { allowed: boolean; remaining: number; resetAt: number } {
   const now = Date.now();

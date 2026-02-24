@@ -1,26 +1,58 @@
-﻿import type { MetadataRoute } from "next";
-import { allSeoPages } from "@/content/seo-data";
-import { getBaseUrl } from "@/lib/env";
+import type { MetadataRoute } from "next";
+import { getPublicSitemapEntries } from "@/lib/sitemap-data";
+
+function resolvePriority(pathname: string): number {
+  if (pathname === "/") {
+    return 1;
+  }
+
+  if (
+    pathname === "/calculator" ||
+    pathname === "/destiny" ||
+    pathname === "/love-percentage" ||
+    pathname === "/true-love-test" ||
+    pathname === "/crush-calculator" ||
+    pathname === "/initials-love-test" ||
+    pathname === "/couple-test" ||
+    pathname === "/birthday-compatibility" ||
+    pathname === "/zodiac-compatibility" ||
+    pathname === "/name-compatibility" ||
+    pathname === "/friendship-compatibility"
+  ) {
+    return 0.95;
+  }
+
+  if (pathname === "/blog" || pathname.startsWith("/blog/")) {
+    return 0.9;
+  }
+
+  if (pathname === "/zodiac" || pathname.startsWith("/zodiac/") || pathname.startsWith("/compatibility/")) {
+    return 0.85;
+  }
+
+  if (
+    pathname === "/privacy" ||
+    pathname === "/terms" ||
+    pathname === "/cookie-policy" ||
+    pathname === "/disclaimer" ||
+    pathname === "/about" ||
+    pathname === "/contact"
+  ) {
+    return 0.7;
+  }
+
+  return 0.8;
+}
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = getBaseUrl();
-  const now = new Date("2026-02-23T00:00:00.000Z");
+  return getPublicSitemapEntries().map((entry) => {
+    const pathname = new URL(entry.url).pathname;
 
-  const staticRoutes = ["", "/tests", "/blog", "/zodiac", "/privacy", "/terms", "/disclaimer", "/contact"].map(
-    (path) => ({
-      url: `${baseUrl}${path}`,
-      lastModified: now,
+    return {
+      url: entry.url,
+      lastModified: entry.lastModified,
       changeFrequency: "weekly" as const,
-      priority: path === "" ? 1 : 0.8,
-    }),
-  );
-
-  const seoRoutes = allSeoPages.map((page) => ({
-    url: `${baseUrl}${page.path}`,
-    lastModified: new Date(page.lastUpdated),
-    changeFrequency: "weekly" as const,
-    priority: page.kind === "tool" ? 0.95 : 0.85,
-  }));
-
-  return [...staticRoutes, ...seoRoutes];
+      priority: resolvePriority(pathname),
+    };
+  });
 }

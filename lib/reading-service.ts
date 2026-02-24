@@ -1,8 +1,12 @@
-﻿import { requestStructuredJson } from "@/lib/ai-client";
+import { requestStructuredJson } from "@/lib/ai-client";
 import {
   buildCompatibilityFallback,
   buildDestinyFallback,
 } from "@/lib/reading-generator";
+import {
+  getCachedCalculatorValue,
+  setCachedCalculatorValue,
+} from "@/lib/server/calculator-cache";
 import type {
   CompatibilityReading,
   CompatibilitySectionKey,
@@ -26,6 +30,38 @@ const destinySections: DestinySectionKey[] = [
   "hidden-talent",
   "weakness",
 ];
+
+const COMPATIBILITY_PROMPT_TEMPLATE = `Generate compact JSON only.
+Schema keys:
+kind, score, title, summary, sections(emotional, communication, long-term, conflict, advice), highlights[3], dos[3], donts[3], birthDateA, birthDateB.
+Rules:
+- kind must be "compatibility".
+- score integer 0-100.
+- title exactly "Compatibility result".
+- summary max 16 words.
+- each section max 2 short sentences.
+- highlights/dos/donts: short action lines.
+- practical tone only; no mystical terms; no medical/legal/financial advice.
+Input: birthDateA="{{birthDateA}}", birthDateB="{{birthDateB}}".`;
+
+const DESTINY_PROMPT_TEMPLATE = `Generate compact JSON only.
+Schema keys:
+kind, title, summary, sections(personality-core, love-style, money-pattern, career-strength, hidden-talent, weakness), highlights[3], dos[3], donts[3], birthDate.
+Rules:
+- kind must be "destiny".
+- title exactly "Destiny result".
+- summary max 16 words.
+- each section max 2 short sentences.
+- highlights/dos/donts: short action lines.
+- practical tone only; no mystical terms; no medical/legal/financial advice.
+Input: birthDate="{{birthDate}}".`;
+
+function fillPrompt(template: string, data: Record<string, string>): string {
+  return Object.entries(data).reduce(
+    (result, [key, value]) => result.replaceAll(`{{${key}}}`, value),
+    template,
+  );
+}
 
 function isValidCompatibility(value: unknown): value is CompatibilityReading {
   if (!value || typeof value !== "object") {
@@ -71,83 +107,86 @@ export async function createCompatibilityReading(
   birthDateA: string,
   birthDateB: string,
 ): Promise<CompatibilityReading> {
-  const prompt = `Create a JSON object for a compatibility reading.
-Schema:
-{
-  "kind": "compatibility",
-  "score": number,
-  "title": string,
-  "summary": string,
-  "sections": {
-    "emotional": string,
-    "communication": string,
-    "long-term": string,
-    "conflict": string,
-    "advice": string
-  },
-  "highlights": string[3],
-  "dos": string[3],
-  "donts": string[3],
-  "birthDateA": "${birthDateA}",
-  "birthDateB": "${birthDateB}"
-}
-Style rules:
-- Plain modern English.
-- No mystical words (cosmic, universe, fate, stars, destiny, zodiac, celestial).
-- No hype, no exclamation marks.
-- title must be exactly "Compatibility result".
-- summary: one sentence, max 14 words.
-- each section: max 2 short sentences.
-- highlights, dos, donts: short action-focused lines.
-- score must be 0-100.
-- entertainment only, no medical/legal/financial claims.`;
+  const cached = await getCachedCalculatorValue<CompatibilityReading>({
+    person1: birthDateA,
+    person2: birthDateB,
+    calculatorType: "compatibility",
+  });
+
+  if (cached && isValidCompatibility(cached)) {
+    return cached;
+  }
+
+  const prompt = fillPrompt(COMPATIBILITY_PROMPT_TEMPLATE, {
+    birthDateA,
+    birthDateB,
+  });
 
   const aiResult = await requestStructuredJson<CompatibilityReading>(prompt);
 
   if (aiResult && isValidCompatibility(aiResult)) {
+    await setCachedCalculatorValue(
+      {
+        person1: birthDateA,
+        person2: birthDateB,
+        calculatorType: "compatibility",
+      },
+      aiResult,
+    );
     return aiResult;
   }
 
-  return buildCompatibilityFallback(birthDateA, birthDateB);
+  const fallback = buildCompatibilityFallback(birthDateA, birthDateB);
+  await setCachedCalculatorValue(
+    {
+      person1: birthDateA,
+      person2: birthDateB,
+      calculatorType: "compatibility",
+    },
+    fallback,
+  );
+  return fallback;
 }
 
 export async function createDestinyReading(
   birthDate: string,
 ): Promise<DestinyReading> {
-  const prompt = `Create a JSON object for a destiny reading.
-Schema:
-{
-  "kind": "destiny",
-  "title": string,
-  "summary": string,
-  "sections": {
-    "personality-core": string,
-    "love-style": string,
-    "money-pattern": string,
-    "career-strength": string,
-    "hidden-talent": string,
-    "weakness": string
-  },
-  "highlights": string[3],
-  "dos": string[3],
-  "donts": string[3],
-  "birthDate": "${birthDate}"
-}
-Style rules:
-- Plain modern English.
-- No mystical words (cosmic, universe, fate, stars, destiny, zodiac, celestial).
-- No hype, no exclamation marks.
-- title must be exactly "Destiny result".
-- summary: one sentence, max 14 words.
-- each section: max 2 short sentences.
-- highlights, dos, donts: short action-focused lines.
-- entertainment only, no medical/legal/financial claims.`;
+  const cached = await getCachedCalculatorValue<DestinyReading>({
+    person1: birthDate,
+    person2: "",
+    calculatorType: "destiny",
+  });
+
+  if (cached && isValidDestiny(cached)) {
+    return cached;
+  }
+
+  const prompt = fillPrompt(DESTINY_PROMPT_TEMPLATE, {
+    birthDate,
+  });
 
   const aiResult = await requestStructuredJson<DestinyReading>(prompt);
 
   if (aiResult && isValidDestiny(aiResult)) {
+    await setCachedCalculatorValue(
+      {
+        person1: birthDate,
+        person2: "",
+        calculatorType: "destiny",
+      },
+      aiResult,
+    );
     return aiResult;
   }
 
-  return buildDestinyFallback(birthDate);
+  const fallback = buildDestinyFallback(birthDate);
+  await setCachedCalculatorValue(
+    {
+      person1: birthDate,
+      person2: "",
+      calculatorType: "destiny",
+    },
+    fallback,
+  );
+  return fallback;
 }

@@ -34,9 +34,12 @@ export function CookieConsent() {
     <div className="fixed inset-x-0 bottom-0 z-50 border-t border-border-soft bg-white/95 p-4 shadow-2xl backdrop-blur-sm">
       <div className="app-shell flex flex-col gap-3 text-sm text-text-muted md:flex-row md:items-center md:justify-between">
         <p>
-          We use cookies for analytics and ads.
+          We use cookies for analytics and Google AdSense.
           <Link className="ml-1 font-semibold text-text-main underline" href="/privacy">
             Privacy details
+          </Link>
+          <Link className="ml-1 font-semibold text-text-main underline" href="/cookie-policy">
+            Cookie policy
           </Link>
           .
         </p>

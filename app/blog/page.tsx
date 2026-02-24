@@ -1,6 +1,5 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { AdSlot } from "@/components/AdSlot";
 import { getBlogPages } from "@/content/seo-data";
 import { buildMetadata } from "@/lib/seo";
 
@@ -25,9 +24,18 @@ export default function BlogIndexPage() {
         </p>
       </header>
 
-      <AdSlot placement="aboveFold" size="leaderboard" />
-
       <div className="grid gap-4 md:grid-cols-2">
+        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 className="text-xl font-semibold text-slate-900">How Love Calculators Work</h2>
+          <p className="mt-2 text-sm text-slate-700">
+            Learn the scoring model, practical limits, and how to use calculator results without overinterpreting one
+            number.
+          </p>
+          <Link href="/blog/how-love-calculators-work" className="mt-4 inline-block text-sm font-semibold text-slate-900 underline">
+            Read guide
+          </Link>
+        </article>
+
         {posts.map((post) => (
           <article key={post.slug} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
             <h2 className="text-xl font-semibold text-slate-900">{post.h1}</h2>

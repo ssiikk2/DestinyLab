@@ -4,6 +4,7 @@ import { getClientIp } from "@/lib/ip";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { createDestinyReading } from "@/lib/reading-service";
 import { saveReading } from "@/lib/reading-store";
+import { isThrottled } from "@/lib/server/request-throttle";
 
 function isValidDate(value: string): boolean {
   const parsed = Date.parse(value);
@@ -12,7 +13,7 @@ function isValidDate(value: string): boolean {
 
 export async function POST(request: NextRequest) {
   const ip = getClientIp(request);
-  const rate = checkRateLimit(`destiny:${ip}`);
+  const rate = checkRateLimit(`destiny:${ip}`, 5, 60_000);
 
   if (!rate.allowed) {
     return NextResponse.json(
@@ -21,9 +22,20 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  if (isThrottled(`destiny:${ip}`, 400)) {
+    return NextResponse.json(
+      { error: "Too many requests in a short burst." },
+      { status: 429 },
+    );
+  }
+
   const body = (await request.json().catch(() => null)) as
-    | { birthDate?: string }
+    | { birthDate?: string; website?: string }
     | null;
+
+  if (body?.website?.trim()) {
+    return NextResponse.json({ error: "Invalid form submission." }, { status: 400 });
+  }
 
   if (!body?.birthDate) {
     return NextResponse.json({ error: "birthDate is required." }, { status: 400 });
@@ -36,13 +48,21 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const reading = await createDestinyReading(body.birthDate);
-  const stored = saveReading(reading);
+  try {
+    const reading = await createDestinyReading(body.birthDate);
+    const stored = saveReading(reading);
 
-  return NextResponse.json({
-    id: stored.id,
-    route: `/reading/${stored.id}`,
-    kind: reading.kind,
-    stored,
-  });
+    return NextResponse.json({
+      id: stored.id,
+      route: `/reading/${stored.id}`,
+      kind: reading.kind,
+      stored,
+    });
+  } catch (error) {
+    console.error("[destiny-api]", error);
+    return NextResponse.json(
+      { error: "Model deployment failed. Please retry later." },
+      { status: 502 },
+    );
+  }
 }

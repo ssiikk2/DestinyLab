@@ -8,6 +8,7 @@ import { saveReadingLocal } from "@/lib/reading-browser";
 export function ToolFormDestiny() {
   const router = useRouter();
   const [birthDate, setBirthDate] = useState("");
+  const [website, setWebsite] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -20,7 +21,7 @@ export function ToolFormDestiny() {
       const response = await fetch("/api/destiny", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ birthDate }),
+        body: JSON.stringify({ birthDate, website }),
       });
 
       const json = (await response.json()) as {
@@ -53,6 +54,16 @@ export function ToolFormDestiny() {
       <p className="mt-2 text-sm text-text-muted">Enter one birth date for a personal snapshot.</p>
 
       <form onSubmit={onSubmit} className="mt-5 space-y-4">
+        <div className="hidden">
+          <label htmlFor="website">Website</label>
+          <input
+            id="website"
+            tabIndex={-1}
+            autoComplete="off"
+            value={website}
+            onChange={(event) => setWebsite(event.target.value)}
+          />
+        </div>
         <div className="grid gap-2">
           <label className="text-sm font-semibold text-text-main" htmlFor="birthDate">
             Birth date

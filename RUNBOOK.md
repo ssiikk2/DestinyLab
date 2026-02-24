@@ -69,12 +69,12 @@ AZURE_OPENAI_NANO_DEPLOYMENT_NAME=<nano-deployment>
 
 ### Start safe
 - Keep `ADS_ENABLED=false` in lower environments.
-- Validate layout with placeholders first.
-- Enable one slot group at a time: above fold -> after calculator -> mid content -> pre FAQ -> sticky mobile.
+- Use Auto Ads only (no manual ad slots in templates).
+- Verify ownership and policy pages before requesting review.
 
 ### CLS safety
-- `AdSlot` has reserved heights per size.
-- Avoid changing ad container heights dynamically.
+- Avoid hardcoded empty ad containers.
+- Keep layout stable with fixed content blocks and responsive spacing.
 
 ## 4) Submitting Sitemap
 

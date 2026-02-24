@@ -1,0 +1,17 @@
+{
+  "name": "Love Compatibility Calculator",
+  "short_name": "LoveCalc",
+  "description": "Compatibility calculators, relationship tests, and practical score interpretation guides.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "/icons/favicon3.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

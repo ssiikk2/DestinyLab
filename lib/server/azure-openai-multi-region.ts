@@ -2,6 +2,7 @@
 import { mkdir, readFile, writeFile } from "fs/promises";
 import { dirname, resolve } from "path";
 import { appEnv } from "@/lib/env";
+import { appendAoaiUsageEvent } from "@/lib/server/aoai-usage-log";
 
 export type AzureModelTier = "gpt-5-mini" | "gpt-5-nano";
 
@@ -181,6 +182,28 @@ async function requestCompletion(input: {
 
   if (!response.ok) {
     const detail = (await response.text()).slice(0, 400);
+
+    try {
+      await appendAoaiUsageEvent({
+        timestamp: new Date().toISOString(),
+        source: "multi-region-azure-openai",
+        endpoint: input.endpoint,
+        deployment: input.deployment,
+        model: input.deployment,
+        apiVersion: input.apiVersion,
+        maxTokens: input.maxOutputTokens,
+        temperature: input.temperature,
+        promptTokens: 0,
+        completionTokens: 0,
+        totalTokens: 0,
+        success: false,
+        statusCode: response.status,
+        errorMessage: detail,
+      });
+    } catch {
+      // Best-effort logging only.
+    }
+
     const error = new Error(`HTTP ${response.status}: ${detail}`) as Error & {
       status?: number;
       detail?: string;
@@ -195,6 +218,7 @@ async function requestCompletion(input: {
   }
 
   const json = (await response.json()) as {
+    model?: string;
     choices?: Array<{ message?: { content?: string } }>;
     usage?: {
       prompt_tokens?: number;
@@ -207,6 +231,26 @@ async function requestCompletion(input: {
 
   if (!text) {
     throw new Error("Azure OpenAI returned empty content.");
+  }
+
+  try {
+    await appendAoaiUsageEvent({
+      timestamp: new Date().toISOString(),
+      source: "multi-region-azure-openai",
+      endpoint: input.endpoint,
+      deployment: input.deployment,
+      model: json.model || input.deployment,
+      apiVersion: input.apiVersion,
+      maxTokens: input.maxOutputTokens,
+      temperature: input.temperature,
+      promptTokens: json.usage?.prompt_tokens ?? 0,
+      completionTokens: json.usage?.completion_tokens ?? 0,
+      totalTokens: json.usage?.total_tokens ?? 0,
+      success: true,
+      cached: false,
+    });
+  } catch {
+    // Best-effort logging only.
   }
 
   return {

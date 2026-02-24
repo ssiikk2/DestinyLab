@@ -43,7 +43,8 @@ function hasAzureProviderEnv(): boolean {
   return Boolean(
     process.env.AZURE_OPENAI_PRIMARY_ENDPOINT &&
       process.env.AZURE_OPENAI_API_KEY &&
-      process.env.AZURE_OPENAI_DEPLOYMENT_NAME,
+      (process.env.AZURE_OPENAI_DEPLOYMENT ||
+        process.env.AZURE_OPENAI_DEPLOYMENT_NAME),
   );
 }
 
@@ -72,7 +73,7 @@ export const appEnv = {
   siteToolMode: process.env.SITE_TOOL_MODE || "compatibility",
   siteThemeAccent: process.env.SITE_THEME_ACCENT || "slate",
 
-  contactEmail: process.env.CONTACT_EMAIL,
+  contactEmail: process.env.CONTACT_EMAIL || "siik0924@naver.com",
 
   adsEnabled: asBool(process.env.ADS_ENABLED, false),
   adsenseClient: process.env.ADSENSE_CLIENT,
@@ -96,17 +97,27 @@ export const appEnv = {
   azureOpenAiPrimaryEndpoint: process.env.AZURE_OPENAI_PRIMARY_ENDPOINT,
   azureOpenAiSecondaryEndpoint: process.env.AZURE_OPENAI_SECONDARY_ENDPOINT,
   azureOpenAiApiKey: process.env.AZURE_OPENAI_API_KEY,
-  azureOpenAiDeploymentName: process.env.AZURE_OPENAI_DEPLOYMENT_NAME,
-  azureOpenAiNanoDeploymentName: process.env.AZURE_OPENAI_NANO_DEPLOYMENT_NAME,
+  azureOpenAiDeployment:
+    process.env.AZURE_OPENAI_DEPLOYMENT ||
+    process.env.AZURE_OPENAI_DEPLOYMENT_NAME ||
+    "gpt-4o-mini",
+  azureOpenAiNanoDeployment:
+    process.env.AZURE_OPENAI_NANO_DEPLOYMENT ||
+    process.env.AZURE_OPENAI_NANO_DEPLOYMENT_NAME,
+  azureOpenAiDeploymentName:
+    process.env.AZURE_OPENAI_DEPLOYMENT ||
+    process.env.AZURE_OPENAI_DEPLOYMENT_NAME ||
+    "gpt-4o-mini",
+  azureOpenAiNanoDeploymentName:
+    process.env.AZURE_OPENAI_NANO_DEPLOYMENT ||
+    process.env.AZURE_OPENAI_NANO_DEPLOYMENT_NAME,
+  azureOpenAiEndpoint:
+    process.env.AZURE_OPENAI_ENDPOINT || process.env.AZURE_OPENAI_PRIMARY_ENDPOINT,
   azureOpenAiApiVersion: process.env.AZURE_OPENAI_API_VERSION || "2024-10-21",
   azureOpenAiTemperature: asOptionalNumber(process.env.AZURE_OPENAI_TEMPERATURE),
   azureOpenAiMaxTokens: asOptionalInt(process.env.AZURE_OPENAI_MAX_TOKENS),
-
-  // Backward compatibility aliases
-  azureOpenAiEndpoint:
-    process.env.AZURE_OPENAI_ENDPOINT || process.env.AZURE_OPENAI_PRIMARY_ENDPOINT,
-  azureOpenAiDeployment:
-    process.env.AZURE_OPENAI_DEPLOYMENT || process.env.AZURE_OPENAI_DEPLOYMENT_NAME,
+  useNano: asBool(process.env.USE_NANO, false),
+  aoaiUsageLogDir: process.env.AOAI_USAGE_LOG_DIR,
 
   indexNowKey: process.env.INDEXNOW_KEY,
   nodeEnv: process.env.NODE_ENV || "development",
@@ -119,7 +130,15 @@ export function getBaseUrl(): string {
       : `https://${appEnv.siteDomain}`;
   }
 
-  return process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  if (process.env.NEXT_PUBLIC_BASE_URL) {
+    return process.env.NEXT_PUBLIC_BASE_URL;
+  }
+
+  if (process.env.NODE_ENV === "development") {
+    return "http://localhost:3000";
+  }
+
+  return "https://lovecompatibilitycalculator.com";
 }
 
 export function isProduction(): boolean {

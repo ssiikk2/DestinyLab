@@ -1,6 +1,5 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { AdSlot } from "@/components/AdSlot";
 import { getZodiacPages } from "@/content/seo-data";
 import { buildMetadata } from "@/lib/seo";
 
@@ -25,12 +24,13 @@ export default function ZodiacHubPage() {
         </p>
       </header>
 
-      <AdSlot placement="aboveFold" size="leaderboard" />
-
       <ul className="grid gap-3 md:grid-cols-2">
         {pages.map((page) => (
           <li key={page.slug} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-            <Link href={page.path} className="text-sm font-semibold text-slate-900 underline decoration-slate-400 hover:decoration-slate-900">
+            <Link
+              href={page.path}
+              className="text-sm font-semibold text-slate-900 underline decoration-slate-400 hover:decoration-slate-900"
+            >
               {page.h1}
             </Link>
           </li>

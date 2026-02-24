@@ -1,17 +1,12 @@
-﻿import type { Metadata } from "next";
-import { SeoLongformPage } from "@/components/SeoLongformPage";
-import { getToolPageBySlug } from "@/content/seo-data";
+import type { Metadata } from "next";
+import { SeoLandingPage } from "@/components/SeoLandingPage";
+import { requireLandingPage } from "@/lib/landing-page";
 import { buildMetadata } from "@/lib/seo";
 
 export const revalidate = 86400;
+export const dynamic = "force-static";
 
-const page = (() => {
-  const found = getToolPageBySlug("zodiac-compatibility");
-  if (!found) {
-    throw new Error("Missing content for /zodiac-compatibility");
-  }
-  return found;
-})();
+const page = requireLandingPage("/zodiac-compatibility");
 
 export const metadata: Metadata = buildMetadata({
   title: page.title,
@@ -20,6 +15,5 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export default function ZodiacCompatibilityPage() {
-  return <SeoLongformPage page={page} calculatorMode="zodiac" includeWebApplicationSchema />;
+  return <SeoLandingPage page={page} />;
 }
-

@@ -180,6 +180,27 @@ const BLOG_SEEDS: BlogSeed[] = [
     description:
       "A practical zodiac compatibility chart explained step by step, with examples and follow-up actions.",
   },
+  {
+    slug: "relationship-repair-guide",
+    keyword: "relationship repair guide",
+    title: "Relationship Repair Guide: How to Rebuild Trust After Repeated Conflict",
+    description:
+      "A practical relationship repair guide with direct communication steps, conflict reset rules, and trust rebuilding habits.",
+  },
+  {
+    slug: "relationship-growth-habits",
+    keyword: "relationship growth habits",
+    title: "Relationship Growth Habits: Weekly Routines That Improve Compatibility",
+    description:
+      "Use these relationship growth habits to strengthen communication, emotional safety, and long-term consistency.",
+  },
+  {
+    slug: "long-term-compatibility-guide",
+    keyword: "long term compatibility guide",
+    title: "Long-Term Compatibility Guide: What Keeps Strong Matches Stable Over Time",
+    description:
+      "A long-term compatibility guide focused on maintenance habits, emotional reliability, and realistic planning.",
+  },
 ];
 
 function toTitleCase(value: string): string {

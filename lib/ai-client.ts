@@ -1,12 +1,10 @@
-﻿import { parseOrThrowJson } from "@/lib/ai/parse";
-import { generateWithActiveProvider } from "@/providers";
+import { parseOrThrowJson } from "@/lib/ai/parse";
+import { generateWithAzureOpenAI } from "@/providers/azure-openai";
 
-export async function requestStructuredJson<T>(prompt: string): Promise<T | null> {
-  try {
-    const { provider, text } = await generateWithActiveProvider(prompt, { json: true });
-    return parseOrThrowJson<T>(text, provider);
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
+export async function requestStructuredJson<T>(prompt: string): Promise<T> {
+  const text = await generateWithAzureOpenAI(prompt, {
+    json: true,
+    maxTokens: 560,
+  });
+  return parseOrThrowJson<T>(text, "azure-openai");
 }

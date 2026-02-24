@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { CompatibilityInsight } from "@/components/CompatibilityInsight";
 import { DoDontCards } from "@/components/DoDontCards";
 import { InsightList } from "@/components/InsightList";
 import { ReadingTabs } from "@/components/ReadingTabs";
@@ -40,6 +41,11 @@ function cleanInsight(line: string): string {
     .replace(/\b(cosmic|universe|star|stars|fate|destiny|celestial|zodiac)\b/gi, "overall")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function deriveDestinyScore(seed: string): number {
+  const total = seed.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  return 62 + (total % 29);
 }
 
 export function ReadingView({ id, section }: ReadingViewProps) {
@@ -181,6 +187,11 @@ export function ReadingView({ id, section }: ReadingViewProps) {
 
       <InsightList title="Key insights" items={insights} />
       <DoDontCards dos={actions.dos} donts={actions.donts} />
+
+      <CompatibilityInsight
+        score={reading.kind === "compatibility" ? reading.score : deriveDestinyScore(reading.birthDate)}
+        type={reading.kind === "compatibility" ? "love" : "destiny"}
+      />
 
       <section className="premium-card p-5 fade-up">
         <p className="label-caps">Share</p>

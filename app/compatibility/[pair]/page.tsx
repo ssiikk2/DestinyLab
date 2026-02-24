@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { compatibilityPairPages, getPairBySlug } from "@/content/compatibility-pages";
 import { appEnv } from "@/lib/env";
+import { buildMetadata } from "@/lib/seo";
 
 interface PairPageProps {
   params: Promise<{ pair: string }>;
@@ -21,16 +22,18 @@ export async function generateMetadata({ params }: PairPageProps): Promise<Metad
   const data = getPairBySlug(pair);
 
   if (!data) {
-    return { title: "Compatibility" };
+    return buildMetadata({
+      title: "Compatibility",
+      description: "Compatibility guide",
+      path: "/compatibility",
+    });
   }
 
-  return {
+  return buildMetadata({
     title: `${data.signA} and ${data.signB} Compatibility`,
     description: data.intro,
-    alternates: {
-      canonical: `/compatibility/${data.slug}`,
-    },
-  };
+    path: `/compatibility/${data.slug}`,
+  });
 }
 
 export default async function PairPage({ params }: PairPageProps) {

@@ -4,7 +4,11 @@ param(
   [string]$AcrName = "",
   [string]$ContainerEnvName = "destinylab-env",
   [string]$ContainerAppName = "destinylab-main",
-  [string]$ImageName = "destinylab:latest"
+  [string]$ImageName = "destinylab:latest",
+  [int]$MinReplicas = 1,
+  [int]$MaxReplicas = 5,
+  [string]$Cpu = "0.5",
+  [string]$Memory = "1.0Gi"
 )
 
 $ErrorActionPreference = "Stop"
@@ -74,9 +78,9 @@ $fullImage = "$acrLoginServer/$ImageName"
 
 $app = az containerapp show --name $ContainerAppName --resource-group $ResourceGroup 2>$null
 if (-not $app) {
-  az containerapp create --name $ContainerAppName --resource-group $ResourceGroup --environment $ContainerEnvName --image $fullImage --ingress external --target-port 3000 --cpu 0.25 --memory 0.5Gi --min-replicas 0 --max-replicas 3 --system-assigned --registry-server $acrLoginServer --registry-identity system --env-vars NODE_ENV=production PORT=3000 1>$null
+  az containerapp create --name $ContainerAppName --resource-group $ResourceGroup --environment $ContainerEnvName --image $fullImage --ingress external --target-port 3000 --cpu $Cpu --memory $Memory --min-replicas $MinReplicas --max-replicas $MaxReplicas --system-assigned --registry-server $acrLoginServer --registry-identity system --env-vars NODE_ENV=production PORT=3000 1>$null
 } else {
-  az containerapp update --name $ContainerAppName --resource-group $ResourceGroup --image $fullImage --ingress external --target-port 3000 --cpu 0.25 --memory 0.5Gi --min-replicas 0 --max-replicas 3 --registry-server $acrLoginServer --registry-identity system --env-vars NODE_ENV=production PORT=3000 1>$null
+  az containerapp update --name $ContainerAppName --resource-group $ResourceGroup --image $fullImage --ingress external --target-port 3000 --cpu $Cpu --memory $Memory --min-replicas $MinReplicas --max-replicas $MaxReplicas --registry-server $acrLoginServer --registry-identity system --env-vars NODE_ENV=production PORT=3000 1>$null
 }
 
 az containerapp identity assign --name $ContainerAppName --resource-group $ResourceGroup --system-assigned 1>$null

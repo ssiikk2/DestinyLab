@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { FormEvent, useMemo, useState } from "react";
+import { CompatibilityInsight, type CompatibilityInsightType } from "@/components/CompatibilityInsight";
 import { getModeTheme, type CalculatorMode } from "@/lib/test-themes";
 
 export type { CalculatorMode };
@@ -15,6 +16,13 @@ interface CalculationResult {
   pros: string[];
   challenges: string[];
   tips: string[];
+}
+
+function mapModeToInsightType(mode: CalculatorMode): CompatibilityInsightType {
+  if (mode === "love") {
+    return "love";
+  }
+  return mode;
 }
 
 function normalizeValue(input: string): string {
@@ -236,6 +244,8 @@ export function CalculatorHook({ mode }: CalculatorHookProps) {
               ))}
             </ul>
           </div>
+
+          <CompatibilityInsight score={result.score} type={mapModeToInsightType(mode)} />
         </div>
       ) : null}
     </section>

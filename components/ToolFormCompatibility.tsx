@@ -9,6 +9,7 @@ export function ToolFormCompatibility() {
   const router = useRouter();
   const [birthDateA, setBirthDateA] = useState("");
   const [birthDateB, setBirthDateB] = useState("");
+  const [website, setWebsite] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -21,7 +22,7 @@ export function ToolFormCompatibility() {
       const response = await fetch("/api/compatibility", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ birthDateA, birthDateB }),
+        body: JSON.stringify({ birthDateA, birthDateB, website }),
       });
 
       const json = (await response.json()) as {
@@ -54,6 +55,16 @@ export function ToolFormCompatibility() {
       <p className="mt-2 text-sm text-text-muted">Enter two birth dates and compare the match.</p>
 
       <form onSubmit={onSubmit} className="mt-5 space-y-4">
+        <div className="hidden">
+          <label htmlFor="website">Website</label>
+          <input
+            id="website"
+            tabIndex={-1}
+            autoComplete="off"
+            value={website}
+            onChange={(event) => setWebsite(event.target.value)}
+          />
+        </div>
         <div className="grid gap-2">
           <label className="text-sm font-semibold text-text-main" htmlFor="birthDateA">
             Person one
