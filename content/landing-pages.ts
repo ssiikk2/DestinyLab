@@ -160,22 +160,22 @@ function makeSections(seed: LandingSeed): LandingSection[] {
     {
       heading: "How to use this result",
       paragraphs: [
-        `Think of ${seed.focus} as a conversation starter, not a final answer. Use it to spot what feels easy, what feels tense, and what you want to talk about next.`,
-        `The page feels most useful when ${seed.behavior}. Small, honest check-ins usually beat big emotional speeches.`,
+        `Treat ${seed.focus} like a conversation spark, not a verdict. Notice what feels smooth, what feels off, and what deserves one honest follow-up chat.`,
+        `This page works best when ${seed.behavior}. Keep it short and real; two clear sentences beat a dramatic hour-long talk.`,
       ],
     },
     {
       heading: "What trips people up",
       paragraphs: [
-        `A common pitfall is ${seed.risk}. If that sounds familiar, slow it down and pick one small habit to try this week.`,
-        "After each result, do one simple thing: note what felt true, name one boundary, and have one follow-up chat. Keeping it simple usually works better than trying to fix everything at once.",
+        `One common miss is ${seed.risk}. If that sounds like your week, lower the pressure and test one small habit first.`,
+        "After each result, keep a tiny ritual: write one thing that rang true, name one boundary, and choose one next conversation. That rhythm usually works better than trying to repair everything in one night.",
       ],
     },
     {
       heading: "Keep it fun and useful",
       paragraphs: [
-        `Most people come back for fresh perspective, not perfection. Keep short notes and compare how things feel month to month.`,
-        "This page is for entertainment purposes and works best with honest conversations and realistic expectations.",
+        `Most people come back for perspective, not perfection. Keep short notes and compare how your mood shifts from month to month.`,
+        "Use this page for fun and reflection, then pair it with honest conversations and grounded expectations.",
       ],
     },
   ];
@@ -863,3 +863,4 @@ export function getLandingPageByPath(path: string): LandingPageRecord | undefine
 export function getLandingPaths(): string[] {
   return landingPages.map((page) => page.path);
 }
+

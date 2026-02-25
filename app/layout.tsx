@@ -23,9 +23,9 @@ export const metadata: Metadata = {
   },
   manifest: "/manifest.webmanifest",
   icons: {
-    icon: [{ url: "/icons/favicon3.png", type: "image/png", sizes: "512x512" }],
-    shortcut: ["/icons/favicon3.png"],
-    apple: [{ url: "/icons/favicon3.png", sizes: "180x180", type: "image/png" }],
+    icon: [{ url: "/icons/faviconfinal.png", type: "image/png", sizes: "512x512" }],
+    shortcut: ["/icons/faviconfinal.png"],
+    apple: [{ url: "/icons/faviconfinal.png", sizes: "180x180", type: "image/png" }],
   },
   robots: {
     index: true,
@@ -65,11 +65,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-2.5 text-sm text-slate-700">
             <Link href="/" className="inline-flex items-center gap-2.5 font-semibold text-slate-900">
               <Image
-                src="/brand/favicon2.png"
+                src="/icons/faviconfinal.png"
                 alt="Love Compatibility Calculator home"
-                width={40}
-                height={40}
-                className="h-10 w-10 rounded-md border border-slate-200 bg-white shadow-sm md:h-11 md:w-11"
+                width={48}
+                height={48}
+                className="h-12 w-12 rounded-full border border-slate-200 bg-white shadow-sm md:h-14 md:w-14"
                 priority
               />
               <span className="text-[15px] leading-none md:text-base">lovecompatibilitycalculator</span>
@@ -83,8 +83,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Link href="/tests" className="hover:text-slate-900">
               All Tests
             </Link>
+            <Link href="/zodiac" className="hover:text-slate-900">
+              Zodiac Hub
+            </Link>
             <Link href="/zodiac-compatibility" className="hover:text-slate-900">
-              Zodiac
+              Zodiac Test
             </Link>
             <Link href="/name-compatibility" className="hover:text-slate-900">
               Name
@@ -130,14 +133,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a
           href="#page-top"
           aria-label="Back to top"
-          className="fixed bottom-5 right-5 z-50 inline-flex h-12 w-12 items-center justify-center rounded-full border border-slate-200 bg-white/95 shadow-[0_10px_24px_rgba(15,23,42,0.18)] transition hover:-translate-y-0.5 hover:bg-white"
+          className="fixed bottom-5 right-5 z-50 inline-flex h-16 w-16 flex-col items-center justify-center rounded-full border border-slate-200 bg-white/95 shadow-[0_10px_24px_rgba(15,23,42,0.18)] transition hover:-translate-y-0.5 hover:bg-white"
         >
+          <span className="text-[10px] font-bold uppercase tracking-[0.08em] text-slate-700">Top</span>
           <Image
-            src="/icons/favicon3.png"
+            src="/icons/faviconfinal.png"
             alt="Back to top"
-            width={36}
-            height={36}
-            className="h-9 w-9 rounded-full object-cover"
+            width={44}
+            height={44}
+            className="h-11 w-11 rounded-full object-cover"
           />
         </a>
 

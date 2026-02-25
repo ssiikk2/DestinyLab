@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { CalculatorHook } from "@/components/CalculatorHook";
 import { InternalLinks } from "@/components/InternalLinks";
 import { SeoJsonLd } from "@/components/SeoJsonLd";
@@ -61,16 +62,10 @@ export async function SeoLandingPage({ page }: SeoLandingPageProps) {
       : null;
 
   const isToolPage = Boolean(page.calculatorMode);
-  const pageForSchema =
-    generatedCopy || !isToolPage
-      ? {
-          ...page,
-          faqs: generatedCopy?.faqs ?? page.faqs,
-        }
-      : {
-          ...page,
-          faqs: [],
-        };
+  const pageForSchema = {
+    ...page,
+    faqs: generatedCopy?.faqs ?? page.faqs,
+  };
   const faqSchema = buildFaqSchema(pageForSchema);
   const breadcrumbSchema = buildBreadcrumbSchema(page);
 
@@ -96,8 +91,7 @@ export async function SeoLandingPage({ page }: SeoLandingPageProps) {
       <header className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-slate-50 to-sky-50 p-7 shadow-[0_16px_40px_rgba(15,23,42,0.08)]">
         <h1 className="text-3xl font-bold text-slate-900 md:text-4xl">{page.h1}</h1>
         <p className="mt-3 text-sm leading-7 text-slate-700 md:text-base">
-          {generatedCopy?.intro ??
-            (isToolPage ? "This page is loading a fresh guide. Please check back in a moment." : page.intro)}
+          {generatedCopy?.intro ?? page.intro}
         </p>
         <p className="mt-3 text-xs font-medium text-slate-500">
           Last updated: {formatHumanDate(page.lastUpdated)}
@@ -106,11 +100,13 @@ export async function SeoLandingPage({ page }: SeoLandingPageProps) {
 
       {page.calculatorMode ? (
         <div id="calculator-form">
-          <CalculatorHook mode={page.calculatorMode} variantKey={page.path} titleOverride={page.h1} />
+          <Suspense fallback={null}>
+            <CalculatorHook mode={page.calculatorMode} variantKey={page.path} titleOverride={page.h1} />
+          </Suspense>
         </div>
       ) : null}
 
-      {(generatedCopy?.sections ?? (isToolPage ? [] : page.sections)).map((section) => (
+      {(generatedCopy?.sections ?? page.sections).map((section) => (
         <section
           key={`${page.path}-${section.heading}`}
           className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_12px_30px_rgba(15,23,42,0.07)]"
@@ -126,7 +122,7 @@ export async function SeoLandingPage({ page }: SeoLandingPageProps) {
         </section>
       ))}
 
-      {(generatedCopy?.faqs ?? (isToolPage ? [] : page.faqs)).length > 0 ? (
+      {(generatedCopy?.faqs ?? page.faqs).length > 0 ? (
         <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_12px_30px_rgba(15,23,42,0.07)]">
           <h2 className="text-2xl font-semibold text-slate-900">Frequently asked questions</h2>
           <div className="mt-4 space-y-4">
@@ -147,21 +143,13 @@ export async function SeoLandingPage({ page }: SeoLandingPageProps) {
         <p className="mt-2 text-sm text-slate-700">
           Check one more angle and compare how each result feels side by side.
         </p>
-        {generatedCopy || !isToolPage ? (
-          <Link
-            href={page.ctaHref}
-            className="mt-4 inline-flex rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
-          >
-            {generatedCopy?.ctaLabel ?? page.ctaLabel}
-          </Link>
-        ) : null}
+        <Link
+          href={page.ctaHref}
+          className="mt-4 inline-flex rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+        >
+          {generatedCopy?.ctaLabel ?? page.ctaLabel}
+        </Link>
       </section>
-
-      {isToolPage && !generatedCopy ? (
-        <p className="text-xs font-medium text-slate-600">
-          Guide text is loading now. Please refresh shortly.
-        </p>
-      ) : null}
 
       <p className="text-xs font-medium text-slate-600">
         This content is for entertainment purposes and personal reflection.

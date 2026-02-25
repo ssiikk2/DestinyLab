@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { InternalLinks } from "@/components/InternalLinks";
 import { SeoJsonLd } from "@/components/SeoJsonLd";
@@ -85,8 +86,9 @@ const webAppSchema = {
 export default function HomePage() {
   return (
     <div className="mx-auto max-w-6xl space-y-8 px-4 py-8">
-      <section className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-rose-50 to-sky-50 p-7 shadow-[0_16px_40px_rgba(15,23,42,0.08)]">
-        <div>
+      <section className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-rose-50 to-sky-50 p-8 md:p-10 shadow-[0_16px_40px_rgba(15,23,42,0.08)]">
+        <div className="grid items-center gap-6 md:grid-cols-[1fr_240px]">
+          <div>
           <h1 className="text-3xl font-bold text-slate-900 md:text-4xl">
             Love Compatibility Calculator for fun, curious relationship check-ins
           </h1>
@@ -123,6 +125,17 @@ export default function HomePage() {
             >
               Read how it works
             </Link>
+          </div>
+        </div>
+          <div className="mx-auto md:mx-0">
+            <Image
+              src="/icons/faviconfinal.png"
+              alt="Cat and calculator mascot"
+              width={220}
+              height={220}
+              priority
+              className="h-40 w-40 rounded-3xl border border-slate-200 bg-white p-2 shadow-[0_12px_26px_rgba(15,23,42,0.14)] md:h-52 md:w-52"
+            />
           </div>
         </div>
       </section>

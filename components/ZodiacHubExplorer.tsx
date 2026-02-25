@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 
 interface ZodiacPageItem {
   slug: string;
@@ -29,53 +30,54 @@ const SIGNS = [
 ] as const;
 
 const POPULAR_PAIR_SLUGS = [
-  "aries-and-taurus-compatibility",
-  "aries-and-scorpio-compatibility",
-  "taurus-and-libra-compatibility",
-  "gemini-and-sagittarius-compatibility",
-  "cancer-and-leo-compatibility",
-  "leo-and-scorpio-compatibility",
-  "virgo-and-pisces-compatibility",
-  "libra-and-capricorn-compatibility",
-  "capricorn-and-cancer-compatibility",
-  "aquarius-and-virgo-compatibility",
-  "pisces-and-cancer-compatibility",
-  "leo-and-aries-compatibility",
+  "aries-and-scorpio",
+  "taurus-and-libra",
+  "gemini-and-sagittarius",
+  "cancer-and-leo",
+  "leo-and-aries",
+  "virgo-and-pisces",
+  "libra-and-aries",
+  "scorpio-and-aries",
+  "sagittarius-and-gemini",
+  "capricorn-and-cancer",
+  "aquarius-and-virgo",
+  "pisces-and-cancer",
 ] as const;
 
 function toSignSlug(sign: string): string {
   return sign.toLowerCase();
 }
 
-function pickIsActive(sign: string, firstSign: string | null, secondSign: string | null): boolean {
+function isActive(sign: string, firstSign: string | null, secondSign: string | null): boolean {
   return sign === firstSign || sign === secondSign;
 }
 
 export function ZodiacHubExplorer({ pages }: ZodiacHubExplorerProps) {
+  const router = useRouter();
   const [firstSign, setFirstSign] = useState<string | null>(null);
   const [secondSign, setSecondSign] = useState<string | null>(null);
+  const [isRouting, setIsRouting] = useState(false);
 
   const pageBySlug = useMemo(() => new Map(pages.map((page) => [page.slug, page])), [pages]);
 
-  const selectedResult = useMemo(() => {
-    if (!firstSign || !secondSign) {
-      return null;
+  useEffect(() => {
+    if (!firstSign || !secondSign || isRouting) {
+      return;
     }
 
-    const firstSlug = toSignSlug(firstSign);
-    const secondSlug = toSignSlug(secondSign);
-    const direct = `${firstSlug}-and-${secondSlug}-compatibility`;
-    const reverse = `${secondSlug}-and-${firstSlug}-compatibility`;
-    const page = pageBySlug.get(direct) || pageBySlug.get(reverse) || null;
-
-    return {
-      title: `${firstSign} + ${secondSign}`,
-      page,
-    };
-  }, [firstSign, secondSign, pageBySlug]);
+    const pairSlug = `${toSignSlug(firstSign)}-and-${toSignSlug(secondSign)}`;
+    setIsRouting(true);
+    router.push(`/compatibility/${pairSlug}`);
+  }, [firstSign, secondSign, isRouting, router]);
 
   const popularPairs = useMemo(
-    () => POPULAR_PAIR_SLUGS.map((slug) => pageBySlug.get(slug)).filter(Boolean) as ZodiacPageItem[],
+    () =>
+      POPULAR_PAIR_SLUGS.map((slug) => {
+        const canonicalSlug = `${slug}-compatibility`;
+        return pageBySlug.get(canonicalSlug)
+          ? { slug, path: `/compatibility/${slug}`, label: pageBySlug.get(canonicalSlug)?.h1 || slug }
+          : { slug, path: `/compatibility/${slug}`, label: slug.replace(/-/g, " ") };
+      }),
     [pageBySlug],
   );
 
@@ -102,6 +104,7 @@ export function ZodiacHubExplorer({ pages }: ZodiacHubExplorerProps) {
 
     setFirstSign(secondSign);
     setSecondSign(sign);
+    setIsRouting(false);
   }
 
   return (
@@ -109,112 +112,80 @@ export function ZodiacHubExplorer({ pages }: ZodiacHubExplorerProps) {
       <section className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-teal-50 to-cyan-50 p-6 shadow-[0_14px_34px_rgba(15,23,42,0.08)]">
         <h2 className="text-2xl font-semibold text-slate-900">Pick Two Signs</h2>
         <p className="mt-2 text-sm text-slate-700">
-          Tap any two signs and jump straight to a match result.
+          Two signs, one tap, instant story. As soon as your pair is set, you jump right into their compatibility page.
         </p>
 
         <div className="mt-4 grid gap-2 sm:grid-cols-3 md:grid-cols-4">
-          {SIGNS.map((sign) => {
-            const active = pickIsActive(sign, firstSign, secondSign);
-
-            return (
-              <button
-                key={sign}
-                type="button"
-                onClick={() => onPickSign(sign)}
-                className={`rounded-xl border px-3 py-2 text-sm font-semibold transition ${
-                  active
-                    ? "border-teal-500 bg-teal-600 text-white"
-                    : "border-slate-300 bg-white text-slate-900 hover:bg-slate-50"
-                }`}
-              >
-                {sign}
-              </button>
-            );
-          })}
+          {SIGNS.map((sign) => (
+            <button
+              key={sign}
+              type="button"
+              onClick={() => onPickSign(sign)}
+              className={`rounded-xl border px-3 py-2 text-sm font-semibold transition ${
+                isActive(sign, firstSign, secondSign)
+                  ? "border-teal-500 bg-teal-600 text-white"
+                  : "border-slate-300 bg-white text-slate-900 hover:bg-slate-50"
+              }`}
+            >
+              {sign}
+            </button>
+          ))}
         </div>
 
         <div className="mt-4 flex flex-wrap items-center gap-2 text-sm">
           <span className="rounded-full border border-slate-300 bg-white px-3 py-1 text-slate-800">
-            First: {firstSign ?? "Not picked yet"}
+            First: {firstSign ?? "pick one"}
           </span>
           <span className="rounded-full border border-slate-300 bg-white px-3 py-1 text-slate-800">
-            Second: {secondSign ?? "Not picked yet"}
+            Second: {secondSign ?? "pick one"}
           </span>
           <button
             type="button"
             onClick={() => {
               setFirstSign(null);
               setSecondSign(null);
+              setIsRouting(false);
             }}
             className="rounded-full border border-slate-300 bg-white px-3 py-1 text-slate-700 transition hover:bg-slate-50"
           >
-            Clear picks
+            Clear
           </button>
         </div>
       </section>
 
       <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="text-2xl font-semibold text-slate-900">Your Combo</h2>
-        {!selectedResult ? (
-          <p className="mt-2 text-sm text-slate-700">Choose two signs above to unlock your match page.</p>
-        ) : selectedResult.page ? (
-          <div className="mt-3 space-y-3">
-            <p className="text-sm text-slate-700">
-              {selectedResult.title} is ready. Tap below to see the full reading.
-            </p>
-            <Link
-              href={selectedResult.page.path}
-              className="inline-flex rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
-            >
-              Open match result
-            </Link>
-          </div>
-        ) : (
-          <div className="mt-3 space-y-3">
-            <p className="text-sm text-slate-700">
-              {selectedResult.title} does not have a dedicated page yet, but you can still run the zodiac test now.
-            </p>
-            <Link
-              href="/zodiac-compatibility"
-              className="inline-flex rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
-            >
-              Open zodiac test
-            </Link>
-          </div>
-        )}
-      </section>
-
-      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="text-2xl font-semibold text-slate-900">Popular Pair Picks</h2>
-        <p className="mt-2 text-sm text-slate-700">Most clicked combos right now. Great place to start.</p>
+        <h2 className="text-2xl font-semibold text-slate-900">Popular Matches</h2>
+        <p className="mt-2 text-sm text-slate-700">
+          Quick picks when you just want to dive in. These are fan-favorite pair stories.
+        </p>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
-          {popularPairs.map((page) => (
+          {popularPairs.map((pair) => (
             <Link
-              key={page.slug}
-              href={page.path}
+              key={pair.slug}
+              href={pair.path}
               className="rounded-2xl border border-slate-200 bg-slate-50 p-4 transition hover:bg-slate-100"
             >
-              <p className="text-sm font-semibold text-slate-900">{page.h1}</p>
+              <p className="text-sm font-semibold text-slate-900 capitalize">{pair.label}</p>
             </Link>
           ))}
         </div>
       </section>
 
       <section className="rounded-3xl border border-slate-200 bg-slate-50 p-6">
-        <h2 className="text-2xl font-semibold text-slate-900">Try also</h2>
-        <p className="mt-2 text-sm text-slate-700">If you want another angle, these are fun next clicks.</p>
+        <h2 className="text-2xl font-semibold text-slate-900">Try Also</h2>
+        <p className="mt-2 text-sm text-slate-700">If you want another angle, these pages keep the story going.</p>
         <div className="mt-4 grid gap-3 md:grid-cols-3">
           <Link href="/calculator" className="rounded-2xl border border-slate-200 bg-white p-4 hover:bg-slate-50">
-            <p className="text-sm font-semibold text-slate-900">Love Calculator</p>
-            <p className="mt-1 text-xs text-slate-600">Classic score and quick read.</p>
+            <p className="text-sm font-semibold text-slate-900">Primary Love Tool</p>
+            <p className="mt-1 text-xs text-slate-600">The full compatibility snapshot.</p>
           </Link>
           <Link href="/name-compatibility" className="rounded-2xl border border-slate-200 bg-white p-4 hover:bg-slate-50">
-            <p className="text-sm font-semibold text-slate-900">Name Compatibility</p>
-            <p className="mt-1 text-xs text-slate-600">Try a light name-based match.</p>
+            <p className="text-sm font-semibold text-slate-900">Name Test</p>
+            <p className="mt-1 text-xs text-slate-600">A flirty, quick chemistry check.</p>
           </Link>
           <Link href="/destiny" className="rounded-2xl border border-slate-200 bg-white p-4 hover:bg-slate-50">
-            <p className="text-sm font-semibold text-slate-900">Destiny Reading</p>
-            <p className="mt-1 text-xs text-slate-600">See your solo relationship vibe.</p>
+            <p className="text-sm font-semibold text-slate-900">Destiny Read</p>
+            <p className="mt-1 text-xs text-slate-600">Your personal relationship style.</p>
           </Link>
         </div>
       </section>

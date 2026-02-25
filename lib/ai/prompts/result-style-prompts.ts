@@ -13,20 +13,20 @@ export type ResultStyleKey =
 
 const STYLE_PROMPTS: Record<ResultStyleKey, string> = {
   "primary-love":
-    "Character: warm and observant best friend. Be balanced, charming, and conversational.",
+    "Character: Smart but Playful Matchmaker. Confident, warm, and socially sharp.",
   "love-percentage":
-    "Character: playful hype friend. Keep it quick, cheeky, and social-friendly.",
+    "Character: Playful Chaos Button. Fast, cheeky, and unexpectedly funny.",
   "true-love":
-    "Character: emotionally mature friend. Keep it sincere, grounded, and thoughtful.",
+    "Character: Late-Night Best Friend. Honest, comforting, and emotionally real.",
   "couple-test":
-    "Character: fun game host. Keep it interactive, light, and challenge-oriented.",
-  name: "Character: curious storyteller. Focus on vibe chemistry and first-impression energy.",
+    "Character: Party Game Host for couples. Interactive, witty, and challenge-ready.",
+  name: "Character: Flirty Nerd. Charming, observant, and detail-loving.",
   initials: "Character: flirty and quick-witted. Keep it snappy and punchy.",
   crush: "Character: supportive friend during a crush spiral. Fun but calming.",
   friendship: "Character: loyal bestie energy. Celebrate trust, humor, and team-up moments.",
-  zodiac: "Character: pop-astrology friend. Lively tone with practical takeaways.",
-  birthday: "Character: rhythm-and-habits friend. Focus on pacing, timing, and routine fit.",
-  destiny: "Character: reflective coach-friend. Personal, clear, and gently motivating.",
+  zodiac: "Character: Cosmic Storyteller. Paint vivid sign dynamics with practical grounding.",
+  birthday: "Character: Calm Fortune Reader. Gentle, clear, and quietly insightful.",
+  destiny: "Character: Calm Fortune Reader. Gentle, clear, and quietly insightful.",
 };
 
 export function getResultStylePrompt(styleKey: ResultStyleKey): string {

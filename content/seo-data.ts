@@ -1,4 +1,4 @@
-﻿import { blogSeeds } from "@/content/blog-seeds";
+import { blogSeeds } from "@/content/blog-seeds";
 
 export type SeoPageKind = "tool" | "blog" | "zodiac";
 
@@ -169,95 +169,68 @@ function pickItems<T>(items: T[], start: number, count: number, exclude?: (item:
   return values;
 }
 
-function buildParagraph(keyword: string, focus: string, action: string, payoff: string): string {
-  return `${keyword} is easier to use when ${focus}. ${action}. ${payoff}. Keep each step small and repeat it for two weeks before you judge results. Write one short note after each check-in about what felt easy and what felt tense. Those notes turn vague feelings into clear choices for next week.`;
+function normalizeLabel(value: string): string {
+  return value
+    .replace(/\s+guide$/i, "")
+    .replace(/\s+calculator$/i, "")
+    .replace(/\s+compatibility$/i, "")
+    .trim();
+}
+
+function buildSectionParagraphs(keyword: string, context: string, section: keyof SeoSections): string[] {
+  const label = normalizeLabel(keyword);
+
+  if (section === "breakdown") {
+    return [
+      `Start with one simple question: where does ${label} feel easiest in real life? In many pairs, ${context} gets smoother once both people agree on response timing before stress kicks in.`,
+      "Try a tiny weekly reset: swap one moment that felt easy and one that felt tense. That short comparison helps you spot patterns without turning every conversation into a debate.",
+      "When a tough topic shows up, slow the pace and ask for one clear request first. Fewer assumptions usually means fewer spirals, and the next talk lands better.",
+    ];
+  }
+
+  if (section === "pros") {
+    return [
+      `One upside of ${label} is momentum: small positive habits stack fast when both people notice them out loud.`,
+      "Clear language helps this match breathe. A short direct message often works better than a long emotional monologue.",
+      "Celebrate the tiny wins, not only the big milestones. A calm repair after a messy moment is still a win worth counting.",
+    ];
+  }
+
+  if (section === "challenges") {
+    return [
+      `The usual friction point for ${label} is pace mismatch. One person wants closure now, the other needs a beat to process.`,
+      "Stress can turn neutral messages into loaded ones. Before reacting, repeat back what you heard in plain words.",
+      "The biggest trap is trying to change five habits at once. Pick one pressure point, test one adjustment, and review it after a week.",
+    ];
+  }
+
+  return [
+    `Pick one action for this week and keep it light. ${label} gets more useful when insight turns into something you can actually try.`,
+    "Use a reset line when tension spikes: \"Give me two minutes, I want to answer well.\" That tiny pause protects the tone.",
+    "If you're unsure what to do next, run a mini check-in on Sunday night: what helped, what stung, and what to tweak next.",
+  ];
 }
 
 function buildSections(keyword: string, context: string): SeoSections {
   return {
-    breakdown: [
-      buildParagraph(
-        keyword,
-        `${context} starts with direct expectations and simple timing`,
-        "Use one ten-minute check-in each week to review emotional pace, communication tone, and stress triggers",
-        "This keeps both people focused on behavior instead of assumptions",
-      ),
-      buildParagraph(
-        keyword,
-        "you separate daily mood from repeat patterns",
-        "Track two moments that felt smooth and two moments that felt tense",
-        "When patterns repeat, changes become easier to test",
-      ),
-      buildParagraph(
-        keyword,
-        "both people explain needs before they react",
-        "Ask one clear question before you respond during hard talks",
-        "That pause lowers pressure and improves trust",
-      ),
-    ],
-    pros: [
-      buildParagraph(
-        keyword,
-        "you focus on clear strengths",
-        "Use strengths for planning dates, conflict recovery, and daily support",
-        "Shared strengths become stable routines that protect the relationship",
-      ),
-      buildParagraph(
-        keyword,
-        "communication is short and direct",
-        "Use simple language, avoid mixed signals, and confirm final decisions",
-        "Clear words prevent confusion and reduce avoidable stress",
-      ),
-      buildParagraph(
-        keyword,
-        "you review small wins",
-        "Celebrate one helpful habit each week and keep it in your routine",
-        "Small wins build momentum that lasts longer than one intense talk",
-      ),
-    ],
-    challenges: [
-      buildParagraph(
-        keyword,
-        "you ignore timing differences",
-        "Set response windows for serious topics so neither person feels rushed",
-        "Better timing lowers conflict intensity and improves repair speed",
-      ),
-      buildParagraph(
-        keyword,
-        "stress turns into quick assumptions",
-        "When stress is high, repeat what you heard before sharing your point",
-        "This one habit removes many avoidable arguments",
-      ),
-      buildParagraph(
-        keyword,
-        "you expect instant change",
-        "Pick one habit at a time and measure progress weekly",
-        "Slow progress with clear proof beats fast promises",
-      ),
-    ],
-    tips: [
-      buildParagraph(
-        keyword,
-        "you convert insight into action",
-        "Choose one habit to start and one habit to stop this week",
-        "Simple actions create visible progress within days",
-      ),
-      buildParagraph(
-        keyword,
-        "you protect calm conversations",
-        "Use a short reset phrase when tension rises, then restart with one focused question",
-        "Calm restarts keep trust intact even after disagreement",
-      ),
-      buildParagraph(
-        keyword,
-        "you set realistic expectations",
-        "Review your plan every month and update only what is not working",
-        "Regular reviews make long-term growth practical and consistent",
-      ),
-    ],
+    breakdown: buildSectionParagraphs(keyword, context, "breakdown"),
+    pros: buildSectionParagraphs(keyword, context, "pros"),
+    challenges: buildSectionParagraphs(keyword, context, "challenges"),
+    tips: buildSectionParagraphs(keyword, context, "tips"),
   };
 }
 
+function buildIntro(keyword: string, variant: "tool" | "zodiac" | "blog", prettyPair?: string): string {
+  if (variant === "zodiac" && prettyPair) {
+    return `${prettyPair} has its own rhythm. Some moments click instantly, others need better timing and clearer words. This page gives you a grounded way to read both.`;
+  }
+
+  if (variant === "blog") {
+    return `If you've been wondering about ${keyword}, this guide keeps it simple: what matters, what people misread, and what to try next time a real moment shows up.`;
+  }
+
+  return `${keyword} can be a fun mirror when you use it with context. Read the score, compare it with real behavior, and take one small step instead of chasing perfect answers.`;
+}
 function buildFaqs(keyword: string): SeoFaq[] {
   return [
     {
@@ -296,7 +269,7 @@ const toolPagesBase: SeoPageRecord[] = TOOL_SEEDS.map((seed) => ({
   title: seed.title,
   description: seed.description,
   h1: seed.h1,
-  intro: `${seed.keyword} gives you a quick way to compare patterns, spot strengths, and plan better conversations. This guide explains what each score range means and how to use the result in daily life.`,
+  intro: buildIntro(seed.keyword, "tool"),
   lastUpdated: LAST_UPDATED,
   sections: buildSections(seed.keyword, "a strong relationship rhythm"),
   faqs: buildFaqs(seed.keyword),
@@ -317,7 +290,7 @@ const zodiacPagesBase: SeoPageRecord[] = ZODIAC_PAIR_SLUGS.map((slug) => {
     title: `${prettyPair} Compatibility: Strengths, Challenges, and Relationship Tips`,
     description: `${prettyPair} compatibility guide with score context, practical examples, and next-step advice for reflection and entertainment purposes.`,
     h1: `${prettyPair} Compatibility`,
-    intro: `${keyword} is easier to understand when you focus on daily behavior, not labels. This guide explains where this pair usually clicks, where tension appears, and how to keep momentum steady.`,
+    intro: buildIntro(keyword, "zodiac", prettyPair),
     lastUpdated: LAST_UPDATED,
     sections: buildSections(keyword, `${prettyPair} compatibility`),
     faqs: buildFaqs(keyword),
@@ -333,7 +306,7 @@ const blogPagesBase: SeoPageRecord[] = BLOG_SEEDS.map((seed) => ({
   title: seed.title,
   description: seed.description,
   h1: seed.title,
-  intro: `${seed.keyword} is a common question for people who want clearer relationship decisions. This guide explains the topic in plain language and gives practical next steps you can use right away.`,
+  intro: buildIntro(seed.keyword, "blog"),
   lastUpdated: LAST_UPDATED,
   sections: buildSections(seed.keyword, "healthy relationship progress"),
   faqs: buildFaqs(seed.keyword),
@@ -449,4 +422,5 @@ export function getToolPages(): SeoPageRecord[] {
 export function getZodiacPages(): SeoPageRecord[] {
   return zodiacPages;
 }
+
 

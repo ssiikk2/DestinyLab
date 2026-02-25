@@ -48,6 +48,24 @@ interface AiResultSchema {
   tryAlsoNotes: string[];
 }
 
+function normalizeMojibake(value: string): string {
+  return value
+    .replace(/â/g, "'")
+    .replace(/â/g, "'")
+    .replace(/â/g, '"')
+    .replace(/â/g, '"')
+    .replace(/â/g, "-")
+    .replace(/â/g, "-")
+    .replace(/Ã©/g, "e")
+    .replace(/Ã¨/g, "e")
+    .replace(/Ã¡/g, "a")
+    .replace(/Ã¶/g, "o")
+    .replace(/Ã¼/g, "u")
+    .replace(/\uFFFD/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function isNonEmptyString(value: unknown): value is string {
   return typeof value === "string" && value.trim().length > 0;
 }
@@ -172,18 +190,18 @@ export async function createUnifiedResult(input: {
 
   return {
     score: Math.trunc(parsed.score),
-    title: parsed.title.trim(),
-    summary: parsed.summary.trim(),
-    strengths: parsed.strengths.map((item) => item.trim()),
-    watchouts: parsed.watchouts.map((item) => item.trim()),
-    tips: parsed.tips.map((item) => item.trim()),
+    title: normalizeMojibake(parsed.title),
+    summary: normalizeMojibake(parsed.summary),
+    strengths: parsed.strengths.map((item) => normalizeMojibake(item)),
+    watchouts: parsed.watchouts.map((item) => normalizeMojibake(item)),
+    tips: parsed.tips.map((item) => normalizeMojibake(item)),
     faq: parsed.faq.map((item) => ({
-      question: item.question.trim(),
-      answer: item.answer.trim(),
+      question: normalizeMojibake(item.question),
+      answer: normalizeMojibake(item.answer),
     })),
     tryAlso: tryAlsoTargets.map((href, index) => ({
       href,
-      note: parsed.tryAlsoNotes[index].trim(),
+      note: normalizeMojibake(parsed.tryAlsoNotes[index]),
     })),
   };
 }

@@ -20,7 +20,7 @@ export default function ZodiacHubPage() {
       <header className="space-y-3 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <h1 className="text-3xl font-bold text-slate-900 md:text-4xl">Zodiac Match Hub</h1>
         <p className="text-sm text-slate-700 md:text-base">
-          Choose two signs, check the vibe, and jump into a full match page.
+          Some sign pairs feel like fireworks, others feel like slow-burn poetry. Pick two signs and open their story.
         </p>
       </header>
 

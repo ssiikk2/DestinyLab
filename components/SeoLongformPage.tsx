@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { CalculatorHook } from "@/components/CalculatorHook";
 import { StructuredData } from "@/components/StructuredData";
 import type { SeoPageRecord } from "@/content/seo-data";
@@ -27,7 +28,7 @@ export async function SeoLongformPage({
 }: SeoLongformPageProps) {
   const theme = getModeTheme(calculatorMode);
   const richToolContent =
-    page.kind === "tool"
+    page.kind === "tool" || page.kind === "zodiac"
       ? await getToolPageRichContent({
           mode: calculatorMode,
           path: page.path,
@@ -35,7 +36,7 @@ export async function SeoLongformPage({
           keyword: page.keyword,
         })
       : null;
-  const faqs = page.kind === "tool" ? richToolContent?.faqs ?? [] : page.faqs;
+  const faqs = richToolContent?.faqs ?? page.faqs;
   const faqSchema = buildFaqSchema(faqs);
   const articleSchema = includeArticleSchema
     ? buildArticleSchema({
@@ -74,7 +75,12 @@ export async function SeoLongformPage({
           paragraphs: richToolContent.nextSteps,
         },
       ]
-    : [];
+    : [
+        { heading: "Breakdown", paragraphs: page.sections.breakdown },
+        { heading: "What feels easy", paragraphs: page.sections.pros },
+        { heading: "What needs care", paragraphs: page.sections.challenges },
+        { heading: "Tiny moves that help", paragraphs: page.sections.tips },
+      ];
 
   const cardClass = `rounded-3xl border ${theme.cardBorderClass} bg-white/88 p-6 shadow-[0_12px_36px_rgba(15,23,42,0.08)] backdrop-blur-sm`;
 
@@ -95,7 +101,9 @@ export async function SeoLongformPage({
         </p>
       </header>
 
-      <CalculatorHook mode={calculatorMode} variantKey={page.path} titleOverride={page.h1} />
+      <Suspense fallback={null}>
+        <CalculatorHook mode={calculatorMode} variantKey={page.path} titleOverride={page.h1} />
+      </Suspense>
 
       {sections.map((section) => (
         <section key={`${page.slug}-${section.heading}`} className={cardClass}>
@@ -121,13 +129,6 @@ export async function SeoLongformPage({
               </div>
             ))}
           </div>
-        </section>
-      ) : null}
-
-      {page.kind === "tool" && !richToolContent ? (
-        <section className={cardClass}>
-          <h2 className={`text-2xl font-semibold ${theme.accentTextClass}`}>Guide is warming up</h2>
-          <p className="mt-2 text-sm text-slate-700">Please refresh in a moment for the full reading guide.</p>
         </section>
       ) : null}
 
