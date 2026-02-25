@@ -1,19 +1,14 @@
-import type { Metadata } from "next";
 import { SeoLandingPage } from "@/components/SeoLandingPage";
-import { requireLandingPage } from "@/lib/landing-page";
-import { buildMetadata } from "@/lib/seo";
+import { generateLandingMetadata, requireLandingPage } from "@/lib/landing-page";
 
 export const revalidate = 86400;
 export const dynamic = "force-static";
 
 const page = requireLandingPage("/blog/how-love-calculators-work");
 
-export const metadata: Metadata = buildMetadata({
-  title: page.title,
-  description: page.description,
-  path: page.path,
-  type: "article",
-});
+export async function generateMetadata() {
+  return generateLandingMetadata("/blog/how-love-calculators-work", "article");
+}
 
 export default function HowLoveCalculatorsWorkPage() {
   return <SeoLandingPage page={page} />;

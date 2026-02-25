@@ -1,4 +1,6 @@
-﻿export type SeoPageKind = "tool" | "blog" | "zodiac";
+﻿import { blogSeeds } from "@/content/blog-seeds";
+
+export type SeoPageKind = "tool" | "blog" | "zodiac";
 
 export interface SeoFaq {
   question: string;
@@ -137,71 +139,12 @@ const ZODIAC_PAIR_SLUGS = [
   "gemini-and-aquarius-compatibility",
 ] as const;
 
-const BLOG_SEEDS: BlogSeed[] = [
-  {
-    slug: "what-is-a-good-love-compatibility-score",
-    keyword: "what is a good love compatibility score",
-    title: "What Is a Good Love Compatibility Score?",
-    description:
-      "Learn how to read compatibility score ranges and use each result for clearer conversations and better weekly habits.",
-  },
-  {
-    slug: "soulmate-vs-twin-flame-difference",
-    keyword: "soulmate vs twin flame difference",
-    title: "Soulmate vs Twin Flame: Key Differences in Real Life",
-    description:
-      "A simple guide to soulmate vs twin flame difference, with practical signs, limits, and healthier expectations.",
-  },
-  {
-    slug: "twin-flame-signs-and-symptoms",
-    keyword: "twin flame signs and symptoms",
-    title: "Twin Flame Signs and Symptoms: What to Notice First",
-    description:
-      "Review the most common twin flame signs and symptoms, and learn how to stay grounded while you interpret them.",
-  },
-  {
-    slug: "how-accurate-are-compatibility-calculators",
-    keyword: "how accurate are compatibility calculators",
-    title: "How Accurate Are Compatibility Calculators?",
-    description:
-      "Understand what compatibility calculators estimate well, where they are limited, and how to use results wisely.",
-  },
-  {
-    slug: "love-compatibility-by-name-explained",
-    keyword: "love compatibility by name explained",
-    title: "Love Compatibility by Name Explained in Plain Language",
-    description:
-      "This guide explains love compatibility by name, score context, and practical ways to apply insights day to day.",
-  },
-  {
-    slug: "zodiac-compatibility-chart-explained",
-    keyword: "zodiac compatibility chart explained",
-    title: "Zodiac Compatibility Chart Explained: Fast Reading Guide",
-    description:
-      "A practical zodiac compatibility chart explained step by step, with examples and follow-up actions.",
-  },
-  {
-    slug: "relationship-repair-guide",
-    keyword: "relationship repair guide",
-    title: "Relationship Repair Guide: How to Rebuild Trust After Repeated Conflict",
-    description:
-      "A practical relationship repair guide with direct communication steps, conflict reset rules, and trust rebuilding habits.",
-  },
-  {
-    slug: "relationship-growth-habits",
-    keyword: "relationship growth habits",
-    title: "Relationship Growth Habits: Weekly Routines That Improve Compatibility",
-    description:
-      "Use these relationship growth habits to strengthen communication, emotional safety, and long-term consistency.",
-  },
-  {
-    slug: "long-term-compatibility-guide",
-    keyword: "long term compatibility guide",
-    title: "Long-Term Compatibility Guide: What Keeps Strong Matches Stable Over Time",
-    description:
-      "A long-term compatibility guide focused on maintenance habits, emotional reliability, and realistic planning.",
-  },
-];
+const BLOG_SEEDS: BlogSeed[] = blogSeeds.map((seed) => ({
+  slug: seed.slug,
+  keyword: seed.keyword,
+  title: seed.title,
+  description: seed.description,
+}));
 
 function toTitleCase(value: string): string {
   return value
@@ -506,3 +449,4 @@ export function getToolPages(): SeoPageRecord[] {
 export function getZodiacPages(): SeoPageRecord[] {
   return zodiacPages;
 }
+

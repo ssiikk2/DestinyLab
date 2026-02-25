@@ -60,7 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`}
         />
       </head>
-      <body>
+      <body id="page-top">
         <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur">
           <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-2.5 text-sm text-slate-700">
             <Link href="/" className="inline-flex items-center gap-2.5 font-semibold text-slate-900">
@@ -74,11 +74,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               />
               <span className="text-[15px] leading-none md:text-base">lovecompatibilitycalculator</span>
             </Link>
-            <Link href="/calculator" className="hover:text-slate-900">
-              Love Calculator
+            <Link
+              href="/calculator"
+              className="rounded-full bg-slate-900 px-3 py-1.5 font-semibold text-white transition hover:bg-slate-800"
+            >
+              Primary Tool
             </Link>
             <Link href="/tests" className="hover:text-slate-900">
-              Tests
+              All Tests
             </Link>
             <Link href="/zodiac-compatibility" className="hover:text-slate-900">
               Zodiac
@@ -102,6 +105,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         <footer className="border-t border-slate-200 bg-white">
           <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-4 px-4 py-6 text-xs text-slate-600">
+            <span className="mr-2 text-slate-500">Fun readings for curious hearts.</span>
             <Link href="/privacy" className="hover:text-slate-900">
               Privacy
             </Link>
@@ -122,6 +126,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </Link>
           </div>
         </footer>
+
+        <a
+          href="#page-top"
+          aria-label="Back to top"
+          className="fixed bottom-5 right-5 z-50 inline-flex h-12 w-12 items-center justify-center rounded-full border border-slate-200 bg-white/95 shadow-[0_10px_24px_rgba(15,23,42,0.18)] transition hover:-translate-y-0.5 hover:bg-white"
+        >
+          <Image
+            src="/icons/favicon3.png"
+            alt="Back to top"
+            width={36}
+            height={36}
+            className="h-9 w-9 rounded-full object-cover"
+          />
+        </a>
 
         <CookieConsent />
       </body>

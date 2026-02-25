@@ -9,35 +9,35 @@ export const revalidate = 86400;
 export const dynamic = "force-static";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Love Compatibility Calculator and Relationship Guide Hub",
+  title: "Love Compatibility Calculator and Fun Relationship Readings",
   description:
-    "Explore calculator, destiny, zodiac, name, and couple-test pages with practical interpretation, FAQs, and internal guides.",
+    "Try love, zodiac, name, and destiny readings with playful explanations and shareable results.",
   path: "/",
 });
 
 const homeFaqs = [
   {
-    question: "How is this site different from a simple one-page calculator?",
+    question: "How is this different from a basic one-screen calculator?",
     answer:
-      "Each route includes interpretation, FAQs, and internal links so users can act on results instead of seeing only a number.",
+      "You get a score plus fun follow-up ideas, related tests, and quick explainers so it never stops at one number.",
   },
   {
-    question: "Which page should I start with for fastest clarity?",
+    question: "Where should I start first?",
     answer:
-      "Start with /calculator, then use /couple-test or /destiny to validate whether issues are shared or individual.",
+      "Start with /calculator, then jump to /couple-test or /destiny for a second angle.",
   },
   {
-    question: "Do these tools explain what to do after the score?",
+    question: "Do these tools say what to do after the score?",
     answer:
-      "Yes. Each tool page includes simple follow-up steps you can try in daily conversations.",
+      "Yes. Every test comes with simple next moves you can try right away.",
   },
   {
-    question: "How often should users retest compatibility?",
-    answer: "Monthly retests after behavior changes provide clearer trend signal than frequent retests.",
+    question: "How often should we retake a test?",
+    answer: "About once a month is plenty, or after a big change in your relationship.",
   },
   {
-    question: "Can users navigate to guides from every tool page?",
-    answer: "Yes. Internal links connect tool pages to related tests and informational guides.",
+    question: "Can I hop between related tests easily?",
+    answer: "Yes. Each page links to other tests and guides that match what you just checked.",
   },
   {
     question: "Is this website for entertainment purposes?",
@@ -76,7 +76,7 @@ const webAppSchema = {
   "@type": "WebApplication",
   name: "Love Compatibility Calculator",
   description:
-    "Compatibility calculators and relationship guides with practical score interpretation.",
+    "Compatibility calculators and relationship guides with playful score explanations.",
   applicationCategory: "LifestyleApplication",
   operatingSystem: "Any",
   url: absoluteUrl("/"),
@@ -88,21 +88,20 @@ export default function HomePage() {
       <section className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-rose-50 to-sky-50 p-7 shadow-[0_16px_40px_rgba(15,23,42,0.08)]">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 md:text-4xl">
-            Love Compatibility Calculator with practical relationship guides
+            Love Compatibility Calculator for fun, curious relationship check-ins
           </h1>
           <div className="mt-4 space-y-4 text-sm leading-7 text-slate-700 md:text-base">
             <p>
-              This website helps you do two things: get a quick score and understand what to do next. Instead of
-              leaving you with one number, each page connects to related tests, FAQs, and clear next steps.
+              Start with a quick score, then keep the vibe going with extra tests, light explainers, and ideas you can
+              talk about together.
             </p>
             <p>
-              Whether you are checking love percentage, a crush score, or zodiac compatibility, the goal is the same:
-              turn results into better conversations. The guides stay practical and focus on habits you can actually
-              test together.
+              Whether you are checking love percentage, a crush reading, or zodiac chemistry, this is built for
+              curiosity and good conversation, not heavy labels.
             </p>
             <p>
-              Treat every score as a reflection prompt. Choose one improvement, run it for a few weeks, and retest with
-              context. That habit turns symbolic tools into useful decision support while keeping expectations realistic.
+              Use each result like a conversation starter. Pick one small thing to try, come back later, and see how
+              the mood changes.
             </p>
           </div>
           <div className="mt-5 flex flex-wrap gap-3">
@@ -110,26 +109,26 @@ export default function HomePage() {
               href="/calculator"
               className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
             >
-              Start main calculator
+              Try the main calculator
             </Link>
             <Link
               href="/tests"
               className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
             >
-              Browse all tools
+              See all tests
             </Link>
             <Link
               href="/blog/how-love-calculators-work"
               className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
             >
-              Read methodology guide
+              Read how it works
             </Link>
           </div>
         </div>
       </section>
 
-      <InternalLinks heading="Tools" links={homeToolsLinks} />
-      <InternalLinks heading="Guides" links={homeGuideLinks} />
+      <InternalLinks heading="Pick a Test" links={homeToolsLinks} />
+      <InternalLinks heading="Quick Reads" links={homeGuideLinks} />
 
       <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_12px_30px_rgba(15,23,42,0.07)]">
         <h2 className="text-2xl font-semibold text-slate-900">FAQ</h2>

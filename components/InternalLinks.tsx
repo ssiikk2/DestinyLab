@@ -12,7 +12,7 @@ interface InternalLinksProps {
   links: InternalLinkItem[];
 }
 
-export function InternalLinks({ heading = "Related tools and guides", links }: InternalLinksProps) {
+export function InternalLinks({ heading = "More tests and reads", links }: InternalLinksProps) {
   return (
     <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_12px_30px_rgba(15,23,42,0.07)]">
       <h2 className="text-2xl font-semibold text-slate-900">{heading}</h2>

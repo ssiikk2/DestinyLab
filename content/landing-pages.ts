@@ -40,79 +40,79 @@ const linkCatalog: Record<string, InternalLinkItem> = {
     href: "/calculator",
     title: "Love Compatibility Calculator",
     keyword: "love calculator",
-    description: "Run the main relationship score and read practical interpretation notes.",
+    description: "Run the classic match test and see what the vibe looks like today.",
   },
   destiny: {
     href: "/destiny",
     title: "Destiny Calculator",
     keyword: "destiny test",
-    description: "Review solo relationship rhythm and weekly behavior patterns.",
+    description: "Get a solo reading about your relationship style and emotional rhythm.",
   },
   nameCompatibility: {
     href: "/name-compatibility",
     title: "Name Compatibility",
     keyword: "name match",
-    description: "Compare communication style and emotional pacing through name-based prompts.",
+    description: "Type in two names for a quick read on chemistry and communication style.",
   },
   zodiacCompatibility: {
     href: "/zodiac-compatibility",
     title: "Zodiac Compatibility",
     keyword: "zodiac match",
-    description: "Check sign dynamics with strengths, risk patterns, and practical tips.",
+    description: "Check your sign match and see where sparks fly or clash.",
   },
   lovePercentage: {
     href: "/love-percentage",
     title: "Love Percentage Calculator",
     keyword: "love percentage",
-    description: "Use a quick percentage score as a prompt for better conversations.",
+    description: "Get a fast love score you can laugh about and talk through together.",
   },
   trueLoveTest: {
     href: "/true-love-test",
     title: "True Love Test",
     keyword: "true love test",
-    description: "Evaluate long-term consistency, trust, and conflict repair habits.",
+    description: "Take a deeper love check focused on trust, effort, and staying power.",
   },
   crushCalculator: {
     href: "/crush-calculator",
     title: "Crush Calculator",
     keyword: "crush score",
-    description: "Use early-stage attraction prompts without overcommitting too quickly.",
+    description: "Perfect for crush energy when you want answers without overthinking it.",
   },
   birthdayCompatibility: {
     href: "/birthday-compatibility",
     title: "Birthday Compatibility",
     keyword: "birthday match",
-    description: "Compare rhythm timing and lifestyle cadence with date-based input.",
+    description: "Use birthdays to check timing, flow, and day-to-day fit.",
   },
   initialsLoveTest: {
     href: "/initials-love-test",
     title: "Initials Love Test",
     keyword: "initials test",
-    description: "Run a lightweight initials check and connect it to real behavior signals.",
+    description: "Try a light initials match for a fun first read.",
   },
   coupleTest: {
     href: "/couple-test",
     title: "Couple Test",
     keyword: "couple test",
-    description: "Audit communication quality, repair speed, and long-term decision flow.",
+    description: "Run a full couple check when you want the bigger relationship picture.",
   },
   tests: {
     href: "/tests",
     title: "All Compatibility Tests",
-    keyword: "tools hub",
-    description: "Browse all tests and choose the format that matches your question.",
+    keyword: "all tests",
+    description: "Browse every test and pick whatever fits your mood right now.",
   },
   blog: {
     href: "/blog",
     title: "Compatibility Guides",
-    keyword: "guide hub",
-    description: "Read long-form practical guides connected to calculator outcomes.",
+    keyword: "blog picks",
+    description: "Read fun guides about signs, scores, and relationship moments.",
   },
   howCalculatorsWork: {
     href: "/blog/how-love-calculators-work",
     title: "How Love Calculators Work",
-    keyword: "calculator guide",
-    description: "Understand the scoring logic, limitations, and interpretation workflow.",
+    keyword: "quick guide",
+    description: "See what these tests mean and how to read the results without the drama.",
   },
 };
 
@@ -158,24 +158,24 @@ interface LandingSeed {
 function makeSections(seed: LandingSeed): LandingSection[] {
   return [
     {
-      heading: "How to read this page",
+      heading: "How to use this result",
       paragraphs: [
-        `${seed.focus} should be treated as a reflection signal, not a fixed prediction. Use the result to spot strengths, repeated tension, and the next conversation. The score is a planning aid, not a verdict.`,
-        `The strongest outcome appears when ${seed.behavior}. That habit turns symbolic output into practical change and keeps interpretation grounded in real behavior.`,
+        `Think of ${seed.focus} as a conversation starter, not a final answer. Use it to spot what feels easy, what feels tense, and what you want to talk about next.`,
+        `The page feels most useful when ${seed.behavior}. Small, honest check-ins usually beat big emotional speeches.`,
       ],
     },
     {
-      heading: "Common mistakes and practical fixes",
+      heading: "What trips people up",
       paragraphs: [
-        `A frequent issue is ${seed.risk}. When this happens, interpretation gets emotional and inconsistent. The fastest fix is one measurable habit and a retest date.`,
-        `Use this sequence after every test: run the score, note one strength, define one boundary, and schedule one follow-up conversation. ${seed.action}`,
+        `A common pitfall is ${seed.risk}. If that sounds familiar, slow it down and pick one small habit to try this week.`,
+        "After each result, do one simple thing: note what felt true, name one boundary, and have one follow-up chat. Keeping it simple usually works better than trying to fix everything at once.",
       ],
     },
     {
-      heading: "Building steady clarity over time",
+      heading: "Keep it fun and useful",
       paragraphs: [
-        `People come back to these tools for perspective, not just a number. Keep notes short and compare trends monthly. If the same pressure point appears across tools, focus there first.`,
-        `${seed.longTerm} This page is for entertainment purposes and works best with direct communication and realistic expectations.`,
+        `Most people come back for fresh perspective, not perfection. Keep short notes and compare how things feel month to month.`,
+        "This page is for entertainment purposes and works best with honest conversations and realistic expectations.",
       ],
     },
   ];
@@ -203,12 +203,12 @@ function makeRecord(seed: LandingSeed): LandingPageRecord {
 const landingSeeds: LandingSeed[] = [
   {
     path: "/calculator",
-    title: "Love Compatibility Calculator: Meaningful Score Reading for Real Couples",
+    title: "Love Compatibility Calculator for Curious Couples",
     description:
-      "Use the love compatibility calculator to check chemistry, communication rhythm, and practical next-step actions.",
+      "Try the classic love test for a quick score and a fun read on your relationship vibe.",
     h1: "Love Compatibility Calculator",
     intro:
-      "This page is built for users who want practical interpretation, not just a score. Run the calculator, then translate the output into one concrete weekly behavior change.",
+      "Start here when you want the classic score with a little more story behind it. Run the test, compare notes, and see what feels surprisingly accurate.",
     focus:
       "the love compatibility score",
     behavior:
@@ -221,7 +221,7 @@ const landingSeeds: LandingSeed[] = [
       "Over time, this creates a cleaner data trail for relationship decisions and improves confidence in what is actually changing.",
     calculatorMode: "love",
     includeWebApplication: true,
-    ctaLabel: "Run the compatibility score now",
+    ctaLabel: "Try this love test",
     ctaHref: "#calculator-form",
     breadcrumbs: [
       { name: "Home", path: "/" },
@@ -262,12 +262,12 @@ const landingSeeds: LandingSeed[] = [
   },
   {
     path: "/destiny",
-    title: "Destiny Calculator for Relationship Reflection and Personal Timing",
+    title: "Destiny Calculator for a Personal Love Snapshot",
     description:
-      "Run a destiny calculator reading to review personal rhythm, emotional pacing, and practical relationship actions.",
+      "Get a solo destiny reading to explore your emotional style and relationship rhythm.",
     h1: "Destiny Calculator",
     intro:
-      "Destiny reflection works best before couple-level decisions. This page helps users evaluate personal patterns that affect communication quality and emotional consistency.",
+      "This one is all about you. Use it to check your patterns before you overread someone else.",
     focus:
       "the destiny result",
     behavior:
@@ -280,7 +280,7 @@ const landingSeeds: LandingSeed[] = [
       "A stable solo rhythm often improves every couple tool result because your baseline communication quality rises first.",
     calculatorMode: "destiny",
     includeWebApplication: true,
-    ctaLabel: "Run your destiny reading",
+    ctaLabel: "Get my destiny reading",
     ctaHref: "#calculator-form",
     breadcrumbs: [
       { name: "Home", path: "/" },
@@ -321,12 +321,12 @@ const landingSeeds: LandingSeed[] = [
   },
   {
     path: "/name-compatibility",
-    title: "Name Compatibility Test with Communication-Focused Score Guidance",
+    title: "Name Compatibility Test",
     description:
-      "Use our name compatibility page to compare communication style, pacing, and realistic relationship next steps.",
+      "Type in two names and get a playful take on chemistry, flow, and communication style.",
     h1: "Name Compatibility",
     intro:
-      "Name-based matching is a symbolic tool. The practical value comes from how you use the result to improve communication clarity and reduce avoidable misunderstandings.",
+      "Name tests are simple and fun. Add both names, check the score, and see which parts feel right.",
     focus:
       "name compatibility output",
     behavior:
@@ -339,7 +339,7 @@ const landingSeeds: LandingSeed[] = [
       "Using name pages with periodic reviews creates better trend visibility than one-time emotional decisions.",
     calculatorMode: "name",
     includeWebApplication: true,
-    ctaLabel: "Check name compatibility now",
+    ctaLabel: "Check our name match",
     ctaHref: "#calculator-form",
     breadcrumbs: [
       { name: "Home", path: "/" },
@@ -380,12 +380,12 @@ const landingSeeds: LandingSeed[] = [
   },
   {
     path: "/zodiac-compatibility",
-    title: "Zodiac Compatibility Guide with Practical Match Interpretation",
+    title: "Zodiac Compatibility Reading",
     description:
-      "Explore zodiac compatibility with score context, challenge patterns, and actionable relationship habits.",
+      "Check your sign match and get a lively read on chemistry, conflict style, and connection.",
     h1: "Zodiac Compatibility",
     intro:
-      "Zodiac content performs best when it goes beyond labels. This page translates symbolic sign dynamics into behavior-focused interpretation users can actually apply.",
+      "If you're into sign chemistry, this page gives you more than one-line labels. Compare signs and see the bigger picture.",
     focus:
       "zodiac compatibility scoring",
     behavior:
@@ -398,7 +398,7 @@ const landingSeeds: LandingSeed[] = [
       "Combining zodiac output with other tools usually exposes the same recurring friction point, which helps prioritize the next fix.",
     calculatorMode: "zodiac",
     includeWebApplication: true,
-    ctaLabel: "Run zodiac compatibility now",
+    ctaLabel: "Check our sign match",
     ctaHref: "#calculator-form",
     breadcrumbs: [
       { name: "Home", path: "/" },
@@ -439,12 +439,12 @@ const landingSeeds: LandingSeed[] = [
   },
   {
     path: "/love-percentage",
-    title: "Love Percentage Calculator with Score Context and Practical Follow-Up",
+    title: "Love Percentage Calculator",
     description:
-      "Check your love percentage and learn how to interpret each range with practical relationship actions.",
+      "Get your love percentage instantly and see what that number might mean in real life.",
     h1: "Love Percentage Calculator",
     intro:
-      "Percentage tools are fast, but a fast number is only useful when paired with interpretation. This page is built to convert percentage output into practical action.",
+      "This is the quick one. Run your percentage, compare reactions, and decide what to talk about next.",
     focus:
       "the love percentage",
     behavior:
@@ -457,7 +457,7 @@ const landingSeeds: LandingSeed[] = [
       "Over months, percentage tracking becomes useful trend data when paired with consistent behavior notes.",
     calculatorMode: "love",
     includeWebApplication: true,
-    ctaLabel: "Calculate your love percentage",
+    ctaLabel: "Show our love percentage",
     ctaHref: "#calculator-form",
     breadcrumbs: [
       { name: "Home", path: "/" },
@@ -498,12 +498,12 @@ const landingSeeds: LandingSeed[] = [
   },
   {
     path: "/true-love-test",
-    title: "True Love Test: Evaluate Consistency, Trust, and Long-Term Potential",
+    title: "True Love Test",
     description:
-      "Take a true love test built around consistency, emotional safety, and practical maintenance habits.",
+      "Take a deeper love test focused on trust, consistency, and how you show up for each other.",
     h1: "True Love Test",
     intro:
-      "True love is clearer in repeated behavior than in isolated emotional moments. This page helps users evaluate consistency and follow-through with a structured score interpretation.",
+      "Think of this as the deeper check. It looks past butterflies and leans into trust, effort, and follow-through.",
     focus:
       "the true love score",
     behavior:
@@ -516,7 +516,7 @@ const landingSeeds: LandingSeed[] = [
       "When users revisit this test monthly, they can see whether trust and execution quality are improving together.",
     calculatorMode: "love",
     includeWebApplication: true,
-    ctaLabel: "Start the true love test",
+    ctaLabel: "Take the true love test",
     ctaHref: "#calculator-form",
     breadcrumbs: [
       { name: "Home", path: "/" },
@@ -557,12 +557,12 @@ const landingSeeds: LandingSeed[] = [
   },
   {
     path: "/crush-calculator",
-    title: "Crush Calculator: Early Attraction Signals and Communication Readiness",
+    title: "Crush Calculator",
     description:
-      "Use the crush calculator to evaluate early-stage chemistry while staying grounded in clear boundaries.",
+      "Got a crush? Run a quick score and get a fun read before you spiral.",
     h1: "Crush Calculator",
     intro:
-      "Crush dynamics can be emotionally loud and data-light. This page helps users slow down and evaluate whether attraction is supported by communication quality and consistent effort.",
+      "Crush energy can get loud fast. This page helps you slow down, check the signs, and keep your balance.",
     focus:
       "the crush score",
     behavior:
@@ -575,7 +575,7 @@ const landingSeeds: LandingSeed[] = [
       "Users who apply these filters early usually avoid avoidable mismatch and make better long-term decisions.",
     calculatorMode: "crush",
     includeWebApplication: true,
-    ctaLabel: "Run the crush calculator",
+    ctaLabel: "Run my crush score",
     ctaHref: "#calculator-form",
     breadcrumbs: [
       { name: "Home", path: "/" },
@@ -616,12 +616,12 @@ const landingSeeds: LandingSeed[] = [
   },
   {
     path: "/birthday-compatibility",
-    title: "Birthday Compatibility Calculator for Timing, Rhythm, and Lifestyle Fit",
+    title: "Birthday Compatibility Calculator",
     description:
-      "Check birthday compatibility and interpret score patterns with practical communication improvements.",
+      "Use birthdays to check timing, emotional rhythm, and how naturally you two click.",
     h1: "Birthday Compatibility",
     intro:
-      "Birthday matching is useful for spotting rhythm mismatch in planning, pacing, and daily expectations. This page connects symbolic output to practical behavior design.",
+      "Birthday matching is great for spotting differences in pace. Compare dates and see where your rhythms sync up.",
     focus:
       "birthday compatibility results",
     behavior:
@@ -634,7 +634,7 @@ const landingSeeds: LandingSeed[] = [
       "Date-based trend checks are most useful when compared with real improvements in planning discipline.",
     calculatorMode: "birthday",
     includeWebApplication: true,
-    ctaLabel: "Calculate birthday compatibility",
+    ctaLabel: "Check birthday match",
     ctaHref: "#calculator-form",
     breadcrumbs: [
       { name: "Home", path: "/" },
@@ -675,12 +675,12 @@ const landingSeeds: LandingSeed[] = [
   },
   {
     path: "/initials-love-test",
-    title: "Initials Love Test with Fast Score Insight and Practical Context",
+    title: "Initials Love Test",
     description:
-      "Run an initials love test for a quick compatibility read and a practical communication follow-up plan.",
+      "Run a fast initials test for a light, fun compatibility check.",
     h1: "Initials Love Test",
     intro:
-      "Initials tools are intentionally simple, which makes interpretation discipline important. This page helps users convert quick symbolic output into practical decisions.",
+      "This one is fast and playful. Type your initials, get the score, and enjoy the moment.",
     focus:
       "the initials love score",
     behavior:
@@ -693,7 +693,7 @@ const landingSeeds: LandingSeed[] = [
       "This method preserves the fun speed of initials tools while still producing useful relationship insight over time.",
     calculatorMode: "initials",
     includeWebApplication: true,
-    ctaLabel: "Run the initials love test",
+    ctaLabel: "Try the initials test",
     ctaHref: "#calculator-form",
     breadcrumbs: [
       { name: "Home", path: "/" },
@@ -734,12 +734,12 @@ const landingSeeds: LandingSeed[] = [
   },
   {
     path: "/couple-test",
-    title: "Couple Test for Communication Quality and Long-Term Stability",
+    title: "Couple Test",
     description:
-      "Take a couple test to evaluate communication consistency, conflict repair, and practical relationship momentum.",
+      "Take a full couple check when you want a broader look at your relationship dynamic.",
     h1: "Couple Test",
     intro:
-      "This page is designed for users who want a broad relationship audit. It prioritizes communication quality, execution reliability, and repair capability over one-dimensional labels.",
+      "Use this when you want the bigger picture. It blends chemistry, communication, and day-to-day reality.",
     focus:
       "the couple test score",
     behavior:
@@ -752,7 +752,7 @@ const landingSeeds: LandingSeed[] = [
       "Couples that review this framework monthly often sustain progress better than couples relying on emotional resets.",
     calculatorMode: "love",
     includeWebApplication: true,
-    ctaLabel: "Start the couple test",
+    ctaLabel: "Take the couple test",
     ctaHref: "#calculator-form",
     breadcrumbs: [
       { name: "Home", path: "/" },
@@ -793,12 +793,12 @@ const landingSeeds: LandingSeed[] = [
   },
   {
     path: "/blog/how-love-calculators-work",
-    title: "How Love Calculators Work: Scoring Logic, Limits, and Best Practices",
+    title: "How Love Calculators Work",
     description:
-      "Learn how love calculators generate results, where limits exist, and how to use scores responsibly.",
+      "A simple guide to what these love tests measure and how to read the results.",
     h1: "How Love Calculators Work",
     intro:
-      "This informational guide explains why calculator results can be useful without being absolute truth. It is designed for users who want clear expectations before relying on a score.",
+      "Wondering what these scores are actually doing? This guide breaks it down in plain language.",
     focus:
       "calculator scoring logic",
     behavior:
@@ -810,7 +810,7 @@ const landingSeeds: LandingSeed[] = [
     longTerm:
       "Clear interpretation and thoughtful page connections make it easier for readers to move from curiosity to useful action.",
     includeWebApplication: false,
-    ctaLabel: "Try the main calculator",
+    ctaLabel: "Go to the main test",
     ctaHref: "/calculator",
     breadcrumbs: [
       { name: "Home", path: "/" },

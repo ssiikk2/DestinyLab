@@ -2,9 +2,9 @@ import Link from "next/link";
 import { CalculatorHook } from "@/components/CalculatorHook";
 import { StructuredData } from "@/components/StructuredData";
 import type { SeoPageRecord } from "@/content/seo-data";
-import { getToolPageRichContent } from "@/content/tool-page-content";
 import { buildArticleSchema, buildFaqSchema, buildWebApplicationSchema } from "@/lib/schema";
 import { formatHumanDate } from "@/lib/seo";
+import { getToolPageRichContent } from "@/lib/tool-guide-content-service";
 import { getModeTheme, type CalculatorMode } from "@/lib/test-themes";
 
 interface SeoLongformPageProps {
@@ -19,15 +19,23 @@ interface RenderSection {
   paragraphs: string[];
 }
 
-export function SeoLongformPage({
+export async function SeoLongformPage({
   page,
   calculatorMode,
   includeArticleSchema = false,
   includeWebApplicationSchema = false,
 }: SeoLongformPageProps) {
   const theme = getModeTheme(calculatorMode);
-  const richToolContent = page.kind === "tool" ? getToolPageRichContent(calculatorMode) : null;
-  const faqs = richToolContent?.faqs ?? page.faqs;
+  const richToolContent =
+    page.kind === "tool"
+      ? await getToolPageRichContent({
+          mode: calculatorMode,
+          path: page.path,
+          h1: page.h1,
+          keyword: page.keyword,
+        })
+      : null;
+  const faqs = page.kind === "tool" ? richToolContent?.faqs ?? [] : page.faqs;
   const faqSchema = buildFaqSchema(faqs);
   const articleSchema = includeArticleSchema
     ? buildArticleSchema({
@@ -66,12 +74,7 @@ export function SeoLongformPage({
           paragraphs: richToolContent.nextSteps,
         },
       ]
-    : [
-        { heading: "Breakdown", paragraphs: page.sections.breakdown },
-        { heading: "Pros", paragraphs: page.sections.pros },
-        { heading: "Challenges", paragraphs: page.sections.challenges },
-        { heading: "Tips", paragraphs: page.sections.tips },
-      ];
+    : [];
 
   const cardClass = `rounded-3xl border ${theme.cardBorderClass} bg-white/88 p-6 shadow-[0_12px_36px_rgba(15,23,42,0.08)] backdrop-blur-sm`;
 
@@ -92,7 +95,7 @@ export function SeoLongformPage({
         </p>
       </header>
 
-      <CalculatorHook mode={calculatorMode} />
+      <CalculatorHook mode={calculatorMode} variantKey={page.path} titleOverride={page.h1} />
 
       {sections.map((section) => (
         <section key={`${page.slug}-${section.heading}`} className={cardClass}>
@@ -107,17 +110,26 @@ export function SeoLongformPage({
         </section>
       ))}
 
-      <section className={cardClass}>
-        <h2 className={`text-2xl font-semibold ${theme.accentTextClass}`}>FAQ</h2>
-        <div className="mt-3 space-y-4">
-          {faqs.map((faq) => (
-            <div key={faq.question} className="space-y-1">
-              <h3 className="text-base font-semibold text-slate-900">{faq.question}</h3>
-              <p className="text-sm text-slate-700">{faq.answer}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      {faqs.length > 0 ? (
+        <section className={cardClass}>
+          <h2 className={`text-2xl font-semibold ${theme.accentTextClass}`}>FAQ</h2>
+          <div className="mt-3 space-y-4">
+            {faqs.map((faq) => (
+              <div key={faq.question} className="space-y-1">
+                <h3 className="text-base font-semibold text-slate-900">{faq.question}</h3>
+                <p className="text-sm text-slate-700">{faq.answer}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {page.kind === "tool" && !richToolContent ? (
+        <section className={cardClass}>
+          <h2 className={`text-2xl font-semibold ${theme.accentTextClass}`}>Guide is warming up</h2>
+          <p className="mt-2 text-sm text-slate-700">Please refresh in a moment for the full reading guide.</p>
+        </section>
+      ) : null}
 
       <section className={cardClass}>
         <h2 className={`text-2xl font-semibold ${theme.accentTextClass}`}>Related links</h2>
@@ -132,9 +144,9 @@ export function SeoLongformPage({
         </ul>
       </section>
 
-      <p className="text-xs font-medium text-slate-600">
-        {richToolContent?.disclaimer ?? "For reflection and entertainment purposes."}
-      </p>
+      {richToolContent?.disclaimer ? (
+        <p className="text-xs font-medium text-slate-600">{richToolContent.disclaimer}</p>
+      ) : null}
 
       <StructuredData data={faqSchema} />
       {articleSchema ? <StructuredData data={articleSchema} /> : null}

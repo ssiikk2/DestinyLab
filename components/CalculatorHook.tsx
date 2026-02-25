@@ -1,68 +1,26 @@
 ﻿"use client";
 
 import { FormEvent, useMemo, useState } from "react";
-import { CompatibilityInsight, type CompatibilityInsightType } from "@/components/CompatibilityInsight";
+import { ResultLayout } from "@/components/ResultLayout";
 import { getModeTheme, type CalculatorMode } from "@/lib/test-themes";
 
 export type { CalculatorMode };
 
 interface CalculatorHookProps {
   mode: CalculatorMode;
+  variantKey?: string;
+  titleOverride?: string;
 }
 
 interface CalculationResult {
   score: number;
+  title: string;
   summary: string;
-  pros: string[];
-  challenges: string[];
+  strengths: string[];
+  watchouts: string[];
   tips: string[];
-}
-
-function mapModeToInsightType(mode: CalculatorMode): CompatibilityInsightType {
-  if (mode === "love") {
-    return "love";
-  }
-  return mode;
-}
-
-function normalizeValue(input: string): string {
-  return input.trim().toLowerCase();
-}
-
-function hashValue(value: string): number {
-  return value.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
-}
-
-function buildResult(mode: CalculatorMode, first: string, second: string): CalculationResult {
-  const seed = hashValue(`${mode}:${normalizeValue(first)}:${normalizeValue(second)}`);
-  const score = 54 + (seed % 43);
-
-  const summary =
-    score >= 80
-      ? "Strong rhythm with high day-to-day potential."
-      : score >= 68
-        ? "Balanced match with a few stress points to manage."
-        : "Mixed rhythm that benefits from clear structure and patience.";
-
-  return {
-    score,
-    summary,
-    pros: [
-      "Shared momentum when goals are clear",
-      "Good upside for direct communication",
-      "Stable progress through short weekly check-ins",
-    ],
-    challenges: [
-      "Timing differences during stressful weeks",
-      "Quick assumptions when messages are unclear",
-      "Avoiding hard topics for too long",
-    ],
-    tips: [
-      "Set one 10-minute review each week",
-      "Use one sentence requests during conflict",
-      "Track one habit change for 30 days",
-    ],
-  };
+  faq: Array<{ question: string; answer: string }>;
+  tryAlso: Array<{ href: string; note: string }>;
 }
 
 function getLabels(mode: CalculatorMode) {
@@ -145,18 +103,62 @@ function getLabels(mode: CalculatorMode) {
   };
 }
 
-export function CalculatorHook({ mode }: CalculatorHookProps) {
-  const labels = useMemo(() => getLabels(mode), [mode]);
+export function CalculatorHook({ mode, variantKey, titleOverride }: CalculatorHookProps) {
+  const labels = useMemo(() => {
+    const base = getLabels(mode);
+    return titleOverride ? { ...base, heading: titleOverride } : base;
+  }, [mode, titleOverride]);
   const theme = useMemo(() => getModeTheme(mode), [mode]);
   const [first, setFirst] = useState("");
   const [second, setSecond] = useState("");
   const [result, setResult] = useState<CalculationResult | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function onSubmit(event: FormEvent<HTMLFormElement>) {
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setError(null);
+    setIsLoading(true);
     const safeSecond = mode === "destiny" ? second || "reflection" : second;
 
-    setResult(buildResult(mode, first, safeSecond));
+    try {
+      const response = await fetch("/api/calculate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          mode,
+          first,
+          second: safeSecond,
+          variantKey,
+        }),
+      });
+
+      const json = (await response.json()) as (CalculationResult & { error?: string });
+
+      if (
+        !response.ok ||
+        typeof json.score !== "number" ||
+        typeof json.title !== "string" ||
+        typeof json.summary !== "string" ||
+        !Array.isArray(json.strengths) ||
+        !Array.isArray(json.watchouts) ||
+        !Array.isArray(json.tips) ||
+        !Array.isArray(json.faq) ||
+        !Array.isArray(json.tryAlso)
+      ) {
+        throw new Error(json.error || "Could not calculate right now.");
+      }
+
+      setResult(json);
+    } catch (submitError) {
+      setError(
+        submitError instanceof Error
+          ? submitError.message
+          : "Unexpected error while getting your result.",
+      );
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -168,7 +170,7 @@ export function CalculatorHook({ mode }: CalculatorHookProps) {
       </p>
       <h2 className="mt-3 text-2xl font-semibold text-slate-900">{labels.heading}</h2>
       <p className="mt-2 text-sm text-slate-700">
-        This calculator estimates relationship rhythm and communication flow.
+        Pop in your details and get a playful compatibility snapshot.
       </p>
 
       <form onSubmit={onSubmit} className="mt-4 grid gap-3">
@@ -196,57 +198,27 @@ export function CalculatorHook({ mode }: CalculatorHookProps) {
 
         <button
           type="submit"
+          disabled={isLoading}
           className={`mt-1 rounded-xl px-4 py-2 text-sm font-semibold transition ${theme.buttonClass} ${theme.buttonHoverClass}`}
         >
-          Calculate score
+          {isLoading ? "Getting your result..." : "Show my result"}
         </button>
+        {error ? <p className="text-sm font-medium text-rose-700">{error}</p> : null}
       </form>
 
       {result ? (
-        <div className={`mt-5 space-y-4 rounded-2xl border p-4 ${theme.resultClass}`}>
-          <div>
-            <h3 className="text-lg font-semibold text-slate-900">Result</h3>
-            <p className="mt-1 text-sm text-slate-700">
-              Score: <strong>{result.score}/100</strong>. {result.summary}
-            </p>
-          </div>
-
-          <div>
-            <h3 className="text-lg font-semibold text-slate-900">Breakdown</h3>
-            <p className="mt-1 text-sm text-slate-700">
-              Focus on emotional timing, communication clarity, and consistency in follow-through.
-            </p>
-          </div>
-
-          <div>
-            <h3 className="text-lg font-semibold text-slate-900">Pros</h3>
-            <ul className="mt-1 list-disc space-y-1 pl-5 text-sm text-slate-700">
-              {result.pros.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-lg font-semibold text-slate-900">Challenges</h3>
-            <ul className="mt-1 list-disc space-y-1 pl-5 text-sm text-slate-700">
-              {result.challenges.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-lg font-semibold text-slate-900">Tips</h3>
-            <ul className="mt-1 list-disc space-y-1 pl-5 text-sm text-slate-700">
-              {result.tips.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </div>
-
-          <CompatibilityInsight score={result.score} type={mapModeToInsightType(mode)} />
-        </div>
+        <ResultLayout
+          mode={mode}
+          score={result.score}
+          title={result.title}
+          summary={result.summary}
+          strengths={result.strengths}
+          watchouts={result.watchouts}
+          tips={result.tips}
+          faq={result.faq}
+          tryAlso={result.tryAlso}
+          resultClassName={theme.resultClass}
+        />
       ) : null}
     </section>
   );

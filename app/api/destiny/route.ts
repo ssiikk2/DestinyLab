@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("[destiny-api]", error);
     return NextResponse.json(
-      { error: "Model deployment failed. Please retry later." },
+      { error: "Could not load your reading right now. Please try again." },
       { status: 502 },
     );
   }
