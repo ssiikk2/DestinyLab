@@ -172,9 +172,9 @@ function makeSections(seed: LandingSeed): LandingSection[] {
       ],
     },
     {
-      heading: "Building long-tail value over time",
+      heading: "Building steady clarity over time",
       paragraphs: [
-        `People return to long-tail tools for context, not just output. Keep notes short and compare trends monthly. If the same pressure point appears across tools, fix that first.`,
+        `People come back to these tools for perspective, not just a number. Keep notes short and compare trends monthly. If the same pressure point appears across tools, focus there first.`,
         `${seed.longTerm} This page is for entertainment purposes and works best with direct communication and realistic expectations.`,
       ],
     },
@@ -808,7 +808,7 @@ const landingSeeds: LandingSeed[] = [
     action:
       "When users add context and track behavior, calculators become much more informative.",
     longTerm:
-      "For site quality, rich interpretation and internal linking improve both user trust and crawl value.",
+      "Clear interpretation and thoughtful page connections make it easier for readers to move from curiosity to useful action.",
     includeWebApplication: false,
     ctaLabel: "Try the main calculator",
     ctaHref: "/calculator",
@@ -841,8 +841,8 @@ const landingSeeds: LandingSeed[] = [
         answer: "No. They should support communication, not replace it.",
       },
       {
-        question: "What creates thin-content SEO risk on calculator pages?",
-        answer: "Pages with only a form and no unique interpretation often underperform in indexing.",
+        question: "Why do some calculator pages feel shallow?",
+        answer: "When a page only shows a form and score, people are left without context. Helpful interpretation makes results much more useful.",
       },
       {
         question: "Is this guide for entertainment purposes?",

@@ -6,7 +6,7 @@ import { buildMetadata } from "@/lib/seo";
 export const metadata: Metadata = buildMetadata({
   title: "Zodiac Compatibility Hub",
   description:
-    "Explore zodiac compatibility pages for high-intent sign pairs with score context, strengths, challenges, FAQs, and related links.",
+    "Explore zodiac compatibility pages with score context, strengths, challenges, FAQs, and related links.",
   path: "/zodiac",
 });
 

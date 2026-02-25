@@ -9,7 +9,7 @@ export const revalidate = 86400;
 export const dynamic = "force-static";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Love Compatibility Calculator and Long-Tail Relationship Test Hub",
+  title: "Love Compatibility Calculator and Relationship Guide Hub",
   description:
     "Explore calculator, destiny, zodiac, name, and couple-test pages with practical interpretation, FAQs, and internal guides.",
   path: "/",
@@ -27,9 +27,9 @@ const homeFaqs = [
       "Start with /calculator, then use /couple-test or /destiny to validate whether issues are shared or individual.",
   },
   {
-    question: "Do these tools help with long-tail search intent?",
+    question: "Do these tools explain what to do after the score?",
     answer:
-      "Yes. Each tool page targets a specific intent pattern with unique explanatory content and practical follow-up.",
+      "Yes. Each tool page includes simple follow-up steps you can try in daily conversations.",
   },
   {
     question: "How often should users retest compatibility?",
@@ -76,7 +76,7 @@ const webAppSchema = {
   "@type": "WebApplication",
   name: "Love Compatibility Calculator",
   description:
-    "Compatibility calculator and long-tail relationship test pages with practical score interpretation.",
+    "Compatibility calculators and relationship guides with practical score interpretation.",
   applicationCategory: "LifestyleApplication",
   operatingSystem: "Any",
   url: absoluteUrl("/"),
@@ -88,18 +88,17 @@ export default function HomePage() {
       <section className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-rose-50 to-sky-50 p-7 shadow-[0_16px_40px_rgba(15,23,42,0.08)]">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 md:text-4xl">
-            Love Compatibility Calculator with practical long-tail relationship guides
+            Love Compatibility Calculator with practical relationship guides
           </h1>
           <div className="mt-4 space-y-4 text-sm leading-7 text-slate-700 md:text-base">
             <p>
-              This website is designed for two goals at the same time: fast calculator utility and deeper explanatory
-              content that supports search intent. Instead of isolated tool pages, the structure links every route to
-              related tests, FAQs, and follow-up guidance so users can move from score to action.
+              This website helps you do two things: get a quick score and understand what to do next. Instead of
+              leaving you with one number, each page connects to related tests, FAQs, and clear next steps.
             </p>
             <p>
-              The result is better indexing quality and better user outcomes. Each page targets a specific query theme
-              such as love percentage, true love test, crush calculator, or zodiac compatibility. Content is written in
-              plain English, includes structured data, and keeps internal navigation consistent for crawlers and users.
+              Whether you are checking love percentage, a crush score, or zodiac compatibility, the goal is the same:
+              turn results into better conversations. The guides stay practical and focus on habits you can actually
+              test together.
             </p>
             <p>
               Treat every score as a reflection prompt. Choose one improvement, run it for a few weeks, and retest with

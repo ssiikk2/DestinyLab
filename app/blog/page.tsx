@@ -6,7 +6,7 @@ import { buildMetadata } from "@/lib/seo";
 export const metadata: Metadata = buildMetadata({
   title: "Compatibility Blog: Guides, FAQs, and Score Explanations",
   description:
-    "Browse compatibility blog guides built for search intent, including score interpretation, zodiac chart basics, and relationship reflection tips.",
+    "Browse compatibility blog guides with score interpretation, zodiac chart basics, and relationship reflection tips.",
   path: "/blog",
 });
 

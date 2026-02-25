@@ -146,11 +146,11 @@ const seeds: BlogSeed[] = [
       "A practical social-sharing guide that keeps your reading results fun and respectful.",
   },
   {
-    slug: "content-strategy-for-compatibility-sites",
-    title: "Content Strategy for Compatibility Sites That Want SEO Growth",
-    keyword: "compatibility blog seo strategy",
+    slug: "when-compatibility-talks-repeat",
+    title: "When Compatibility Talks Repeat: How to Reset the Conversation",
+    keyword: "stuck compatibility conversations",
     description:
-      "An actionable content roadmap for tool-centric compatibility websites pursuing steady organic growth.",
+      "A practical guide for couples who keep repeating the same argument after checking compatibility results.",
   },
   {
     slug: "cookie-consent-and-adsense-basics",
@@ -160,11 +160,11 @@ const seeds: BlogSeed[] = [
       "A practical compliance checklist for cookie banners, disclaimers, and ad placement.",
   },
   {
-    slug: "indexnow-for-fast-content-discovery",
-    title: "IndexNow for Faster Content Discovery in 2026",
-    keyword: "indexnow setup guide",
+    slug: "reconnect-after-a-distant-week",
+    title: "How to Reconnect After a Distant Week",
+    keyword: "reconnect in relationship",
     description:
-      "How to use IndexNow and Bing Webmaster for faster discovery of new compatibility content.",
+      "Simple steps to rebuild warmth and communication after a week that felt cold or disconnected.",
   },
 ];
 
