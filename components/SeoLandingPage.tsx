@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { CalculatorHook } from "@/components/CalculatorHook";
 import { InternalLinks } from "@/components/InternalLinks";
+import { SeoClusterLinks } from "@/components/SeoClusterLinks";
 import { SeoJsonLd } from "@/components/SeoJsonLd";
 import type { LandingPageRecord } from "@/content/landing-pages";
 import { getGeneratedLandingCopy } from "@/lib/landing-copy-service";
@@ -61,7 +62,6 @@ export async function SeoLandingPage({ page }: SeoLandingPageProps) {
         })
       : null;
 
-  const isToolPage = Boolean(page.calculatorMode);
   const pageForSchema = {
     ...page,
     faqs: generatedCopy?.faqs ?? page.faqs,
@@ -137,6 +137,7 @@ export async function SeoLandingPage({ page }: SeoLandingPageProps) {
       ) : null}
 
       <InternalLinks heading="More to Explore" links={page.relatedLinks} />
+      <SeoClusterLinks />
 
       <section className="rounded-3xl border border-slate-200 bg-slate-50 p-6">
         <h2 className="text-xl font-semibold text-slate-900">Try one more</h2>

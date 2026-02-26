@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { CalculatorHook } from "@/components/CalculatorHook";
+import { SeoClusterLinks } from "@/components/SeoClusterLinks";
 import { StructuredData } from "@/components/StructuredData";
 import type { SeoPageRecord } from "@/content/seo-data";
-import { buildArticleSchema, buildFaqSchema, buildWebApplicationSchema } from "@/lib/schema";
+import { buildArticleSchema, buildBreadcrumbSchema, buildFaqSchema, buildWebApplicationSchema } from "@/lib/schema";
 import { formatHumanDate } from "@/lib/seo";
 import { getToolPageRichContent } from "@/lib/tool-guide-content-service";
 import { getModeTheme, type CalculatorMode } from "@/lib/test-themes";
@@ -18,6 +19,29 @@ interface SeoLongformPageProps {
 interface RenderSection {
   heading: string;
   paragraphs: string[];
+}
+
+function crumbsForPage(page: SeoPageRecord): Array<{ name: string; path: string }> {
+  if (page.path.startsWith("/blog/")) {
+    return [
+      { name: "Home", path: "/" },
+      { name: "Blog", path: "/blog" },
+      { name: page.h1, path: page.path },
+    ];
+  }
+
+  if (page.path.startsWith("/zodiac/")) {
+    return [
+      { name: "Home", path: "/" },
+      { name: "Zodiac", path: "/zodiac" },
+      { name: page.h1, path: page.path },
+    ];
+  }
+
+  return [
+    { name: "Home", path: "/" },
+    { name: page.h1, path: page.path },
+  ];
 }
 
 export async function SeoLongformPage({
@@ -38,6 +62,7 @@ export async function SeoLongformPage({
       : null;
   const faqs = richToolContent?.faqs ?? page.faqs;
   const faqSchema = buildFaqSchema(faqs);
+  const breadcrumbSchema = buildBreadcrumbSchema(crumbsForPage(page));
   const articleSchema = includeArticleSchema
     ? buildArticleSchema({
         path: page.path,
@@ -145,11 +170,27 @@ export async function SeoLongformPage({
         </ul>
       </section>
 
+      <SeoClusterLinks />
+
+      <section className={cardClass}>
+        <h2 className={`text-2xl font-semibold ${theme.accentTextClass}`}>Try the calculator</h2>
+        <p className="mt-2 text-sm text-slate-700">
+          Run the main test, then compare this guide with your live result.
+        </p>
+        <Link
+          href="/calculator"
+          className="mt-4 inline-flex rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+        >
+          Open calculator
+        </Link>
+      </section>
+
       {richToolContent?.disclaimer ? (
         <p className="text-xs font-medium text-slate-600">{richToolContent.disclaimer}</p>
       ) : null}
 
       <StructuredData data={faqSchema} />
+      <StructuredData data={breadcrumbSchema} />
       {articleSchema ? <StructuredData data={articleSchema} /> : null}
       {webApplicationSchema ? <StructuredData data={webApplicationSchema} /> : null}
     </article>

@@ -2,10 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ResultReport } from "@/components/results/ResultReport";
+import { SeoClusterLinks } from "@/components/SeoClusterLinks";
+import { StructuredData } from "@/components/StructuredData";
 import { compatibilityPairPages, getPairBySlug } from "@/content/compatibility-pages";
 import { appEnv } from "@/lib/env";
 import { buildResultReport } from "@/lib/results/engine";
 import { buildSeed, deterministicShuffle } from "@/lib/results/seed";
+import { buildBreadcrumbSchema, buildFaqSchema } from "@/lib/schema";
 import { buildMetadata } from "@/lib/seo";
 
 interface PairPageProps {
@@ -179,6 +182,14 @@ export default async function PairPage({ params, searchParams }: PairPageProps) 
   const query = searchParams ? await searchParams : undefined;
   const primaryInput = query?.a?.trim() || data.signA;
   const secondaryInput = query?.b?.trim() || data.signB;
+  const pairSections = makePairSections(data.signA, data.signB);
+  const faqItems = pairSections.find((section) => section.faqs)?.faqs || [];
+  const faqSchema = buildFaqSchema(faqItems);
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Compatibility", path: "/tests" },
+    { name: `${data.signA} and ${data.signB}`, path: `/compatibility/${data.slug}` },
+  ]);
   const shareLink = `/compatibility/${data.slug}?a=${encodeURIComponent(primaryInput)}&b=${encodeURIComponent(secondaryInput)}`;
   const report = buildResultReport({
     testKey: "compatibility",
@@ -206,7 +217,7 @@ export default async function PairPage({ params, searchParams }: PairPageProps) 
       </header>
 
       <section className="space-y-3">
-        {makePairSections(data.signA, data.signB).map((section) => (
+        {pairSections.map((section) => (
           <div key={section.title} className="space-y-1 rounded-2xl border border-border-soft bg-white p-4">
             <h2 className="text-xl font-semibold text-text-main">{section.title}</h2>
             {section.body ? <p className="text-text-muted">{section.body}</p> : null}
@@ -234,19 +245,30 @@ export default async function PairPage({ params, searchParams }: PairPageProps) 
       </section>
 
       <ResultReport report={report} shareLink={shareLink} />
+      <SeoClusterLinks />
 
       <section className="rounded-2xl border border-border-soft bg-bg-muted p-5">
         <h2 className="text-2xl font-semibold text-text-main">Try one more pair</h2>
         <p className="mt-2 text-text-muted">Open another pair page and compare what changes in the tone.</p>
-        <Link
-          href="/zodiac"
-          className="mt-4 inline-flex rounded-full bg-brand-primary px-5 py-2 text-sm font-bold text-white hover:bg-[#2b2f8f]"
-        >
-          Explore zodiac hub
-        </Link>
+        <div className="mt-4 flex flex-wrap gap-3">
+          <Link
+            href="/calculator"
+            className="inline-flex rounded-full bg-brand-primary px-5 py-2 text-sm font-bold text-white hover:bg-[#2b2f8f]"
+          >
+            Try the calculator
+          </Link>
+          <Link
+            href="/zodiac"
+            className="inline-flex rounded-full border border-border-soft bg-white px-5 py-2 text-sm font-bold text-text-main hover:bg-bg-muted"
+          >
+            Explore zodiac hub
+          </Link>
+        </div>
       </section>
 
       <p className="text-sm font-semibold text-text-tertiary">{appEnv.siteName} is for entertainment purposes only.</p>
+      <StructuredData data={faqSchema} />
+      <StructuredData data={breadcrumbSchema} />
     </article>
   );
 }
