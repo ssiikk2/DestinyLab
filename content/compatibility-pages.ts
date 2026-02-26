@@ -5,6 +5,7 @@ export interface CompatibilityPairPage {
   intro: string;
   strengths: string[];
   watchouts: string[];
+  lastUpdated: string;
 }
 
 const pairList: Array<[string, string]> = [
@@ -12,12 +13,16 @@ const pairList: Array<[string, string]> = [
   ["taurus", "libra"],
   ["gemini", "capricorn"],
   ["cancer", "pisces"],
+  ["cancer", "libra"],
   ["leo", "sagittarius"],
+  ["leo", "aries"],
   ["virgo", "aquarius"],
   ["libra", "cancer"],
   ["scorpio", "taurus"],
+  ["scorpio", "pisces"],
   ["sagittarius", "gemini"],
   ["capricorn", "virgo"],
+  ["taurus", "capricorn"],
   ["aquarius", "aries"],
   ["pisces", "leo"],
 ];
@@ -42,6 +47,7 @@ export const compatibilityPairPages: CompatibilityPairPage[] = pairList.map(
       "Different decision speed under pressure",
       "Letting unresolved tension carry into new issues",
     ],
+    lastUpdated: "2026-02-26",
   }),
 );
 

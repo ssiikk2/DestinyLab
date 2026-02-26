@@ -153,6 +153,55 @@ const seeds: BlogSeed[] = [
       "A practical guide for couples who keep repeating the same argument after checking compatibility results.",
   },
   {
+    slug: "love-compatibility-score-meaning",
+    title: "Love Compatibility Score Meaning: How to Read the Number Without Panic",
+    keyword: "love compatibility score meaning",
+    description:
+      "A clear guide to reading compatibility scores, spotting what actually matters, and choosing sensible next moves.",
+  },
+  {
+    slug: "70-love-compatibility-score-meaning",
+    title: "What a 70 Love Compatibility Score Really Means",
+    keyword: "70 love compatibility score meaning",
+    description:
+      "Understand the strengths, limits, and practical follow-up actions behind a 70 score.",
+  },
+  {
+    slug: "low-compatibility-score-meaning",
+    title: "Low Compatibility Score Meaning: What to Do Next",
+    keyword: "low compatibility score meaning",
+    description:
+      "How to interpret a low score without overreacting, and where to focus first for better relationship rhythm.",
+  },
+  {
+    slug: "is-love-compatibility-calculator-accurate",
+    title: "Is a Love Compatibility Calculator Accurate?",
+    keyword: "is love compatibility calculator accurate",
+    description:
+      "A practical explanation of what these calculators can and cannot tell you in real life.",
+  },
+  {
+    slug: "how-to-improve-relationship-compatibility",
+    title: "How to Improve Relationship Compatibility Week by Week",
+    keyword: "how to improve relationship compatibility",
+    description:
+      "Simple weekly habits to improve communication, trust, and emotional timing as a pair.",
+  },
+  {
+    slug: "compatibility-strengths-and-weaknesses",
+    title: "Compatibility Strengths and Weaknesses: A Practical Framework",
+    keyword: "compatibility strengths and weaknesses",
+    description:
+      "Learn how to map your strongest points and pressure points into a workable relationship plan.",
+  },
+  {
+    slug: "next-steps-after-compatibility-score",
+    title: "Next Steps After a Compatibility Score",
+    keyword: "next steps after compatibility score",
+    description:
+      "A clean action checklist for what to do after you see a compatibility result.",
+  },
+  {
     slug: "cookie-consent-and-adsense-basics",
     title: "Cookie Consent and AdSense Basics for Reading Sites",
     keyword: "adsense policy for astrology site",

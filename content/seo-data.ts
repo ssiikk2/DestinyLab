@@ -258,6 +258,21 @@ function buildFaqs(keyword: string): SeoFaq[] {
       answer:
         "Keep communication clear, set short review cycles, and track one behavior change at a time.",
     },
+    {
+      question: "Should we compare this with another test?",
+      answer:
+        "Yes. A second angle often makes interpretation clearer and more balanced.",
+    },
+    {
+      question: "Can this still be useful if we disagree with it?",
+      answer:
+        "Absolutely. Disagreement can highlight what each person values most right now.",
+    },
+    {
+      question: "What is one good next move after reading this?",
+      answer:
+        "Choose one practical action for this week and review how it changed the tone.",
+    },
   ];
 }
 
