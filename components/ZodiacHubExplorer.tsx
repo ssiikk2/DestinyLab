@@ -56,19 +56,17 @@ export function ZodiacHubExplorer({ pages }: ZodiacHubExplorerProps) {
   const router = useRouter();
   const [firstSign, setFirstSign] = useState<string | null>(null);
   const [secondSign, setSecondSign] = useState<string | null>(null);
-  const [isRouting, setIsRouting] = useState(false);
 
   const pageBySlug = useMemo(() => new Map(pages.map((page) => [page.slug, page])), [pages]);
 
   useEffect(() => {
-    if (!firstSign || !secondSign || isRouting) {
+    if (!firstSign || !secondSign) {
       return;
     }
 
     const pairSlug = `${toSignSlug(firstSign)}-and-${toSignSlug(secondSign)}`;
-    setIsRouting(true);
     router.push(`/compatibility/${pairSlug}`);
-  }, [firstSign, secondSign, isRouting, router]);
+  }, [firstSign, secondSign, router]);
 
   const popularPairs = useMemo(
     () =>
@@ -104,7 +102,6 @@ export function ZodiacHubExplorer({ pages }: ZodiacHubExplorerProps) {
 
     setFirstSign(secondSign);
     setSecondSign(sign);
-    setIsRouting(false);
   }
 
   return (
@@ -144,7 +141,6 @@ export function ZodiacHubExplorer({ pages }: ZodiacHubExplorerProps) {
             onClick={() => {
               setFirstSign(null);
               setSecondSign(null);
-              setIsRouting(false);
             }}
             className="rounded-full border border-slate-300 bg-white px-3 py-1 text-slate-700 transition hover:bg-slate-50"
           >

@@ -23,7 +23,7 @@ const STATIC_PUBLIC_PATHS = [
   "/contact",
 ] as const;
 
-const STATIC_LAST_MODIFIED = new Date("2026-02-24T00:00:00.000Z");
+const BUILD_LAST_MODIFIED = new Date();
 const LEGACY_REDIRECT_PATHS = new Set([
   "/love-compatibility-calculator",
   "/destiny-calculator",
@@ -47,17 +47,17 @@ function dedupeByUrl(entries: PublicSitemapEntry[]): PublicSitemapEntry[] {
 export function getPublicSitemapEntries(): PublicSitemapEntry[] {
   const staticEntries: PublicSitemapEntry[] = STATIC_PUBLIC_PATHS.map((path) => ({
     url: absoluteUrl(path),
-    lastModified: STATIC_LAST_MODIFIED,
+    lastModified: BUILD_LAST_MODIFIED,
   }));
 
   const seoEntries: PublicSitemapEntry[] = allSeoPages.map((page) => ({
     url: absoluteUrl(page.path),
-    lastModified: new Date(page.lastUpdated),
+    lastModified: page.lastUpdated ? new Date(page.lastUpdated) : BUILD_LAST_MODIFIED,
   })).filter((entry) => !LEGACY_REDIRECT_PATHS.has(new URL(entry.url).pathname));
 
   const compatibilityEntries: PublicSitemapEntry[] = compatibilityPairPages.map((pair) => ({
     url: absoluteUrl(`/compatibility/${pair.slug}`),
-    lastModified: STATIC_LAST_MODIFIED,
+    lastModified: pair.lastUpdated ? new Date(pair.lastUpdated) : BUILD_LAST_MODIFIED,
   }));
 
   return dedupeByUrl([...staticEntries, ...seoEntries, ...compatibilityEntries]);
