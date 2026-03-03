@@ -7,6 +7,7 @@ import { buildResultReport } from "@/lib/results/engine";
 import { resolveResultTestKey } from "@/lib/results/resolve";
 import type { BaseResultOutput } from "@/lib/results/types";
 import { getModeTheme, type CalculatorMode } from "@/lib/test-themes";
+import type { ViralityContext } from "@/lib/virality-text";
 
 export type { CalculatorMode };
 
@@ -273,6 +274,38 @@ export function CalculatorHook({ mode, variantKey, titleOverride }: CalculatorHo
     return `${pathname}?${query}`;
   }, [result, pathname, mode, first, second, variantKey]);
 
+  const viralityContext: ViralityContext = useMemo(() => {
+    if (mode === "zodiac") return "zodiac";
+    if (mode === "destiny") return "destiny";
+    if (mode === "love") return "love";
+    return "compatibility";
+  }, [mode]);
+
+  const compareLabels = useMemo(() => {
+    if (mode === "zodiac") return { first: "Sign one", second: "Sign two" };
+    if (mode === "destiny") return { first: "Birth date", second: "Focus word (optional)" };
+    if (mode === "name") return { first: "Name one", second: "Name two" };
+    return { first: labels.firstLabel, second: labels.secondLabel };
+  }, [mode, labels.firstLabel, labels.secondLabel]);
+
+  const onCompareSubmit = useCallback(
+    async (firstValue: string, secondValue: string) => {
+      setError(null);
+      setIsLoading(true);
+      setFirst(firstValue);
+      setSecond(secondValue);
+      try {
+        const computed = await runCalculation(firstValue, secondValue);
+        setResult(computed);
+      } catch (submitError) {
+        setError(submitError instanceof Error ? submitError.message : "Unexpected error while getting your result.");
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [runCalculation],
+  );
+
   useEffect(() => {
     if (!result || !pathname) return;
     const params = new URLSearchParams();
@@ -330,7 +363,15 @@ export function CalculatorHook({ mode, variantKey, titleOverride }: CalculatorHo
       </form>
 
       {report ? (
-        <ResultReport report={report} shareLink={shareLink} className={theme.resultClass} />
+        <ResultReport
+          report={report}
+          shareLink={shareLink}
+          className={theme.resultClass}
+          context={viralityContext}
+          compareSecondaryOptional={mode === "destiny"}
+          compareLabels={compareLabels}
+          onCompareSubmit={onCompareSubmit}
+        />
       ) : null}
     </section>
   );

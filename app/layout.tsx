@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import Script from "next/script";
 import { CookieConsent } from "@/components/CookieConsent";
 import { SiteHeader } from "@/components/SiteHeader";
 import { appEnv } from "@/lib/env";
@@ -8,6 +9,7 @@ import { CANONICAL_ORIGIN } from "@/lib/seo";
 import "./globals.css";
 
 const ADSENSE_CLIENT = "ca-pub-9161450133304636";
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "";
 
 export const metadata: Metadata = {
   metadataBase: new URL(CANONICAL_ORIGIN),
@@ -46,16 +48,30 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const adsenseScriptSrc = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`;
+
   return (
     <html lang="en">
       <head>
         <script
           async
           crossOrigin="anonymous"
-          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`}
+          src={adsenseScriptSrc}
         />
+        {GA_ID ? <Script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" /> : null}
+        {GA_ID ? (
+          <Script id="ga-init" strategy="afterInteractive">
+            {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+window.gtag = gtag;
+gtag('js', new Date());
+gtag('config', '${GA_ID}', { anonymize_ip: true });`}
+          </Script>
+        ) : null}
       </head>
       <body id="page-top">
+        <script async crossOrigin="anonymous" src={adsenseScriptSrc} />
+
         <SiteHeader />
 
         <main>{children}</main>

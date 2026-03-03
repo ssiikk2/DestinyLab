@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { ResultReport } from "@/components/results/ResultReport";
 import { loadReadingLocal, saveReadingLocal } from "@/lib/reading-browser";
@@ -19,6 +20,7 @@ type ViewState =
   | { status: "ready"; stored: StoredReading };
 
 export function ReadingView({ id }: ReadingViewProps) {
+  const router = useRouter();
   const [state, setState] = useState<ViewState>({ status: "loading" });
 
   useEffect(() => {
@@ -108,7 +110,29 @@ export function ReadingView({ id }: ReadingViewProps) {
 
   return (
     <article className="space-y-6 md:space-y-7">
-      <ResultReport report={report} shareLink={shareLink} />
+      <ResultReport
+        report={report}
+        shareLink={shareLink}
+        context={report.testKey === "destiny" ? "destiny" : "compatibility"}
+        compareSecondaryOptional={report.testKey === "destiny"}
+        compareLabels={report.testKey === "destiny" ? { first: "Birth date", second: "Focus word (optional)" } : { first: "Person one", second: "Person two" }}
+        onCompareSubmit={(first, second) => {
+          if (report.testKey === "destiny") {
+            const params = new URLSearchParams();
+            params.set("m", "destiny");
+            params.set("a", first);
+            if (second) params.set("b", second);
+            router.push(`/destiny?${params.toString()}`);
+            return;
+          }
+
+          const params = new URLSearchParams();
+          params.set("m", "birthday");
+          params.set("a", first);
+          params.set("b", second);
+          router.push(`/birthday-compatibility?${params.toString()}`);
+        }}
+      />
       <section className="premium-card flex flex-col gap-3 p-5 md:flex-row md:items-center md:justify-between fade-up">
         <div className="flex flex-wrap gap-2">
           <Link href="/#compatibility-form" className="btn-primary px-5 py-2 text-sm">

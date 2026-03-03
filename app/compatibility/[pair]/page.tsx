@@ -242,7 +242,12 @@ export default async function PairPage({ params, searchParams }: PairPageProps) 
         ))}
       </section>
 
-      <ResultReport report={report} shareLink={shareLink} />
+      <ResultReport
+        report={report}
+        shareLink={shareLink}
+        context="zodiac"
+        compareLabels={{ first: "Sign one", second: "Sign two" }}
+      />
       <SeoClusterLinks context={{ type: "pair", pair: data.slug, tags: [data.signA.toLowerCase(), data.signB.toLowerCase()] }} />
 
       <section className="rounded-2xl border border-border-soft bg-bg-muted p-5">
