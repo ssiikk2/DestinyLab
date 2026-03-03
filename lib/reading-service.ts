@@ -1,4 +1,4 @@
-import { createUnifiedResult } from "@/lib/unified-result-service";
+import { createLocalResult } from "@/lib/local-result-service";
 import {
   getCachedCalculatorValue,
   setCachedCalculatorValue,
@@ -12,7 +12,7 @@ function compactLines(lines: string[], joiner: string): string {
 function toCompatibilityReading(
   birthDateA: string,
   birthDateB: string,
-  payload: Awaited<ReturnType<typeof createUnifiedResult>>,
+  payload: Awaited<ReturnType<typeof createLocalResult>>,
 ): CompatibilityReading {
   return {
     kind: "compatibility",
@@ -48,7 +48,7 @@ function toCompatibilityReading(
 
 function toDestinyReading(
   birthDate: string,
-  payload: Awaited<ReturnType<typeof createUnifiedResult>>,
+  payload: Awaited<ReturnType<typeof createLocalResult>>,
 ): DestinyReading {
   return {
     kind: "destiny",
@@ -87,7 +87,7 @@ export async function createCompatibilityReading(
     return cached;
   }
 
-  const payload = await createUnifiedResult({
+  const payload = createLocalResult({
     mode: "birthday",
     first: birthDateA,
     second: birthDateB,
@@ -113,7 +113,7 @@ export async function createDestinyReading(
     return cached;
   }
 
-  const payload = await createUnifiedResult({
+  const payload = createLocalResult({
     mode: "destiny",
     first: birthDate,
     second: "self",

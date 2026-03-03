@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getClientIp } from "@/lib/ip";
+import { createLocalResult } from "@/lib/local-result-service";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { isThrottled } from "@/lib/server/request-throttle";
 import type { CalculatorMode } from "@/lib/test-themes";
-import { createUnifiedResult } from "@/lib/unified-result-service";
 
 interface CalculateRequestBody {
   mode?: string;
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
   const secondSafe = body.mode === "destiny" ? second || "reflection" : second;
 
   try {
-    const result = await createUnifiedResult({
+    const result = createLocalResult({
       mode: body.mode,
       first,
       second: secondSafe,
