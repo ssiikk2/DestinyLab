@@ -23,7 +23,7 @@ const STATIC_PUBLIC_PATHS = [
   "/contact",
 ] as const;
 
-const BUILD_LAST_MODIFIED = new Date();
+const BUILD_LAST_MODIFIED = process.env.BUILD_DATE ? new Date(process.env.BUILD_DATE) : new Date();
 const LEGACY_REDIRECT_PATHS = new Set([
   "/love-compatibility-calculator",
   "/destiny-calculator",

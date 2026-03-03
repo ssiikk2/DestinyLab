@@ -44,8 +44,8 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/favicon.ico",
-        destination: "/icons/favicon3.png",
-        permanent: true,
+        destination: "/icons/faviconfinal.png?v=20260303b",
+        permanent: false,
       },
     ];
   },

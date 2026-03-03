@@ -1,19 +1,20 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { InternalLinkCluster } from "@/components/InternalLinkCluster";
 import { InternalLinks } from "@/components/InternalLinks";
 import { SeoJsonLd } from "@/components/SeoJsonLd";
 import { homeGuideLinks, homeToolsLinks } from "@/content/landing-pages";
-import { absoluteUrl, buildMetadata } from "@/lib/seo";
+import { absoluteUrl, buildHubMeta } from "@/lib/seo";
 
 export const revalidate = 86400;
 export const dynamic = "force-static";
 
-export const metadata: Metadata = buildMetadata({
-  title: "Love Compatibility Calculator and Fun Relationship Readings",
-  description:
-    "Try love, zodiac, name, and destiny readings with playful explanations and shareable results.",
+export const metadata: Metadata = buildHubMeta({
+  primaryKeyword: "Love compatibility insights",
   path: "/",
+  year: 2026,
+  variantSeed: "/",
 });
 
 const homeFaqs = [
@@ -129,7 +130,7 @@ export default function HomePage() {
         </div>
           <div className="mx-auto md:mx-0">
             <Image
-              src="/icons/faviconfinal.png"
+              src="/brand/favicon2.png"
               alt="Cat and calculator mascot"
               width={220}
               height={220}
@@ -142,6 +143,7 @@ export default function HomePage() {
 
       <InternalLinks heading="Pick a Test" links={homeToolsLinks} />
       <InternalLinks heading="Quick Reads" links={homeGuideLinks} />
+      <InternalLinkCluster context={{ type: "home", tags: ["home", "insights"] }} />
 
       <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_12px_30px_rgba(15,23,42,0.07)]">
         <h2 className="text-2xl font-semibold text-slate-900">FAQ</h2>

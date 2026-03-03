@@ -9,7 +9,7 @@ import { appEnv } from "@/lib/env";
 import { buildResultReport } from "@/lib/results/engine";
 import { buildSeed, deterministicShuffle } from "@/lib/results/seed";
 import { buildBreadcrumbSchema, buildFaqSchema } from "@/lib/schema";
-import { buildMetadata } from "@/lib/seo";
+import { buildPairMeta } from "@/lib/seo";
 
 interface PairPageProps {
   params: Promise<{ pair: string }>;
@@ -25,125 +25,119 @@ interface PairSection {
 
 function makePairSections(signA: string, signB: string): PairSection[] {
   const seed = buildSeed([signA, signB]);
-  const summaryPool = [
-    `${signA} and ${signB} tend to do well when the tone stays clear and warm. Their best moments usually come from simple check-ins, not grand speeches.`,
-    `${signA} with ${signB} can feel both lively and layered. When both people say what they mean early, this pairing becomes much easier to navigate.`,
-    `${signA} and ${signB} often have real pull, but pace matters. A little structure around tough moments helps this match feel calmer and closer.`,
+  const uniqueParagraphs = [
+    `${signA} often pushes movement while ${signB} looks for emotional safety first, so this pair works best when speed and reassurance are negotiated together.`,
+    `${signA} and ${signB} usually share strong attraction but different value signals around timing, which is why clear communication makes such a dramatic difference.`,
+    `With ${signA} and ${signB}, the chemistry is rarely the issue; consistency is. When both protect each other's communication style, long-term stability improves.`,
   ];
 
-  const worksBestPool = [
-    "Both people name expectations before a stressful week starts.",
-    "Hard topics happen in short, focused talks instead of late-night spirals.",
-    "Each person says one appreciation out loud during conflict repair.",
-    "Plans are confirmed clearly, especially around timing changes.",
-    "You check assumptions before reacting to tone.",
+  const quickSnapshotPool = [
+    "Your strongest moments come from direct and kind communication, not guessing games.",
+    "This pair usually improves fast when expectations are named before stress spikes.",
+    "Shared momentum is good, but conflict repair speed decides the long-term mood.",
+    "Texting tone can create friction unless both people clarify intent early.",
+    "Small weekly habits outperform big one-time talks in this match.",
   ];
 
-  const pressurePointsPool = [
-    "One person wants an answer now while the other needs breathing room.",
-    "Text tone gets misread when energy is low.",
-    "Old tension leaks into a new conversation.",
-    "Silence is interpreted as distance instead of cooldown.",
-    "Busy schedules make both people feel under-prioritized.",
+  const strengthsPool = [
+    "High curiosity about each other's perspective during calm conversations.",
+    "Strong emotional pull that helps both return after disagreement.",
+    "Good momentum when plans are explicit and time windows are clear.",
+    "Natural chemistry in playful settings and low-pressure activities.",
+    "Ability to recover quickly when appreciation is spoken out loud.",
   ];
 
-  const weekPlanPool = [
-    "Day 1: Trade one thing that felt easy this week and one thing that felt tense.",
-    "Day 2: Set a 10-minute check-in time for the same day next week.",
-    "Day 3: During one chat, repeat back what you heard before replying.",
-    "Day 4: Send one direct message instead of a hint.",
-    "Day 5: Do one light activity together with phones away for 20 minutes.",
-    "Day 6: Name one recurring friction point and agree on one small fix.",
-    "Day 7: End the week with one appreciation and one practical next step.",
-    "Day 1: Start with a clean slate question: what do we want this week to feel like?",
-    "Day 2: Pick one phrase you both use when a talk gets heated.",
-    "Day 3: Share one personal trigger without blaming language.",
-    "Day 4: Keep one conversation short on purpose: 12 minutes max.",
-    "Day 5: Plan a small date with a clear start and end time.",
-    "Day 6: Review one misunderstanding and rewrite it in plain words.",
-    "Day 7: Decide one habit to keep for next week.",
+  const challengesPool = [
+    "Different pacing needs can feel like mixed signals under pressure.",
+    "Silence during conflict may be read as distance instead of cooldown.",
+    "Unclear text tone can trigger overthinking on both sides.",
+    "Stacking too many issues in one talk creates defensiveness.",
+    "Busy schedules can make both people feel under-prioritized.",
   ];
 
-  const textingRulesPool = [
-    "If a message can be read two ways, rewrite it once before sending.",
-    "Use one clear ask per message during serious topics.",
-    "When tone feels off, switch to voice instead of escalating in text.",
-    "Do not stack complaints in one long paragraph.",
-    "If either person is overwhelmed, send a reset line with a return time.",
+  const communicationTipsPool = [
+    "Use one clear ask per serious message and one clear response window.",
+    "When tone gets sharp, switch to voice and keep it under ten minutes.",
+    "Start difficult talks with one appreciation before one request.",
+    "Repeat what you heard before defending your own point.",
+    "Agree on a reset phrase both people can use mid-conflict.",
+  ];
+
+  const nextStepsPool = [
+    "Pick one friction point and run a seven-day experiment before judging progress.",
+    "Schedule one short weekly check-in with a fixed time and no multitasking.",
+    "Choose one shared rule for texting during stressful days.",
+    "After your next disagreement, end with one concrete action each.",
+    "Run this pair page again in two weeks and compare what changed.",
   ];
 
   const faqPool = [
     {
-      question: `Is ${signA} and ${signB} a naturally easy match?`,
-      answer: "It can be, but it depends more on timing and communication habits than labels.",
+      question: `What does the ${signA} and ${signB} score meaning tell us?`,
+      answer: "It points to likely strengths and challenges, then gives advice on what to adjust next.",
     },
     {
-      question: "What matters most first: chemistry or consistency?",
-      answer: "Chemistry starts things. Consistency decides whether things stay healthy.",
+      question: "What is the biggest strength in this pair?",
+      answer: "Most often it is natural pull plus curiosity, especially when communication stays direct.",
     },
     {
-      question: "How often should we check this page again?",
-      answer: "Every few weeks is enough, especially after you test a new habit.",
+      question: "What challenge shows up most often?",
+      answer: "Pace mismatch and tone misreads are common, especially in text-only conversations.",
     },
     {
-      question: "What should we do right after a low-feeling week?",
-      answer: "Pick one small repair rule and run it for seven days before judging progress.",
+      question: "How should we improve communication first?",
+      answer: "Set one clear check-in routine and one rule for handling heated moments.",
     },
     {
-      question: "Can texting alone carry this match?",
-      answer: "Usually no. Important topics land better in voice or in person.",
+      question: "What does long-term outlook depend on here?",
+      answer: "Less on chemistry, more on how consistently both people repair after friction.",
     },
     {
-      question: "What is the fastest way to reduce misunderstandings?",
-      answer: "Repeat what you heard, then respond. That one step prevents many loops.",
-    },
-    {
-      question: "Should we try to fix every issue at once?",
-      answer: "No. One pressure point at a time gives better results.",
-    },
-    {
-      question: "How do we keep this fun while still improving?",
-      answer: "Use tiny weekly experiments, not heavy rules.",
-    },
-    {
-      question: "What if we disagree with this read?",
-      answer: "Good. Compare notes and use the disagreement as a conversation starter.",
-    },
-    {
-      question: "Can this page predict the whole future?",
-      answer: "No. It is a snapshot for reflection, not a fixed outcome.",
+      question: "What should we do if the score feels low?",
+      answer: "Pick one practical next step this week and re-check after real behavior changes.",
     },
   ];
 
   return [
     {
-      title: "Quick Summary",
-      body: deterministicShuffle(summaryPool, seed + 1)[0],
+      title: "Quick Snapshot",
+      body: deterministicShuffle(uniqueParagraphs, seed + 1)[0],
+      items: deterministicShuffle(quickSnapshotPool, seed + 2).slice(0, 5),
     },
     {
-      title: "Works best when...",
+      title: "Strengths",
       body: "",
-      items: deterministicShuffle(worksBestPool, seed + 2).slice(0, 3),
+      items: deterministicShuffle(strengthsPool, seed + 3).slice(0, 4),
     },
     {
-      title: "Pressure points",
+      title: "Challenges",
       body: "",
-      items: deterministicShuffle(pressurePointsPool, seed + 3).slice(0, 3),
+      items: deterministicShuffle(challengesPool, seed + 4).slice(0, 4),
     },
     {
-      title: "Do this this week",
+      title: "Communication Tips",
       body: "",
-      items: deterministicShuffle(weekPlanPool, seed + 4).slice(0, 7),
+      items: deterministicShuffle(communicationTipsPool, seed + 5).slice(0, 4),
     },
     {
-      title: "Texting rules",
+      title: "Long-term Outlook",
+      body: deterministicShuffle(
+        [
+          `The long-term outlook for ${signA} and ${signB} improves when both protect repair habits, not just chemistry highs.`,
+          `${signA} and ${signB} can build strong long-term alignment by treating communication rituals as non-negotiable.`,
+        ],
+        seed + 6,
+      )[0],
+    },
+    {
+      title: "Next Steps",
       body: "",
-      items: deterministicShuffle(textingRulesPool, seed + 5).slice(0, 3),
+      items: deterministicShuffle(nextStepsPool, seed + 7).slice(0, 4),
     },
     {
       title: "FAQ",
       body: "",
-      faqs: deterministicShuffle(faqPool, seed + 6).slice(0, 10),
+      faqs: deterministicShuffle(faqPool, seed + 8).slice(0, 6),
     },
   ];
 }
@@ -157,17 +151,21 @@ export async function generateMetadata({ params }: PairPageProps): Promise<Metad
   const data = getPairBySlug(pair);
 
   if (!data) {
-    return buildMetadata({
-      title: "Compatibility",
-      description: "Compatibility guide",
+    return buildPairMeta({
+      signA: "Zodiac",
+      signB: "Pair",
       path: "/compatibility",
+      year: 2026,
+      variantSeed: "/compatibility",
     });
   }
 
-  return buildMetadata({
-    title: `${data.signA} and ${data.signB} Compatibility`,
-    description: data.intro,
+  return buildPairMeta({
+    signA: data.signA,
+    signB: data.signB,
     path: `/compatibility/${data.slug}`,
+    year: 2026,
+    variantSeed: data.slug,
   });
 }
 
@@ -245,7 +243,7 @@ export default async function PairPage({ params, searchParams }: PairPageProps) 
       </section>
 
       <ResultReport report={report} shareLink={shareLink} />
-      <SeoClusterLinks />
+      <SeoClusterLinks context={{ type: "pair", pair: data.slug, tags: [data.signA.toLowerCase(), data.signB.toLowerCase()] }} />
 
       <section className="rounded-2xl border border-border-soft bg-bg-muted p-5">
         <h2 className="text-2xl font-semibold text-text-main">Try one more pair</h2>

@@ -59,22 +59,36 @@ export function ZodiacHubExplorer({ pages }: ZodiacHubExplorerProps) {
 
   const pageBySlug = useMemo(() => new Map(pages.map((page) => [page.slug, page])), [pages]);
 
+  const resolvePairPath = useMemo(
+    () => (firstValue: string, secondValue: string) => {
+      const firstSlug = toSignSlug(firstValue);
+      const secondSlug = toSignSlug(secondValue);
+      const pairSlug = `${firstSlug}-and-${secondSlug}`;
+      const zodiacPath = `/zodiac/${pairSlug}-compatibility`;
+      if (pageBySlug.has(`${pairSlug}-compatibility`)) {
+        return zodiacPath;
+      }
+
+      return `/zodiac-compatibility?a=${encodeURIComponent(firstValue)}&b=${encodeURIComponent(secondValue)}`;
+    },
+    [pageBySlug],
+  );
+
   useEffect(() => {
     if (!firstSign || !secondSign) {
       return;
     }
 
-    const pairSlug = `${toSignSlug(firstSign)}-and-${toSignSlug(secondSign)}`;
-    router.push(`/compatibility/${pairSlug}`);
-  }, [firstSign, secondSign, router]);
+    router.push(resolvePairPath(firstSign, secondSign));
+  }, [firstSign, secondSign, router, resolvePairPath]);
 
   const popularPairs = useMemo(
     () =>
       POPULAR_PAIR_SLUGS.map((slug) => {
         const canonicalSlug = `${slug}-compatibility`;
         return pageBySlug.get(canonicalSlug)
-          ? { slug, path: `/compatibility/${slug}`, label: pageBySlug.get(canonicalSlug)?.h1 || slug }
-          : { slug, path: `/compatibility/${slug}`, label: slug.replace(/-/g, " ") };
+          ? { slug, path: `/zodiac/${canonicalSlug}`, label: pageBySlug.get(canonicalSlug)?.h1 || slug }
+          : { slug, path: `/zodiac-compatibility?a=${encodeURIComponent(slug.split("-and-")[0])}&b=${encodeURIComponent(slug.split("-and-")[1])}`, label: slug.replace(/-/g, " ") };
       }),
     [pageBySlug],
   );

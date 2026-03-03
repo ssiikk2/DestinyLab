@@ -2,7 +2,7 @@
 import { notFound } from "next/navigation";
 import { SeoLongformPage } from "@/components/SeoLongformPage";
 import { getBlogPageBySlug, getBlogPages } from "@/content/seo-data";
-import { buildMetadata } from "@/lib/seo";
+import { buildGuideMeta } from "@/lib/seo";
 
 interface BlogPageProps {
   params: Promise<{ slug: string }>;
@@ -21,18 +21,19 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
   const page = getBlogPageBySlug(slug);
 
   if (!page) {
-    return buildMetadata({
-      title: "Compatibility Blog",
-      description: "Compatibility blog guide",
+    return buildGuideMeta({
+      primaryKeyword: "Compatibility guide",
       path: "/blog",
+      year: 2026,
+      variantSeed: "/blog",
     });
   }
 
-  return buildMetadata({
-    title: page.title,
-    description: page.description,
+  return buildGuideMeta({
+    primaryKeyword: page.keyword || page.h1,
     path: page.path,
-    type: "article",
+    year: 2026,
+    variantSeed: page.slug,
   });
 }
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import type { LandingPageRecord } from "@/content/landing-pages";
 import { getLandingPageByPath } from "@/content/landing-pages";
 import { getGeneratedLandingMetadata } from "@/lib/landing-metadata-service";
-import { buildMetadata } from "@/lib/seo";
+import { buildGuideMeta, buildHubMeta, buildToolMeta } from "@/lib/seo";
 
 export function requireLandingPage(path: string): LandingPageRecord {
   const page = getLandingPageByPath(path);
@@ -24,13 +24,30 @@ export async function generateLandingMetadata(
     mode: page.calculatorMode,
   });
 
-  const fallbackTitle = `${page.h1} | Love Compatibility Calculator`;
-  const fallbackDescription = `Try ${page.h1.toLowerCase()} and get a quick, fun read you can share.`;
+  const hubPaths = new Set(["/tests", "/zodiac", "/zodiac-compatibility-chart", "/best-love-compatibility-tests"]);
 
-  return buildMetadata({
-    title: generated?.title || fallbackTitle,
-    description: generated?.description || fallbackDescription,
+  if (type === "article" || page.path.startsWith("/blog/")) {
+    return buildGuideMeta({
+      primaryKeyword: generated?.title || page.h1,
+      path: page.path,
+      year: 2026,
+      variantSeed: page.path,
+    });
+  }
+
+  if (hubPaths.has(page.path)) {
+    return buildHubMeta({
+      primaryKeyword: generated?.title || page.h1,
+      path: page.path,
+      year: 2026,
+      variantSeed: page.path,
+    });
+  }
+
+  return buildToolMeta({
+    primaryKeyword: generated?.title || page.h1,
     path: page.path,
-    type,
+    year: 2026,
+    variantSeed: page.path,
   });
 }

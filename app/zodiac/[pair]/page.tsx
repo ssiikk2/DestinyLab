@@ -2,7 +2,7 @@
 import { notFound } from "next/navigation";
 import { SeoLongformPage } from "@/components/SeoLongformPage";
 import { getZodiacPageBySlug, getZodiacPages } from "@/content/seo-data";
-import { buildMetadata } from "@/lib/seo";
+import { buildPairMeta } from "@/lib/seo";
 
 interface ZodiacPageProps {
   params: Promise<{ pair: string }>;
@@ -21,17 +21,24 @@ export async function generateMetadata({ params }: ZodiacPageProps): Promise<Met
   const page = getZodiacPageBySlug(pair);
 
   if (!page) {
-    return buildMetadata({
-      title: "Zodiac Compatibility",
-      description: "Zodiac compatibility guide",
+    return buildPairMeta({
+      signA: "Zodiac",
+      signB: "Pair",
       path: "/zodiac",
+      year: 2026,
+      variantSeed: "/zodiac",
     });
   }
 
-  return buildMetadata({
-    title: page.title,
-    description: page.description,
+  const pairName = page.h1.replace(/ Compatibility$/i, "");
+  const [signA = "Zodiac", signB = "Pair"] = pairName.split(/\s+and\s+/i);
+
+  return buildPairMeta({
+    signA,
+    signB,
     path: page.path,
+    year: 2026,
+    variantSeed: page.slug,
   });
 }
 

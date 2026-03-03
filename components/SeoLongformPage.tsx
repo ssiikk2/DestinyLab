@@ -61,7 +61,22 @@ export async function SeoLongformPage({
         })
       : null;
   const faqs = richToolContent?.faqs ?? page.faqs;
-  const faqSchema = buildFaqSchema(faqs);
+  const fallbackFaqs = [
+    {
+      question: "How should I use this score meaning in real life?",
+      answer: "Use it to choose one communication action, then review what changed after a week.",
+    },
+    {
+      question: "What if the insights feel mixed?",
+      answer: "Look for repeated strengths and challenges, then prioritize the clearest next step.",
+    },
+    {
+      question: "Can this help with long-term decisions?",
+      answer: "It helps frame the conversation, but long-term outcomes still depend on behavior.",
+    },
+  ];
+  const displayFaqs = faqs.length >= 6 ? faqs : [...faqs, ...fallbackFaqs].slice(0, 6);
+  const faqSchema = buildFaqSchema(displayFaqs);
   const breadcrumbSchema = buildBreadcrumbSchema(crumbsForPage(page));
   const articleSchema = includeArticleSchema
     ? buildArticleSchema({
@@ -143,11 +158,11 @@ export async function SeoLongformPage({
         </section>
       ))}
 
-      {faqs.length > 0 ? (
+      {displayFaqs.length > 0 ? (
         <section className={cardClass}>
           <h2 className={`text-2xl font-semibold ${theme.accentTextClass}`}>FAQ</h2>
           <div className="mt-3 space-y-4">
-            {faqs.map((faq) => (
+            {displayFaqs.map((faq) => (
               <div key={faq.question} className="space-y-1">
                 <h3 className="text-base font-semibold text-slate-900">{faq.question}</h3>
                 <p className="text-sm text-slate-700">{faq.answer}</p>
@@ -170,7 +185,7 @@ export async function SeoLongformPage({
         </ul>
       </section>
 
-      <SeoClusterLinks />
+      <SeoClusterLinks context={{ type: page.kind === "blog" ? "guide" : "tool", tags: [page.kind, page.slug] }} />
 
       <section className={cardClass}>
         <h2 className={`text-2xl font-semibold ${theme.accentTextClass}`}>Try the calculator</h2>

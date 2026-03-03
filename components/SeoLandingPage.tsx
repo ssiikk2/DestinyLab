@@ -137,7 +137,7 @@ export async function SeoLandingPage({ page }: SeoLandingPageProps) {
       ) : null}
 
       <InternalLinks heading="More to Explore" links={page.relatedLinks} />
-      <SeoClusterLinks />
+      <SeoClusterLinks context={{ type: page.calculatorMode ? "tool" : "guide", tags: [page.path.replace(/\//g, "")] }} />
 
       <section className="rounded-3xl border border-slate-200 bg-slate-50 p-6">
         <h2 className="text-xl font-semibold text-slate-900">Try one more</h2>
