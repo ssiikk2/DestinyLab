@@ -3,6 +3,50 @@
 DestinyLab은 광고 수익형 영어 사이트를 목표로 만든 단일 Next.js 컨테이너 프로젝트입니다.
 호환성(Compatibility)과 운명(Destiny) 도구를 중심으로 재방문, 공유, 점진적 SEO 확장을 노립니다.
 
+## Architecture (Infra-first)
+
+### 1) Runtime Architecture
+
+```mermaid
+flowchart LR
+    U[User Browser<br/>Mobile / Desktop] --> DNS[DNS + HTTPS]
+    DNS --> ACA[Azure Container Apps<br/>destinylab-main]
+
+    subgraph APP[Next.js 16 App Router Container]
+      WEB[App Pages<br/>/ /calculator /tests /compatibility/* /blog/*]
+      API[Route Handlers<br/>/api/calculate /api/compatibility /api/destiny /api/meme]
+      CACHE[In-memory Caches<br/>calculator + meme cache + reading store]
+      CONTENT[Content Layer<br/>content/*.json + generated seeds]
+      SEO[SEO Layer<br/>metadata + robots + sitemap + OG]
+      ADS[Ad Slots / AdSense Script]
+      WEB --> API
+      API --> CACHE
+      WEB --> CONTENT
+      WEB --> SEO
+      WEB --> ADS
+    end
+
+    ACA --> APP
+    API --> AOAI[Azure OpenAI<br/>optional calls for spicy/meme upgrades]
+    API --> IDX[IndexNow Endpoint<br/>Bing indexing ping]
+    ACA --> LOG[Log Analytics Workspace]
+```
+
+### 2) Build & Deploy Architecture
+
+```mermaid
+flowchart LR
+    DEV[Local Repo / CI Runner] --> SCRIPT[infra/deploy-single.ps1]
+    SCRIPT --> ACRBUILD[az acr build]
+    ACRBUILD --> ACR[Azure Container Registry<br/>destinylab93181]
+    ACR --> ACAUPD[az containerapp update]
+    ACAUPD --> ACAAPP[Azure Container App<br/>destinylab-main]
+    ACAAPP --> REV[New Revision Rollout]
+    ACAAPP --> MI[System Managed Identity]
+    MI --> ACRPULL[AcrPull Role Assignment]
+    SCRIPT --> PRUNE[Old Image Tag Pruning<br/>keep latest N tags]
+```
+
 ## 프로젝트 구조
 
 ```text
