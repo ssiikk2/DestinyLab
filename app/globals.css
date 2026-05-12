@@ -1,8 +1,23 @@
-﻿@import "tailwindcss";
+@import "tailwindcss";
+
+:root {
+  --font-sans:
+    Inter, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Apple SD Gothic Neo",
+    "Malgun Gothic", "Noto Sans KR", sans-serif;
+  --font-display:
+    "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, "Apple SD Gothic Neo",
+    "Malgun Gothic", "Noto Sans KR", sans-serif;
+}
 
 html,
 body {
   min-height: 100%;
+}
+
+html {
+  font-family: var(--font-sans);
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -11,15 +26,41 @@ body {
     radial-gradient(900px 520px at 110% 5%, rgba(251, 113, 133, 0.12), transparent 60%),
     linear-gradient(180deg, #f8fafc 0%, #eef4ff 100%);
   color: #0f172a;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
 }
 
 p,
 li {
-  line-height: 1.65;
+  line-height: 1.7;
+  text-wrap: pretty;
 }
 
 h1,
 h2,
 h3 {
-  letter-spacing: -0.02em;
+  font-family: var(--font-display);
+  letter-spacing: 0;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+h1 {
+  line-height: 1.08;
+}
+
+::selection {
+  background: rgba(14, 165, 233, 0.18);
+  color: #0f172a;
 }
