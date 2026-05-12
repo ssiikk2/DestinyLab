@@ -30,8 +30,13 @@ function Ensure-Command {
 }
 
 function Ensure-AzureContainerAppExtension {
-  $containerExt = az extension show --name containerapp 2>$null
-  if (-not $containerExt) {
+  $previousErrorActionPreference = $ErrorActionPreference
+  $ErrorActionPreference = "Continue"
+  $containerExt = az extension show --name containerapp --only-show-errors 2>$null
+  $extensionExists = $LASTEXITCODE -eq 0 -and $containerExt
+  $ErrorActionPreference = $previousErrorActionPreference
+
+  if (-not $extensionExists) {
     az extension add --name containerapp --upgrade 1>$null
   } else {
     az extension update --name containerapp 1>$null

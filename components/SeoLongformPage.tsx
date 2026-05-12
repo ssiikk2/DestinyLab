@@ -21,6 +21,12 @@ interface RenderSection {
   paragraphs: string[];
 }
 
+interface ConversionLink {
+  href: string;
+  label: string;
+  note: string;
+}
+
 function crumbsForPage(page: SeoPageRecord): Array<{ name: string; path: string }> {
   if (page.path.startsWith("/blog/")) {
     return [
@@ -41,6 +47,128 @@ function crumbsForPage(page: SeoPageRecord): Array<{ name: string; path: string 
   return [
     { name: "Home", path: "/" },
     { name: page.h1, path: page.path },
+  ];
+}
+
+function getConversionLinks(page: SeoPageRecord, calculatorMode: CalculatorMode): ConversionLink[] {
+  const keyword = `${page.keyword} ${page.slug}`.toLowerCase();
+
+  if (keyword.includes("zodiac") || page.kind === "zodiac" || calculatorMode === "zodiac") {
+    return [
+      {
+        href: "/zodiac-compatibility",
+        label: "Run a zodiac compatibility test",
+        note: "Compare your sign match with a live score and practical next steps.",
+      },
+      {
+        href: "/zodiac",
+        label: "Browse the zodiac hub",
+        note: "Jump into sign-pair guides when you want a more specific read.",
+      },
+      {
+        href: "/calculator",
+        label: "Check the main calculator",
+        note: "Use the general tool to compare zodiac insight with a broader match score.",
+      },
+    ];
+  }
+
+  if (keyword.includes("name")) {
+    return [
+      {
+        href: "/name-compatibility",
+        label: "Run the name compatibility test",
+        note: "Use two names to get a quick chemistry score and interpretation.",
+      },
+      {
+        href: "/love-calculator-by-name",
+        label: "Try love calculator by name",
+        note: "A better fit when the search intent is a name-first love score.",
+      },
+      {
+        href: "/initials-love-test",
+        label: "Try initials next",
+        note: "Use initials for a lighter, faster comparison after the name result.",
+      },
+    ];
+  }
+
+  if (keyword.includes("birthday") || keyword.includes("life path") || keyword.includes("numerology")) {
+    return [
+      {
+        href: "/birthday-compatibility",
+        label: "Run birthday compatibility",
+        note: "Use birthdays to compare timing, pace, and daily rhythm.",
+      },
+      {
+        href: "/compatibility-by-birthday",
+        label: "Open compatibility by birthday",
+        note: "A focused page for date-based matching and rhythm interpretation.",
+      },
+      {
+        href: "/destiny",
+        label: "Try a solo destiny reading",
+        note: "Use this when you want personal pattern context before comparing with someone else.",
+      },
+    ];
+  }
+
+  if (keyword.includes("crush")) {
+    return [
+      {
+        href: "/crush-calculator",
+        label: "Run the crush calculator",
+        note: "A low-pressure way to check early interest and next-step energy.",
+      },
+      {
+        href: "/love-percentage",
+        label: "Get a quick love percentage",
+        note: "Use a fast percentage when you want something easy to share.",
+      },
+      {
+        href: "/true-love-test",
+        label: "Compare with true love",
+        note: "Use this only if the crush is starting to feel more serious.",
+      },
+    ];
+  }
+
+  if (keyword.includes("low") || keyword.includes("next steps") || keyword.includes("advice")) {
+    return [
+      {
+        href: "/true-love-test",
+        label: "Run the true love test",
+        note: "Use a deeper test to compare trust, effort, and staying power.",
+      },
+      {
+        href: "/couple-test",
+        label: "Try the couple test",
+        note: "A good follow-up when the guide points to habits, timing, or repair work.",
+      },
+      {
+        href: "/calculator",
+        label: "Retake the main calculator",
+        note: "Use the main score as your baseline before checking a second angle.",
+      },
+    ];
+  }
+
+  return [
+    {
+      href: "/calculator",
+      label: "Run the main compatibility calculator",
+      note: "Start with the broad score, then use the guide to interpret what changed.",
+    },
+    {
+      href: "/love-percentage",
+      label: "Check love percentage",
+      note: "Use this when you want a faster, more shareable result.",
+    },
+    {
+      href: "/tests",
+      label: "Compare all tests",
+      note: "Pick a second test to see whether the same theme repeats.",
+    },
   ];
 }
 
@@ -95,6 +223,7 @@ export async function SeoLongformPage({
         description: page.description,
       })
     : null;
+  const conversionLinks = getConversionLinks(page, calculatorMode);
 
   const sections: RenderSection[] = richToolContent
     ? [
@@ -144,6 +273,27 @@ export async function SeoLongformPage({
       <Suspense fallback={null}>
         <CalculatorHook mode={calculatorMode} variantKey={page.path} titleOverride={page.h1} />
       </Suspense>
+
+      <section className={cardClass}>
+        <h2 className={`text-2xl font-semibold ${theme.accentTextClass}`}>Use this guide with a live test</h2>
+        <p className="mt-2 text-sm leading-6 text-slate-700">
+          A guide is useful, but a live result makes it easier to compare strengths, pressure points, and next steps.
+        </p>
+        <div className="mt-4 grid gap-3 md:grid-cols-3">
+          {conversionLinks.map((item) => (
+            <article key={`${page.slug}-${item.href}`} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <h3 className="text-sm font-semibold text-slate-900">{item.label}</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-700">{item.note}</p>
+              <Link
+                href={item.href}
+                className="mt-3 inline-flex rounded-xl bg-slate-900 px-3 py-2 text-xs font-semibold text-white transition hover:bg-slate-800"
+              >
+                Open test
+              </Link>
+            </article>
+          ))}
+        </div>
+      </section>
 
       {sections.map((section) => (
         <section key={`${page.slug}-${section.heading}`} className={cardClass}>

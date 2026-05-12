@@ -176,6 +176,37 @@ $env:AZURE_OPENAI_API_KEY="<key>"
 $env:AZURE_OPENAI_DEPLOYMENT_NAME="<deployment-name>"
 ```
 
+## ship.ps1 자동 배포 방법
+
+코드 검증, git 커밋/푸시, Azure Container Apps 배포, URL 확인까지 한 번에 실행합니다.
+
+```powershell
+./infra/ship.ps1 -CommitMessage "ship: improve seo and sharing loops"
+```
+
+또는 npm 스크립트로 실행할 수 있습니다.
+
+```bash
+npm run ship -- -CommitMessage "ship: improve seo and sharing loops"
+```
+
+기본 흐름:
+- `npm run build`
+- `npm run lint`
+- `git add -A`
+- `git commit`
+- `git push origin <current-branch>`
+- `infra/deploy-single.ps1`
+- 주요 URL 응답 확인
+
+필요하면 일부 단계를 건너뛸 수 있습니다.
+
+```powershell
+./infra/ship.ps1 -SkipGit
+./infra/ship.ps1 -SkipDeploy
+./infra/ship.ps1 -SkipVerify
+```
+
 ## FQDN으로 HTTPS 테스트
 
 배포 스크립트 출력의 FQDN을 사용합니다.

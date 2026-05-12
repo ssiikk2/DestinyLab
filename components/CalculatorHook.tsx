@@ -29,25 +29,11 @@ interface CalculationResult extends BaseResultOutput {
   tryAlso: Array<{ href: string; note: string }>;
 }
 
-function toBase64(value: string): string {
-  if (typeof window === "undefined") return "";
-  const bytes = new TextEncoder().encode(value);
-  let binary = "";
-  bytes.forEach((byte) => {
-    binary += String.fromCharCode(byte);
-  });
-  return window.btoa(binary);
-}
-
 function fromBase64(value: string): string {
   if (typeof window === "undefined") return "";
   const binary = window.atob(value);
   const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
   return new TextDecoder().decode(bytes);
-}
-
-function encodeResultSnapshot(result: CalculationResult): string {
-  return toBase64(JSON.stringify(result));
 }
 
 function decodeResultSnapshot(value: string): CalculationResult | null {
@@ -263,20 +249,23 @@ export function CalculatorHook({ mode, variantKey, titleOverride }: CalculatorHo
     });
   }, [result, testKey, first, second]);
 
-  const shareLink = useMemo(() => {
-    if (!result || !pathname) return "";
+  const resultQuery = useMemo(() => {
+    if (!result) return "";
     const params = new URLSearchParams();
     params.set("m", mode);
     params.set("a", first);
     if (mode !== "destiny") params.set("b", second);
     if (variantKey) params.set("v", variantKey);
-    params.set("r", encodeResultSnapshot(result));
-    const query = params.toString();
+    return params.toString();
+  }, [result, mode, first, second, variantKey]);
+
+  const shareLink = useMemo(() => {
+    if (!resultQuery || !pathname) return "";
     if (typeof window !== "undefined") {
-      return `${window.location.origin}${pathname}?${query}`;
+      return `${window.location.origin}${pathname}?${resultQuery}`;
     }
-    return `${pathname}?${query}`;
-  }, [result, pathname, mode, first, second, variantKey]);
+    return `${pathname}?${resultQuery}`;
+  }, [resultQuery, pathname]);
 
   const viralityContext: ViralityContext = useMemo(() => {
     if (mode === "zodiac") return "zodiac";
@@ -311,16 +300,10 @@ export function CalculatorHook({ mode, variantKey, titleOverride }: CalculatorHo
   );
 
   useEffect(() => {
-    if (!result || !pathname) return;
+    if (!result || !pathname || !resultQuery) return;
     trackEvent("result_view", { mode, path: pathname, score: result.score });
-    const params = new URLSearchParams();
-    params.set("m", mode);
-    params.set("a", first);
-    if (mode !== "destiny") params.set("b", second);
-    if (variantKey) params.set("v", variantKey);
-    params.set("r", encodeResultSnapshot(result));
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-  }, [result, pathname, mode, first, second, variantKey, router]);
+    router.replace(`${pathname}?${resultQuery}`, { scroll: false });
+  }, [result, resultQuery, pathname, mode, router]);
 
   return (
     <section

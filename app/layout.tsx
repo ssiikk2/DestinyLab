@@ -5,6 +5,7 @@ import Script from "next/script";
 import { CookieConsent } from "@/components/CookieConsent";
 import { SiteHeader } from "@/components/SiteHeader";
 import { appEnv } from "@/lib/env";
+import { guidesNav, toolsNav } from "@/lib/nav";
 import { CANONICAL_ORIGIN } from "@/lib/seo";
 import "./globals.css";
 
@@ -74,26 +75,78 @@ gtag('config', '${GA_ID}', { anonymize_ip: true });`}
         <main>{children}</main>
 
         <footer className="border-t border-slate-200 bg-white">
-          <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-4 px-4 py-6 text-xs text-slate-600">
-            <span className="mr-2 text-slate-500">Fun readings for curious hearts.</span>
-            <Link href="/privacy" className="hover:text-slate-900">
-              Privacy
-            </Link>
-            <Link href="/cookie-policy" className="hover:text-slate-900">
-              Cookie Policy
-            </Link>
-            <Link href="/terms" className="hover:text-slate-900">
-              Terms
-            </Link>
-            <Link href="/disclaimer" className="hover:text-slate-900">
-              Disclaimer
-            </Link>
-            <Link href="/about" className="hover:text-slate-900">
-              About
-            </Link>
-            <Link href="/contact" className="hover:text-slate-900">
-              Contact
-            </Link>
+          <div className="mx-auto grid max-w-6xl gap-6 px-4 py-8 text-sm text-slate-600 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+            <section>
+              <p className="text-base font-semibold text-slate-900">Love Compatibility Calculator</p>
+              <p className="mt-2 max-w-sm text-sm leading-6 text-slate-600">
+                Fun relationship tests, score meanings, and shareable results for curious hearts.
+              </p>
+              <p className="mt-3 text-xs font-medium text-slate-500">
+                All readings are for entertainment and reflection.
+              </p>
+            </section>
+
+            <nav aria-label="Popular tests">
+              <p className="text-xs font-bold uppercase tracking-[0.08em] text-slate-900">Popular Tests</p>
+              <ul className="mt-3 space-y-2">
+                {toolsNav.slice(0, 5).map((item) => (
+                  <li key={item.href}>
+                    <Link href={item.href} className="hover:text-slate-900">
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+            <nav aria-label="Compatibility guides">
+              <p className="text-xs font-bold uppercase tracking-[0.08em] text-slate-900">Guides</p>
+              <ul className="mt-3 space-y-2">
+                {guidesNav.map((item) => (
+                  <li key={item.href}>
+                    <Link href={item.href} className="hover:text-slate-900">
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+            <nav aria-label="Site policies">
+              <p className="text-xs font-bold uppercase tracking-[0.08em] text-slate-900">Site</p>
+              <ul className="mt-3 space-y-2">
+                <li>
+                  <Link href="/privacy" className="hover:text-slate-900">
+                    Privacy
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/cookie-policy" className="hover:text-slate-900">
+                    Cookie Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/terms" className="hover:text-slate-900">
+                    Terms
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/disclaimer" className="hover:text-slate-900">
+                    Disclaimer
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/about" className="hover:text-slate-900">
+                    About
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/contact" className="hover:text-slate-900">
+                    Contact
+                  </Link>
+                </li>
+              </ul>
+            </nav>
           </div>
         </footer>
 

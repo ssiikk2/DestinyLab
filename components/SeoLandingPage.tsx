@@ -111,6 +111,103 @@ const scoreGuides = {
   },
 } as const;
 
+const intentGuides: Record<
+  string,
+  {
+    heading: string;
+    intro: string;
+    useCases: string[];
+    comparePath: { href: string; label: string; note: string };
+    searcherPromise: string;
+  }
+> = {
+  "/calculator": {
+    heading: "Best for a complete compatibility check",
+    intro:
+      "Use this page when you want the broadest read: attraction, communication, pressure points, and one realistic next move.",
+    useCases: [
+      "You want one main score before trying niche tests.",
+      "You are comparing a crush, partner, or long-term match.",
+      "You want a shareable result that still gives practical advice.",
+    ],
+    comparePath: {
+      href: "/true-love-test",
+      label: "Compare with the True Love Test",
+      note: "Use the true love version when you want a deeper read on trust and staying power.",
+    },
+    searcherPromise:
+      "Searchers usually want a fast score first, then a plain explanation of what that score means. This page is built for that flow.",
+  },
+  "/love-percentage": {
+    heading: "Best for a quick love percentage",
+    intro:
+      "Use this page when the number matters most and you want a result that is easy to screenshot, copy, or send.",
+    useCases: [
+      "You want an instant percentage without a long setup.",
+      "You are making a playful comparison with friends.",
+      "You want to see whether the score feels high, mixed, or surprising.",
+    ],
+    comparePath: {
+      href: "/love-calculator-by-name",
+      label: "Try Love Calculator By Name",
+      note: "Run the same pair by name if you want a second percentage-style angle.",
+    },
+    searcherPromise:
+      "People searching for a love percentage usually expect speed. Keep the result light, then use the score bands to avoid overreading it.",
+  },
+  "/name-compatibility": {
+    heading: "Best for name-based chemistry",
+    intro:
+      "Use this page when you want a symbolic read based on two names and a quick interpretation of the vibe.",
+    useCases: [
+      "You want to compare preferred names, nicknames, or full names.",
+      "You are testing early dating chemistry in a low-pressure way.",
+      "You want a second angle before using zodiac or birthday tests.",
+    ],
+    comparePath: {
+      href: "/initials-love-test",
+      label: "Try the Initials Love Test",
+      note: "Initials are faster and lighter, which makes them useful for quick comparisons.",
+    },
+    searcherPromise:
+      "Name compatibility searches are usually playful, but the page still needs useful interpretation. This version keeps both.",
+  },
+  "/zodiac-compatibility": {
+    heading: "Best for sign chemistry and conflict style",
+    intro:
+      "Use this page when signs are the starting point and you want chemistry, communication, and friction explained together.",
+    useCases: [
+      "You want to compare two zodiac signs quickly.",
+      "You are checking whether a sign match is easy, intense, or high-effort.",
+      "You want to move from a broad zodiac read into a specific pair guide.",
+    ],
+    comparePath: {
+      href: "/zodiac",
+      label: "Open the Zodiac Hub",
+      note: "Use the hub to jump into specific sign-pair pages and compare patterns.",
+    },
+    searcherPromise:
+      "Zodiac searchers expect more than a yes or no. The useful answer is where the spark is, where friction starts, and what to do next.",
+  },
+  "/true-love-test": {
+    heading: "Best for trust, effort, and staying power",
+    intro:
+      "Use this page when you want a slightly deeper result than a quick percentage and care about long-term signals.",
+    useCases: [
+      "You want to test whether the connection feels stable, not just exciting.",
+      "You are comparing attraction with communication and effort.",
+      "You want a result that can start a more honest conversation.",
+    ],
+    comparePath: {
+      href: "/couple-test",
+      label: "Compare with the Couple Test",
+      note: "The couple test is better when you want a broader shared-habits snapshot.",
+    },
+    searcherPromise:
+      "People searching for a true love test usually want reassurance, but the better result is a grounded read on trust and follow-through.",
+  },
+};
+
 function buildHowToSchema(page: LandingPageRecord) {
   return {
     "@context": "https://schema.org",
@@ -154,6 +251,7 @@ export async function SeoLandingPage({ page }: SeoLandingPageProps) {
   const faqSchema = buildFaqSchema(pageForSchema);
   const breadcrumbSchema = buildBreadcrumbSchema(page);
   const scoreGuide = page.calculatorMode ? scoreGuides[page.calculatorMode] : null;
+  const intentGuide = intentGuides[page.path];
   const howToSchema = page.calculatorMode ? buildHowToSchema(page) : null;
 
   return (
@@ -214,6 +312,34 @@ export async function SeoLandingPage({ page }: SeoLandingPageProps) {
             </article>
           </div>
           <p className="mt-4 text-sm font-medium leading-6 text-slate-700">{scoreGuide.next}</p>
+        </section>
+      ) : null}
+
+      {intentGuide ? (
+        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_12px_30px_rgba(15,23,42,0.07)]">
+          <h2 className="text-2xl font-semibold text-slate-900">{intentGuide.heading}</h2>
+          <p className="mt-3 text-sm leading-7 text-slate-700">{intentGuide.intro}</p>
+          <div className="mt-4 grid gap-4 md:grid-cols-[1fr_0.9fr]">
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <h3 className="text-sm font-semibold text-slate-900">Use this when</h3>
+              <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-slate-700">
+                {intentGuide.useCases.map((item) => (
+                  <li key={`${page.path}-${item}`}>{item}</li>
+                ))}
+              </ul>
+            </div>
+            <div className="rounded-2xl border border-sky-200 bg-sky-50 p-4">
+              <h3 className="text-sm font-semibold text-sky-950">Compare next</h3>
+              <p className="mt-2 text-sm leading-6 text-sky-950">{intentGuide.comparePath.note}</p>
+              <Link
+                href={intentGuide.comparePath.href}
+                className="mt-4 inline-flex rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+              >
+                {intentGuide.comparePath.label}
+              </Link>
+            </div>
+          </div>
+          <p className="mt-4 text-sm leading-7 text-slate-700">{intentGuide.searcherPromise}</p>
         </section>
       ) : null}
 

@@ -8,10 +8,11 @@
     "start": "next start",
     "lint": "eslint",
     "generate:seo": "tsx scripts/generate-content.ts",
-    "check:aoai": "tsx scripts/check-aoai.ts"
+    "check:aoai": "tsx scripts/check-aoai.ts",
+    "ship": "powershell -ExecutionPolicy Bypass -File infra/ship.ps1"
   },
   "dependencies": {
-    "next": "16.1.6",
+    "next": "16.2.6",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
@@ -21,7 +22,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.1.6",
+    "eslint-config-next": "16.2.6",
     "tailwindcss": "^4",
     "tsx": "^4.20.6",
     "typescript": "^5"

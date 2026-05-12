@@ -60,6 +60,7 @@ export function ShareBar({ title, score, shockLine, shareUrl, pairLabel }: Share
   const [copied, setCopied] = useState(false);
   const [copiedText, setCopiedText] = useState(false);
   const text = useMemo(() => `${pairLabel}: ${score}/100. ${shockLine}`, [pairLabel, score, shockLine]);
+  const shareText = useMemo(() => `${text} Try yours: ${shareUrl}`, [text, shareUrl]);
 
   async function onCopy() {
     try {
@@ -136,6 +137,33 @@ export function ShareBar({ title, score, shockLine, shareUrl, pairLabel }: Share
         >
           Share to Pinterest
         </button>
+        <button
+          type="button"
+          onClick={() => {
+            trackEvent("share_whatsapp", { score });
+            safeOpen(`https://wa.me/?text=${encodeURIComponent(shareText)}`);
+          }}
+          className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-700"
+        >
+          WhatsApp
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            trackEvent("share_telegram", { score });
+            safeOpen(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(text)}`);
+          }}
+          className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-700"
+        >
+          Telegram
+        </button>
+        <a
+          href={`sms:?&body=${encodeURIComponent(shareText)}`}
+          onClick={() => trackEvent("share_sms", { score })}
+          className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-700"
+        >
+          SMS
+        </a>
         {typeof navigator !== "undefined" && "share" in navigator ? (
           <button type="button" onClick={onNativeShare} className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-700">
             Share
