@@ -63,9 +63,12 @@ export function HomeQuickStart() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+    <form onSubmit={onSubmit} className="rounded-3xl border border-white/70 bg-white p-5 shadow-[0_18px_40px_rgba(15,23,42,0.14)]">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-xs font-bold uppercase tracking-[0.08em] text-slate-500">Quick start</p>
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.08em] text-rose-700">Quick start</p>
+          <p className="mt-1 text-sm font-semibold text-slate-900">Type two details. Get a shareable score.</p>
+        </div>
         <div className="inline-flex rounded-full border border-slate-200 bg-slate-50 p-1" aria-label="Test type">
           {quickModes.map((item) => (
             <button
@@ -83,7 +86,7 @@ export function HomeQuickStart() {
           ))}
         </div>
       </div>
-      <div className="mt-3 grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
+      <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
         <label className="grid gap-1">
           <span className="text-xs font-semibold text-slate-700">{mode.firstLabel}</span>
           <input
@@ -91,7 +94,7 @@ export function HomeQuickStart() {
             onChange={(event) => setFirst(event.target.value)}
             placeholder={mode.firstPlaceholder}
             required
-            className="rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-slate-900"
+            className="h-12 rounded-2xl border border-slate-300 px-4 text-base font-semibold text-slate-900 outline-none transition placeholder:font-medium placeholder:text-slate-400 focus:border-slate-900"
           />
         </label>
         <label className="grid gap-1">
@@ -101,19 +104,21 @@ export function HomeQuickStart() {
             onChange={(event) => setSecond(event.target.value)}
             placeholder={mode.secondPlaceholder}
             required
-            className="rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-slate-900"
+            className="h-12 rounded-2xl border border-slate-300 px-4 text-base font-semibold text-slate-900 outline-none transition placeholder:font-medium placeholder:text-slate-400 focus:border-slate-900"
           />
         </label>
         <button
           type="submit"
-          className="self-end rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+          className="self-end rounded-2xl bg-slate-950 px-5 py-3 text-sm font-bold text-white shadow-[0_12px_24px_rgba(15,23,42,0.25)] transition hover:-translate-y-0.5 hover:bg-slate-800"
         >
-        Get score
+          Get score
         </button>
       </div>
-      <p className="mt-3 text-xs leading-5 text-slate-500">
-        Opens the best matching test with your details already loaded.
-      </p>
+      <div className="mt-4 grid gap-2 border-t border-slate-100 pt-3 text-xs font-semibold text-slate-500 sm:grid-cols-3">
+        <span>No signup</span>
+        <span>Instant result</span>
+        <span>Share card ready</span>
+      </div>
     </form>
   );
 }
