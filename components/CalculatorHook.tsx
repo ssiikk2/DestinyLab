@@ -128,6 +128,46 @@ function getLabels(mode: CalculatorMode) {
   };
 }
 
+function getExamplePairs(mode: CalculatorMode): Array<{ first: string; second: string; label: string }> {
+  if (mode === "zodiac") {
+    return [
+      { first: "Aries", second: "Scorpio", label: "Aries + Scorpio" },
+      { first: "Taurus", second: "Libra", label: "Taurus + Libra" },
+      { first: "Cancer", second: "Pisces", label: "Cancer + Pisces" },
+    ];
+  }
+
+  if (mode === "birthday") {
+    return [
+      { first: "1995-03-21", second: "1997-10-11", label: "Spring + Fall" },
+      { first: "1998-07-17", second: "1999-02-04", label: "Summer + Winter" },
+      { first: "2000-12-01", second: "2001-06-14", label: "Late year + Mid year" },
+    ];
+  }
+
+  if (mode === "destiny") {
+    return [
+      { first: "1998-07-17", second: "relationship", label: "Love focus" },
+      { first: "1995-03-21", second: "growth", label: "Growth focus" },
+      { first: "2000-12-01", second: "career", label: "Career focus" },
+    ];
+  }
+
+  if (mode === "initials") {
+    return [
+      { first: "A.K.", second: "J.S.", label: "A.K. + J.S." },
+      { first: "M.R.", second: "T.L.", label: "M.R. + T.L." },
+      { first: "S.P.", second: "C.N.", label: "S.P. + C.N." },
+    ];
+  }
+
+  return [
+    { first: "Alex", second: "Jamie", label: "Alex + Jamie" },
+    { first: "Taylor", second: "Jordan", label: "Taylor + Jordan" },
+    { first: "Mia", second: "Noah", label: "Mia + Noah" },
+  ];
+}
+
 export function CalculatorHook({ mode, variantKey, titleOverride }: CalculatorHookProps) {
   const labels = useMemo(() => {
     const base = getLabels(mode);
@@ -145,6 +185,7 @@ export function CalculatorHook({ mode, variantKey, titleOverride }: CalculatorHo
   const [error, setError] = useState<string | null>(null);
   const autoRanRef = useRef(false);
   const testKey = useMemo(() => resolveResultTestKey({ mode, variantKey }), [mode, variantKey]);
+  const examplePairs = useMemo(() => getExamplePairs(mode), [mode]);
 
   const runCalculation = useCallback(
     async (firstValue: string, secondValue: string) => {
@@ -305,61 +346,112 @@ export function CalculatorHook({ mode, variantKey, titleOverride }: CalculatorHo
     router.replace(`${pathname}?${resultQuery}`, { scroll: false });
   }, [result, resultQuery, pathname, mode, router]);
 
+  const canSubmit = first.trim() && (mode === "destiny" || second.trim());
+
+  function fillExample(example: { first: string; second: string; label: string }) {
+    setFirst(example.first);
+    setSecond(example.second);
+    setError(null);
+    trackEvent("calculator_example_fill", { mode, label: example.label });
+  }
+
   return (
     <section
-      className={`rounded-3xl border ${theme.cardBorderClass} bg-white/90 p-6 shadow-[0_10px_30px_rgba(15,23,42,0.08)] backdrop-blur-sm`}
+      className={`overflow-hidden rounded-3xl border ${theme.cardBorderClass} bg-white shadow-[0_18px_46px_rgba(15,23,42,0.12)]`}
     >
-      <p className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${theme.pillClass}`}>
-        {theme.label} test
-      </p>
-      <h2 className="mt-3 text-2xl font-semibold text-slate-900">{labels.heading}</h2>
-      <p className="mt-2 text-sm text-slate-700">
-        Pop in your details and get a playful compatibility snapshot.
-      </p>
+      <div className={`bg-gradient-to-br ${theme.heroGradientClass} p-5 md:p-6`}>
+        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+          <div>
+            <p className={`inline-flex rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.08em] ${theme.pillClass}`}>
+              {theme.label} test
+            </p>
+            <h2 className="mt-3 text-3xl font-black text-slate-950">{labels.heading}</h2>
+            <p className="mt-2 max-w-2xl text-sm font-medium leading-6 text-slate-700">
+              Enter your details and get a score, meaning, next move, and share-ready result card.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-white/70 bg-white/80 p-3 text-sm shadow-sm">
+            <p className="text-xs font-bold uppercase tracking-[0.08em] text-slate-500">Preview</p>
+            <p className="mt-1 text-2xl font-black text-slate-950">82/100</p>
+            <p className="text-xs font-semibold text-slate-600">Score + meaning + share card</p>
+          </div>
+        </div>
+      </div>
 
-      <form onSubmit={onSubmit} className="mt-4 grid gap-3">
-        <label className="grid gap-1">
-          <span className="text-sm font-medium text-slate-800">{labels.firstLabel}</span>
-          <input
-            required
-            value={first}
-            onChange={(event) => setFirst(event.target.value)}
-            placeholder={labels.firstPlaceholder}
-            className={`rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none transition ${theme.inputFocusClass}`}
-          />
-        </label>
+      <div className="p-5 md:p-6">
+        <form onSubmit={onSubmit} className="grid gap-4">
+          <div className="grid gap-3 md:grid-cols-2">
+            <label className="grid gap-1.5">
+              <span className="text-sm font-bold text-slate-800">{labels.firstLabel}</span>
+              <input
+                required
+                value={first}
+                onChange={(event) => setFirst(event.target.value)}
+                placeholder={labels.firstPlaceholder}
+                className={`h-12 rounded-2xl border border-slate-300 px-4 text-base font-semibold text-slate-900 outline-none transition placeholder:font-medium placeholder:text-slate-400 ${theme.inputFocusClass}`}
+              />
+            </label>
 
-        <label className="grid gap-1">
-          <span className="text-sm font-medium text-slate-800">{labels.secondLabel}</span>
-          <input
-            required={mode !== "destiny"}
-            value={second}
-            onChange={(event) => setSecond(event.target.value)}
-            placeholder={labels.secondPlaceholder}
-            className={`rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none transition ${theme.inputFocusClass}`}
-          />
-        </label>
+            <label className="grid gap-1.5">
+              <span className="text-sm font-bold text-slate-800">{labels.secondLabel}</span>
+              <input
+                required={mode !== "destiny"}
+                value={second}
+                onChange={(event) => setSecond(event.target.value)}
+                placeholder={labels.secondPlaceholder}
+                className={`h-12 rounded-2xl border border-slate-300 px-4 text-base font-semibold text-slate-900 outline-none transition placeholder:font-medium placeholder:text-slate-400 ${theme.inputFocusClass}`}
+              />
+            </label>
+          </div>
 
-        <button
-          type="submit"
-          disabled={isLoading}
-          className={`mt-1 rounded-xl px-4 py-2 text-sm font-semibold transition ${theme.buttonClass} ${theme.buttonHoverClass}`}
-        >
-          {isLoading ? "Getting your result..." : "Show my result"}
-        </button>
-        {error ? <p className="text-sm font-medium text-rose-700">{error}</p> : null}
-      </form>
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div className="flex flex-wrap gap-2">
+              {examplePairs.map((example) => (
+                <button
+                  key={example.label}
+                  type="button"
+                  onClick={() => fillExample(example)}
+                  className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-700 transition hover:bg-white hover:text-slate-950"
+                >
+                  {example.label}
+                </button>
+              ))}
+            </div>
+            <button
+              type="submit"
+              disabled={isLoading || !canSubmit}
+              className={`rounded-2xl px-5 py-3 text-sm font-black shadow-[0_12px_24px_rgba(15,23,42,0.18)] transition disabled:cursor-not-allowed disabled:opacity-50 ${theme.buttonClass} ${theme.buttonHoverClass}`}
+            >
+              {isLoading ? "Building result..." : "Show my result card"}
+            </button>
+          </div>
+          {error ? <p className="text-sm font-medium text-rose-700">{error}</p> : null}
+        </form>
+
+        {!report ? (
+          <section className="mt-5 grid gap-3 border-t border-slate-100 pt-5 md:grid-cols-3">
+            {["Score breakdown", "3-step next move", "Wide + story share cards"].map((item) => (
+              <div key={item} className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                <p className="text-sm font-bold text-slate-900">{item}</p>
+                <p className="mt-1 text-xs leading-5 text-slate-600">Included after your result is generated.</p>
+              </div>
+            ))}
+          </section>
+        ) : null}
+      </div>
 
       {report ? (
-        <ResultReport
-          report={report}
-          shareLink={shareLink}
-          className={theme.resultClass}
-          context={viralityContext}
-          compareSecondaryOptional={mode === "destiny"}
-          compareLabels={compareLabels}
-          onCompareSubmit={onCompareSubmit}
-        />
+        <div className="px-5 pb-5 md:px-6 md:pb-6">
+          <ResultReport
+            report={report}
+            shareLink={shareLink}
+            className={theme.resultClass}
+            context={viralityContext}
+            compareSecondaryOptional={mode === "destiny"}
+            compareLabels={compareLabels}
+            onCompareSubmit={onCompareSubmit}
+          />
+        </div>
       ) : null}
     </section>
   );
