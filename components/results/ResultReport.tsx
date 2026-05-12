@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import { NextActionFunnel } from "@/components/NextActionFunnel";
 import { ShareBar } from "@/components/ShareBar";
 import { ViralResultOverlay } from "@/components/ViralResultOverlay";
 import { trackEvent } from "@/lib/analytics";
@@ -489,6 +490,8 @@ export function ResultReport({
           pairLabel={pairLabel}
         />
       </div>
+
+      <NextActionFunnel score={report.header.score} context="result" />
 
       <section className="rounded-2xl border border-slate-200 bg-white p-4">
         <h3 className="text-base font-semibold text-slate-900">What does this score mean?</h3>

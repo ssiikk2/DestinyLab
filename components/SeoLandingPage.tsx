@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { CalculatorHook } from "@/components/CalculatorHook";
 import { InternalLinks } from "@/components/InternalLinks";
 import { LiveCompatibilityBoard } from "@/components/LiveCompatibilityBoard";
+import { NextActionFunnel } from "@/components/NextActionFunnel";
 import { SeoClusterLinks } from "@/components/SeoClusterLinks";
 import { SeoJsonLd } from "@/components/SeoJsonLd";
 import type { LandingPageRecord } from "@/content/landing-pages";
@@ -347,6 +348,7 @@ export async function SeoLandingPage({ page }: SeoLandingPageProps) {
       ) : null}
 
       {isToolPage ? <LiveCompatibilityBoard /> : null}
+      {isToolPage ? <NextActionFunnel context="tool" /> : null}
 
       {intentGuide ? (
         <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_12px_30px_rgba(15,23,42,0.07)]">

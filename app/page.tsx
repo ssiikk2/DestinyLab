@@ -5,6 +5,7 @@ import { HomeQuickStart } from "@/components/HomeQuickStart";
 import { InternalLinkCluster } from "@/components/InternalLinkCluster";
 import { InternalLinks } from "@/components/InternalLinks";
 import { LiveCompatibilityBoard } from "@/components/LiveCompatibilityBoard";
+import { NextActionFunnel } from "@/components/NextActionFunnel";
 import { SeoJsonLd } from "@/components/SeoJsonLd";
 import { homeGuideLinks, homeToolsLinks } from "@/content/landing-pages";
 import { absoluteUrl, buildHubMeta } from "@/lib/seo";
@@ -271,6 +272,7 @@ export default function HomePage() {
       </section>
 
       <LiveCompatibilityBoard />
+      <NextActionFunnel context="home" />
 
       <InternalLinks heading="Pick a Test" links={homeToolsLinks} />
       <InternalLinks heading="Quick Reads" links={homeGuideLinks} />
