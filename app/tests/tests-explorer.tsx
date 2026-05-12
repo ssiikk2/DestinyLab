@@ -8,6 +8,7 @@ import { absoluteUrl } from "@/lib/seo";
 
 type Vibe = "All" | "Playful" | "Fun" | "Deep" | "Reflective" | "Cosmic";
 type SortMode = "Popular" | "Quick" | "Deep";
+type Goal = "First score" | "Crush check" | "Serious relationship" | "Zodiac mood";
 
 interface ToolItem {
   path: string;
@@ -133,6 +134,29 @@ const POPULAR_ORDER = [
   "/destiny",
 ];
 
+const GOAL_RECS: Record<Goal, { href: string; title: string; reason: string }[]> = {
+  "First score": [
+    { href: "/calculator", title: "Main compatibility score", reason: "Start broad before narrowing the result." },
+    { href: "/love-percentage", title: "Love percentage", reason: "Get a fast second read for comparison." },
+    { href: "/best-love-compatibility-tests", title: "Best tests guide", reason: "Pick the next path without guessing." },
+  ],
+  "Crush check": [
+    { href: "/crush-calculator", title: "Crush calculator", reason: "Low-pressure read for early-stage interest." },
+    { href: "/name-compatibility", title: "Name compatibility", reason: "Playful angle that is easy to share." },
+    { href: "/initials-love-test", title: "Initials love test", reason: "Fastest lightweight follow-up." },
+  ],
+  "Serious relationship": [
+    { href: "/true-love-test", title: "True love test", reason: "Focuses on trust, effort, and staying power." },
+    { href: "/couple-test", title: "Couple test", reason: "Good for habits and day-to-day rhythm." },
+    { href: "/birthday-compatibility", title: "Birthday compatibility", reason: "Adds pacing and timing context." },
+  ],
+  "Zodiac mood": [
+    { href: "/zodiac-compatibility", title: "Zodiac compatibility", reason: "Start with sign chemistry and friction." },
+    { href: "/zodiac", title: "Zodiac hub", reason: "Browse sign-pair pages from one place." },
+    { href: "/zodiac-compatibility-chart", title: "Zodiac chart", reason: "Use chart-style browsing for quick ideas." },
+  ],
+};
+
 function sortTools(input: ToolItem[], sortMode: SortMode): ToolItem[] {
   const map = new Map(POPULAR_ORDER.map((path, index) => [path, index]));
   const withMeta = input.map((item) => {
@@ -157,6 +181,8 @@ function sortTools(input: ToolItem[], sortMode: SortMode): ToolItem[] {
 export function TestsExplorer({ tools }: { tools: ToolItem[] }) {
   const [vibe, setVibe] = useState<Vibe>("All");
   const [sortMode, setSortMode] = useState<SortMode>("Popular");
+  const [goal, setGoal] = useState<Goal>("First score");
+  const [query, setQuery] = useState("");
 
   const toolMap = useMemo(() => new Map(tools.map((tool) => [tool.path, tool])), [tools]);
   const sortedTools = useMemo(() => sortTools(tools, sortMode), [tools, sortMode]);
@@ -164,14 +190,22 @@ export function TestsExplorer({ tools }: { tools: ToolItem[] }) {
 
   const visibleByPath = useMemo(() => {
     const visible = new Set<string>();
+    const normalizedQuery = query.trim().toLowerCase();
     for (const tool of sortedTools) {
       const toolVibe = TEST_VISUALS[tool.path]?.vibe || "Playful";
-      if (vibe === "All" || vibe === toolVibe) {
+      const matchesVibe = vibe === "All" || vibe === toolVibe;
+      const matchesQuery =
+        !normalizedQuery ||
+        tool.h1.toLowerCase().includes(normalizedQuery) ||
+        tool.description.toLowerCase().includes(normalizedQuery) ||
+        tool.path.toLowerCase().includes(normalizedQuery) ||
+        (TEST_VISUALS[tool.path]?.line || "").toLowerCase().includes(normalizedQuery);
+      if (matchesVibe && matchesQuery) {
         visible.add(tool.path);
       }
     }
     return visible;
-  }, [sortedTools, vibe]);
+  }, [sortedTools, vibe, query]);
 
   const testsFaq = [
     {
@@ -220,16 +254,89 @@ export function TestsExplorer({ tools }: { tools: ToolItem[] }) {
   };
 
   return (
-    <section className="mx-auto max-w-5xl space-y-7 px-4 py-8">
-      <header className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-slate-50 to-blue-50 p-6 shadow-[0_14px_34px_rgba(15,23,42,0.08)]">
-        <h1 className="text-3xl font-bold text-slate-900 md:text-4xl">All compatibility tests</h1>
-        <p className="mt-2 text-sm text-slate-700 md:text-base">
-          Pick your vibe, sort by depth, and compare score meaning from more than one angle.
-        </p>
+    <section className="mx-auto max-w-6xl space-y-7 px-4 py-8">
+      <header className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_14px_34px_rgba(15,23,42,0.08)]">
+        <div className="grid gap-0 lg:grid-cols-[1fr_0.82fr]">
+          <div className="bg-gradient-to-br from-white via-slate-50 to-blue-50 p-6 md:p-8">
+            <p className="text-xs font-bold uppercase tracking-[0.08em] text-slate-500">Test library</p>
+            <h1 className="mt-2 text-3xl font-bold text-slate-900 md:text-5xl">All compatibility tests</h1>
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-700 md:text-base">
+              Pick your situation, filter by vibe, and compare score meaning from more than one angle.
+            </p>
+            <div className="mt-5 grid gap-3 sm:grid-cols-3">
+              <div>
+                <p className="text-2xl font-bold text-slate-900">{tools.length}</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Interactive tools</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-slate-900">4</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Test paths</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-slate-900">0</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Signup steps</p>
+              </div>
+            </div>
+          </div>
+          <aside className="border-t border-slate-200 bg-slate-950 p-6 text-white lg:border-l lg:border-t-0 md:p-8">
+            <p className="text-xs font-bold uppercase tracking-[0.08em] text-sky-200">Recommended stack</p>
+            <h2 className="mt-2 text-2xl font-semibold">Run 2 tests, not 10</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-300">
+              Start with one broad score, then use one contrast test. Repeated themes matter more than constant retesting.
+            </p>
+            <div className="mt-5 space-y-2">
+              {["Main score", "One contrast angle", "Share or compare"].map((item, index) => (
+                <div key={item} className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/10 p-3">
+                  <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white text-xs font-bold text-slate-950">
+                    {index + 1}
+                  </span>
+                  <span className="text-sm font-semibold">{item}</span>
+                </div>
+              ))}
+            </div>
+          </aside>
+        </div>
       </header>
 
       <section className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
-        <div className="flex flex-wrap gap-2">
+        <div className="grid gap-3 lg:grid-cols-[1fr_auto_auto] lg:items-center">
+          <label className="grid gap-1">
+            <span className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Search tests</span>
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="name, zodiac, crush, birthday..."
+              className="rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-slate-900"
+            />
+          </label>
+          <label className="grid gap-1">
+            <span className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Goal</span>
+            <select
+              value={goal}
+              onChange={(event) => setGoal(event.target.value as Goal)}
+              className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700"
+            >
+              <option>First score</option>
+              <option>Crush check</option>
+              <option>Serious relationship</option>
+              <option>Zodiac mood</option>
+            </select>
+          </label>
+          <label className="grid gap-1">
+            <span className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Sort</span>
+            <select
+              value={sortMode}
+              onChange={(event) => setSortMode(event.target.value as SortMode)}
+              className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700"
+            >
+              <option>Popular</option>
+              <option>Quick</option>
+              <option>Deep</option>
+            </select>
+          </label>
+        </div>
+
+        <div className="mt-4 flex flex-wrap gap-2">
           {(["All", "Playful", "Fun", "Deep", "Reflective", "Cosmic"] as Vibe[]).map((chip) => (
             <button
               key={chip}
@@ -243,20 +350,26 @@ export function TestsExplorer({ tools }: { tools: ToolItem[] }) {
             </button>
           ))}
         </div>
-        <div className="mt-3 flex items-center gap-2">
-          <label htmlFor="test-sort" className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">
-            Sort
-          </label>
-          <select
-            id="test-sort"
-            value={sortMode}
-            onChange={(event) => setSortMode(event.target.value as SortMode)}
-            className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700"
-          >
-            <option>Popular</option>
-            <option>Quick</option>
-            <option>Deep</option>
-          </select>
+      </section>
+
+      <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_12px_30px_rgba(15,23,42,0.07)]">
+        <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.08em] text-slate-500">Recommended for {goal}</p>
+            <h2 className="mt-1 text-2xl font-semibold text-slate-900">Best next clicks</h2>
+          </div>
+        </div>
+        <div className="mt-4 grid gap-3 md:grid-cols-3">
+          {GOAL_RECS[goal].map((item) => (
+            <Link
+              key={`${goal}-${item.href}`}
+              href={item.href}
+              className="rounded-2xl border border-slate-200 bg-slate-50 p-4 transition hover:border-slate-300 hover:bg-white hover:shadow-sm"
+            >
+              <h3 className="text-base font-semibold text-slate-900">{item.title}</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-700">{item.reason}</p>
+            </Link>
+          ))}
         </div>
       </section>
 
