@@ -253,9 +253,10 @@ export async function SeoLandingPage({ page }: SeoLandingPageProps) {
   const scoreGuide = page.calculatorMode ? scoreGuides[page.calculatorMode] : null;
   const intentGuide = intentGuides[page.path];
   const howToSchema = page.calculatorMode ? buildHowToSchema(page) : null;
+  const isToolPage = Boolean(page.calculatorMode);
 
   return (
-    <article className="mx-auto max-w-5xl space-y-6 px-4 py-8">
+    <article className="mx-auto max-w-6xl space-y-6 px-4 py-8">
       <nav aria-label="Breadcrumb" className="text-xs text-slate-600">
         <ol className="flex flex-wrap items-center gap-2">
           {page.breadcrumbs.map((crumb, index) => (
@@ -273,23 +274,52 @@ export async function SeoLandingPage({ page }: SeoLandingPageProps) {
         </ol>
       </nav>
 
-      <header className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-slate-50 to-sky-50 p-7 shadow-[0_16px_40px_rgba(15,23,42,0.08)]">
-        <h1 className="text-3xl font-bold text-slate-900 md:text-4xl">{page.h1}</h1>
-        <p className="mt-3 text-sm leading-7 text-slate-700 md:text-base">
-          {generatedCopy?.intro ?? page.intro}
-        </p>
-        <p className="mt-3 text-xs font-medium text-slate-500">
-          Last updated: {formatHumanDate(page.lastUpdated)}
-        </p>
-      </header>
+      {isToolPage && page.calculatorMode ? (
+        <section className="grid gap-6 lg:grid-cols-[0.88fr_1.12fr] lg:items-start">
+          <header className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-slate-50 to-sky-50 p-7 shadow-[0_16px_40px_rgba(15,23,42,0.08)] lg:sticky lg:top-24">
+            <p className="inline-flex rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-bold uppercase tracking-[0.08em] text-slate-600">
+              Interactive test
+            </p>
+            <h1 className="mt-4 text-3xl font-bold text-slate-900 md:text-4xl">{page.h1}</h1>
+            <p className="mt-3 text-sm leading-7 text-slate-700 md:text-base">
+              {generatedCopy?.intro ?? page.intro}
+            </p>
+            <div className="mt-5 grid gap-3 border-t border-slate-200 pt-4 sm:grid-cols-3 lg:grid-cols-1">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.08em] text-slate-500">Result</p>
+                <p className="mt-1 text-sm font-semibold text-slate-900">Score, meaning, and next move</p>
+              </div>
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.08em] text-slate-500">Compare</p>
+                <p className="mt-1 text-sm font-semibold text-slate-900">Run another match from the result</p>
+              </div>
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.08em] text-slate-500">Share</p>
+                <p className="mt-1 text-sm font-semibold text-slate-900">Copy links and score cards</p>
+              </div>
+            </div>
+            <p className="mt-4 text-xs font-medium text-slate-500">
+              Last updated: {formatHumanDate(page.lastUpdated)}
+            </p>
+          </header>
 
-      {page.calculatorMode ? (
-        <div id="calculator-form">
-          <Suspense fallback={null}>
-            <CalculatorHook mode={page.calculatorMode} variantKey={page.path} titleOverride={page.h1} />
-          </Suspense>
-        </div>
-      ) : null}
+          <div id="calculator-form">
+            <Suspense fallback={null}>
+              <CalculatorHook mode={page.calculatorMode} variantKey={page.path} titleOverride={page.h1} />
+            </Suspense>
+          </div>
+        </section>
+      ) : (
+        <header className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-slate-50 to-sky-50 p-7 shadow-[0_16px_40px_rgba(15,23,42,0.08)]">
+          <h1 className="text-3xl font-bold text-slate-900 md:text-4xl">{page.h1}</h1>
+          <p className="mt-3 text-sm leading-7 text-slate-700 md:text-base">
+            {generatedCopy?.intro ?? page.intro}
+          </p>
+          <p className="mt-3 text-xs font-medium text-slate-500">
+            Last updated: {formatHumanDate(page.lastUpdated)}
+          </p>
+        </header>
+      )}
 
       {scoreGuide ? (
         <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_12px_30px_rgba(15,23,42,0.07)]">
