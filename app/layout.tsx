@@ -50,13 +50,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const adsenseScriptSrc = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`;
-  const shouldLoadAdsense = appEnv.adsEnabled && ADSENSE_CLIENT;
+  const shouldLoadAdsenseScript = Boolean(ADSENSE_CLIENT);
 
   return (
     <html lang="en">
       <head>
-        {shouldLoadAdsense ? (
-          <Script async crossOrigin="anonymous" src={adsenseScriptSrc} strategy="afterInteractive" />
+        {shouldLoadAdsenseScript ? (
+          <script async crossOrigin="anonymous" src={adsenseScriptSrc} />
         ) : null}
         {GA_ID ? <Script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" /> : null}
         {GA_ID ? (
