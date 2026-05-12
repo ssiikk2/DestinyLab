@@ -26,7 +26,7 @@ interface SpicyResponsePayload {
 
 function clampText(value: string, max = 220): string {
   const clean = value.trim().replace(/\s+/g, " ");
-  return clean.length <= max ? clean : `${clean.slice(0, max - 1).trimEnd()}…`;
+  return clean.length <= max ? clean : `${clean.slice(0, max - 3).trimEnd()}...`;
 }
 
 function validate(payload: unknown): payload is SpicyResponsePayload {

@@ -71,7 +71,7 @@ function truncateNear(input: string, max: number): string {
   const slice = text.slice(0, max - 1);
   const cut = slice.lastIndexOf(" ");
   const head = cut > 20 ? slice.slice(0, cut) : slice;
-  return `${head.trimEnd()}…`;
+  return `${head.trimEnd()}...`;
 }
 
 function ensureLengthRange(input: string, min: number, max: number): string {

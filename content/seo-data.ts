@@ -329,7 +329,7 @@ const blogPagesBase: SeoPageRecord[] = BLOG_SEEDS.map((seed) => ({
 }));
 
 const calculatorHubLink: SeoLink = {
-  href: "/love-compatibility-calculator",
+  href: "/calculator",
   label: "Love Compatibility Calculator",
 };
 

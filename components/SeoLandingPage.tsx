@@ -52,6 +52,91 @@ function buildWebApplicationSchema(page: LandingPageRecord) {
   };
 }
 
+const scoreGuides = {
+  love: {
+    example: "Example result: 82/100 with strong chemistry, fast attraction, and one timing habit to clean up.",
+    high: "70-100 means the match has an easy hook. Use the result to protect the strength that already works.",
+    middle: "45-69 means the connection may work, but only if communication gets more direct and predictable.",
+    low: "0-44 means the score is a warning light, not a final answer. Start with one simple boundary or check-in.",
+    next: "Best next move: compare the score with one real behavior from this week before retesting.",
+  },
+  name: {
+    example: "Example result: 76/100 with playful name chemistry and a note about first-message energy.",
+    high: "70-100 suggests an easy symbolic match and a strong opening vibe.",
+    middle: "45-69 suggests mixed signals. Look for effort, response timing, and emotional clarity.",
+    low: "0-44 suggests the names make a fun contrast, but real behavior matters much more.",
+    next: "Best next move: try the same pair on the main calculator and compare the repeated themes.",
+  },
+  initials: {
+    example: "Example result: 68/100 with quick spark, light tension, and one conversation starter.",
+    high: "70-100 means the initials read as smooth and easy to share.",
+    middle: "45-69 means the result is best used as a quick icebreaker.",
+    low: "0-44 means keep it playful and avoid overreading the number.",
+    next: "Best next move: use initials first, then run a name-based test for a fuller read.",
+  },
+  crush: {
+    example: "Example result: 71/100 with obvious interest, a little uncertainty, and a low-pressure next step.",
+    high: "70-100 means the crush read has momentum. Keep the next move light and specific.",
+    middle: "45-69 means the signal needs more context before you chase it.",
+    low: "0-44 means the result points to caution. Protect your confidence and keep it casual.",
+    next: "Best next move: send one simple message or compare with the true love test if things get serious.",
+  },
+  friendship: {
+    example: "Example result: 84/100 with steady trust, easy humor, and one reminder about boundaries.",
+    high: "70-100 means the friendship has strong rhythm and low-friction support.",
+    middle: "45-69 means the friendship may need clearer expectations.",
+    low: "0-44 means the connection may still be fun, but trust and timing need care.",
+    next: "Best next move: choose one check-in habit that makes the friendship easier to maintain.",
+  },
+  zodiac: {
+    example: "Example result: Aries + Scorpio at 79/100, with strong spark and a warning about control battles.",
+    high: "70-100 means the signs share an easy symbolic pattern or complementary energy.",
+    middle: "45-69 means the match depends on maturity, communication, and conflict style.",
+    low: "0-44 means the signs may clash unless both people create clear rules for pressure moments.",
+    next: "Best next move: open the zodiac hub and compare the pair guide with your live score.",
+  },
+  birthday: {
+    example: "Example result: 73/100 with compatible pacing, different stress rhythms, and a scheduling tip.",
+    high: "70-100 means timing, rhythm, or routine may feel naturally easier.",
+    middle: "45-69 means daily pacing may need explicit planning.",
+    low: "0-44 means the date-based read points to timing friction, not relationship failure.",
+    next: "Best next move: set one response-time or planning expectation and review it after a week.",
+  },
+  destiny: {
+    example: "Example result: a solo destiny read that highlights emotional style, hidden strength, and a growth edge.",
+    high: "70-100 means your current pattern is easier to work with when you stay consistent.",
+    middle: "45-69 means self-awareness matters more than guessing someone else's motives.",
+    low: "0-44 means the result is asking for rest, boundaries, or a smaller next step.",
+    next: "Best next move: pick one personal habit to test before comparing with another relationship tool.",
+  },
+} as const;
+
+function buildHowToSchema(page: LandingPageRecord) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: `How to use ${page.h1}`,
+    description: page.description,
+    step: [
+      {
+        "@type": "HowToStep",
+        name: "Enter your details",
+        text: "Add the names, signs, birthdays, or focus words requested by the calculator.",
+      },
+      {
+        "@type": "HowToStep",
+        name: "Read the score band",
+        text: "Compare the score with the high, medium, or low interpretation on the page.",
+      },
+      {
+        "@type": "HowToStep",
+        name: "Choose one next move",
+        text: "Use the result as a conversation starter and pick one practical action to try.",
+      },
+    ],
+  };
+}
+
 export async function SeoLandingPage({ page }: SeoLandingPageProps) {
   const generatedCopy =
     page.calculatorMode
@@ -68,6 +153,8 @@ export async function SeoLandingPage({ page }: SeoLandingPageProps) {
   };
   const faqSchema = buildFaqSchema(pageForSchema);
   const breadcrumbSchema = buildBreadcrumbSchema(page);
+  const scoreGuide = page.calculatorMode ? scoreGuides[page.calculatorMode] : null;
+  const howToSchema = page.calculatorMode ? buildHowToSchema(page) : null;
 
   return (
     <article className="mx-auto max-w-5xl space-y-6 px-4 py-8">
@@ -104,6 +191,30 @@ export async function SeoLandingPage({ page }: SeoLandingPageProps) {
             <CalculatorHook mode={page.calculatorMode} variantKey={page.path} titleOverride={page.h1} />
           </Suspense>
         </div>
+      ) : null}
+
+      {scoreGuide ? (
+        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_12px_30px_rgba(15,23,42,0.07)]">
+          <h2 className="text-2xl font-semibold text-slate-900">How to read your result</h2>
+          <p className="mt-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm font-semibold leading-6 text-slate-800">
+            {scoreGuide.example}
+          </p>
+          <div className="mt-4 grid gap-3 md:grid-cols-3">
+            <article className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
+              <h3 className="text-sm font-semibold text-emerald-900">High score</h3>
+              <p className="mt-2 text-sm leading-6 text-emerald-950">{scoreGuide.high}</p>
+            </article>
+            <article className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
+              <h3 className="text-sm font-semibold text-amber-900">Middle score</h3>
+              <p className="mt-2 text-sm leading-6 text-amber-950">{scoreGuide.middle}</p>
+            </article>
+            <article className="rounded-2xl border border-rose-200 bg-rose-50 p-4">
+              <h3 className="text-sm font-semibold text-rose-900">Low score</h3>
+              <p className="mt-2 text-sm leading-6 text-rose-950">{scoreGuide.low}</p>
+            </article>
+          </div>
+          <p className="mt-4 text-sm font-medium leading-6 text-slate-700">{scoreGuide.next}</p>
+        </section>
       ) : null}
 
       {(generatedCopy?.sections ?? page.sections).map((section) => (
@@ -158,6 +269,7 @@ export async function SeoLandingPage({ page }: SeoLandingPageProps) {
 
       <SeoJsonLd schema={faqSchema} />
       <SeoJsonLd schema={breadcrumbSchema} />
+      {howToSchema ? <SeoJsonLd schema={howToSchema} /> : null}
       {page.includeWebApplication ? <SeoJsonLd schema={buildWebApplicationSchema(page)} /> : null}
     </article>
   );

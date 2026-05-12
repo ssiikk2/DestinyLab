@@ -3,6 +3,7 @@
 import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ResultReport } from "@/components/results/ResultReport";
+import { trackEvent } from "@/lib/analytics";
 import { buildResultReport } from "@/lib/results/engine";
 import { resolveResultTestKey } from "@/lib/results/resolve";
 import type { BaseResultOutput } from "@/lib/results/types";
@@ -196,16 +197,19 @@ export function CalculatorHook({ mode, variantKey, titleOverride }: CalculatorHo
     event.preventDefault();
     setError(null);
     setIsLoading(true);
+    trackEvent("calculator_submit", { mode, path: pathname || "", has_second: Boolean(second.trim()) });
 
     try {
       const computed = await runCalculation(first, second);
       setResult(computed);
+      trackEvent("calculator_success", { mode, path: pathname || "", score: computed.score });
     } catch (submitError) {
       setError(
         submitError instanceof Error
           ? submitError.message
           : "Unexpected error while getting your result.",
       );
+      trackEvent("calculator_error", { mode, path: pathname || "" });
     } finally {
       setIsLoading(false);
     }
@@ -308,6 +312,7 @@ export function CalculatorHook({ mode, variantKey, titleOverride }: CalculatorHo
 
   useEffect(() => {
     if (!result || !pathname) return;
+    trackEvent("result_view", { mode, path: pathname, score: result.score });
     const params = new URLSearchParams();
     params.set("m", mode);
     params.set("a", first);

@@ -8,7 +8,7 @@ import { appEnv } from "@/lib/env";
 import { CANONICAL_ORIGIN } from "@/lib/seo";
 import "./globals.css";
 
-const ADSENSE_CLIENT = "ca-pub-9161450133304636";
+const ADSENSE_CLIENT = appEnv.adsenseClient || "ca-pub-9161450133304636";
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "";
 
 export const metadata: Metadata = {
@@ -49,15 +49,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const adsenseScriptSrc = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`;
+  const shouldLoadAdsense = appEnv.adsEnabled && ADSENSE_CLIENT;
 
   return (
     <html lang="en">
       <head>
-        <script
-          async
-          crossOrigin="anonymous"
-          src={adsenseScriptSrc}
-        />
+        {shouldLoadAdsense ? (
+          <Script async crossOrigin="anonymous" src={adsenseScriptSrc} strategy="afterInteractive" />
+        ) : null}
         {GA_ID ? <Script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" /> : null}
         {GA_ID ? (
           <Script id="ga-init" strategy="afterInteractive">
@@ -70,8 +69,6 @@ gtag('config', '${GA_ID}', { anonymize_ip: true });`}
         ) : null}
       </head>
       <body id="page-top">
-        <script async crossOrigin="anonymous" src={adsenseScriptSrc} />
-
         <SiteHeader />
 
         <main>{children}</main>

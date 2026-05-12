@@ -109,13 +109,7 @@ http://localhost:3000
 1. 기본 생성
 
 ```bash
-npm run generate:content
-```
-
-2. 생성 후 IndexNow 자동 핑
-
-```bash
-npm run generate:content:ping
+npm run generate:seo
 ```
 
 생성 결과는 `content/blog.generated.json`에 저장됩니다.
@@ -162,12 +156,25 @@ docker run --rm -p 3000:3000 --env-file .env.local destinylab:local
 스크립트는 아래를 자동 처리합니다.
 - `containerapp` 확장 설치/업데이트
 - 리소스 그룹 생성(없으면)
-- ACR 생성(없으면)
+- ACR 확인/생성(`-AcrName`을 명시했고 없으면 생성)
 - Container Apps 환경 생성(없으면)
 - `az acr build`로 이미지 빌드
 - 단일 앱 `destinylab-main` 배포
 - 시스템 ID 활성화 + `AcrPull` 권한 부여
+- 현재 셸에 설정된 런타임 환경변수 반영
 - 앱 이름/FQDN/리비전 출력
+
+배포 전에 필요한 환경변수는 현재 PowerShell 세션에 설정해두면 스크립트가 Container Apps에 같이 반영합니다.
+
+```powershell
+$env:SITE_DOMAIN="https://lovecompatibilitycalculator.com"
+$env:ADS_ENABLED="false"
+$env:ADSENSE_CLIENT="ca-pub-9161450133304636"
+$env:AI_PROVIDER="azure-openai"
+$env:AZURE_OPENAI_PRIMARY_ENDPOINT="https://<resource>.openai.azure.com"
+$env:AZURE_OPENAI_API_KEY="<key>"
+$env:AZURE_OPENAI_DEPLOYMENT_NAME="<deployment-name>"
+```
 
 ## FQDN으로 HTTPS 테스트
 
@@ -213,8 +220,7 @@ https://<출력된-fqdn>
 - 색인/크롤링 상태 모니터링
 
 5. 자동 핑 활성화
-- 콘텐츠 생성 시 `npm run generate:content:ping` 사용
-- 또는 `/api/indexnow`로 URL 목록을 직접 전송
+- 콘텐츠 생성 후 `/api/indexnow`로 URL 목록을 직접 전송
 
 ## Azure OpenAI 사용하기
 
@@ -224,9 +230,9 @@ https://<출력된-fqdn>
 
 ```env
 AI_PROVIDER=azure-openai
-AZURE_OPENAI_ENDPOINT=https://<resource>.openai.azure.com
+AZURE_OPENAI_PRIMARY_ENDPOINT=https://<resource>.openai.azure.com
 AZURE_OPENAI_API_KEY=<your-key>
-AZURE_OPENAI_DEPLOYMENT=<deployment-name>
+AZURE_OPENAI_DEPLOYMENT_NAME=<deployment-name>
 AZURE_OPENAI_API_VERSION=2024-10-21
 ```
 
@@ -238,9 +244,9 @@ az containerapp update \
   --resource-group destinylab-rg \
   --set-env-vars \
 AI_PROVIDER=azure-openai \
-AZURE_OPENAI_ENDPOINT=https://<resource>.openai.azure.com \
+AZURE_OPENAI_PRIMARY_ENDPOINT=https://<resource>.openai.azure.com \
 AZURE_OPENAI_API_KEY=<your-key> \
-AZURE_OPENAI_DEPLOYMENT=<deployment-name> \
+AZURE_OPENAI_DEPLOYMENT_NAME=<deployment-name> \
 AZURE_OPENAI_API_VERSION=2024-10-21
 ```
 
@@ -262,3 +268,9 @@ AZURE_OPENAI_API_VERSION=2024-10-21
 2. 반응이 좋은 페이지를 기준으로 유사 주제를 확장합니다.
 3. 툴 결과 공유율, 재방문율, 체류시간을 핵심 지표로 관리합니다.
 4. 무리한 페이지 폭증보다 주간 단위의 안정적 발행이 장기적으로 유리합니다.
+
+## 수익화 운영 문서
+
+- `docs/revenue-target-kr.md`: 월 300만 원 목표 기준 운영안
+- `docs/monetization-roadmap.md`: 단계별 제품/SEO/수익화 로드맵
+- `docs/deploy-checklist.md`: 배포 전후 점검 목록
