@@ -50,6 +50,54 @@ function toFaqSchema(report: ResultReportData) {
   };
 }
 
+function scoreTone(score: number): { label: string; summary: string; plan: string[] } {
+  if (score >= 80) {
+    return {
+      label: "Strong match",
+      summary: "The connection has momentum. The smart move is to protect what already works instead of over-testing it.",
+      plan: [
+        "Name the one habit that makes this feel easy.",
+        "Keep pressure low and repeat the best shared rhythm this week.",
+        "Use one deeper test only if you want a second angle.",
+      ],
+    };
+  }
+
+  if (score >= 60) {
+    return {
+      label: "Promising but mixed",
+      summary: "There is enough spark to explore, but the result depends on communication and timing more than the number.",
+      plan: [
+        "Pick one watch-out and turn it into a clear question.",
+        "Try a small check-in before making a big interpretation.",
+        "Compare with one alternate test to see whether the same pattern repeats.",
+      ],
+    };
+  }
+
+  if (score >= 40) {
+    return {
+      label: "Needs context",
+      summary: "The result is not a final answer. It is a prompt to slow down and look at real behavior.",
+      plan: [
+        "Do not argue with the score. Ask what felt accurate.",
+        "Choose one communication rule for the next seven days.",
+        "Retest after something actually changes.",
+      ],
+    };
+  }
+
+  return {
+    label: "High-friction read",
+    summary: "This score points to friction, not failure. Treat it as a reason to simplify the next conversation.",
+    plan: [
+      "Start with one boundary or expectation.",
+      "Avoid dramatic conclusions from a single result.",
+      "Use the meaning guide before sharing the score.",
+    ],
+  };
+}
+
 export function ResultReport({
   report,
   shareLink,
@@ -102,6 +150,15 @@ export function ResultReport({
   );
   const subScores = useMemo(() => getMiniStats(report.header.score, viralCtx), [report.header.score, viralCtx]);
   const meaningHref = useMemo(() => getMeaningLink(report.header.score, context), [report.header.score, context]);
+  const tone = useMemo(() => scoreTone(report.header.score), [report.header.score]);
+  const topBreakdown = useMemo(
+    () => [...report.breakdown].sort((a, b) => b.score - a.score)[0],
+    [report.breakdown],
+  );
+  const lowBreakdown = useMemo(
+    () => [...report.breakdown].sort((a, b) => a.score - b.score)[0],
+    [report.breakdown],
+  );
   const rotatedIdeas = useMemo(
     () => rotateDeterministic(report.dateIdeas, seed + 201, ideaStep),
     [report.dateIdeas, seed, ideaStep],
@@ -236,6 +293,40 @@ export function ResultReport({
         compareLabel={memeUpgrade?.compareCta || "Compare with someone else"}
         isUpgrading={isMemeLoading}
       />
+
+      <section className="rounded-2xl border border-slate-200 bg-slate-950 p-4 text-white">
+        <div className="grid gap-4 md:grid-cols-[1fr_0.9fr]">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.08em] text-sky-200">Result read</p>
+            <h3 className="mt-2 text-2xl font-semibold">{tone.label}</h3>
+            <p className="mt-2 text-sm leading-6 text-slate-200">{tone.summary}</p>
+          </div>
+          <div className="grid gap-2 sm:grid-cols-2">
+            <article className="rounded-xl border border-white/10 bg-white/10 p-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-300">Best signal</p>
+              <p className="mt-1 text-lg font-semibold">{topBreakdown?.label || "Connection"}</p>
+              <p className="mt-1 text-sm text-slate-300">{topBreakdown?.score ?? report.header.score}/100</p>
+            </article>
+            <article className="rounded-xl border border-white/10 bg-white/10 p-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-300">Needs care</p>
+              <p className="mt-1 text-lg font-semibold">{lowBreakdown?.label || "Timing"}</p>
+              <p className="mt-1 text-sm text-slate-300">{lowBreakdown?.score ?? report.header.score}/100</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section className="rounded-2xl border border-slate-200 bg-white p-4">
+        <h3 className="text-base font-semibold text-slate-900">Your 3-step next move</h3>
+        <div className="mt-3 grid gap-3 md:grid-cols-3">
+          {tone.plan.map((step, index) => (
+            <article key={step} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+              <p className="text-xs font-bold uppercase tracking-[0.08em] text-slate-500">Step {index + 1}</p>
+              <p className="mt-2 text-sm leading-6 text-slate-800">{step}</p>
+            </article>
+          ))}
+        </div>
+      </section>
 
       <section className="rounded-2xl border border-slate-200 bg-white p-4">
         <h3 className="text-base font-semibold text-slate-900">Meaning</h3>
