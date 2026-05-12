@@ -11,48 +11,126 @@ interface ShareBarProps {
   pairLabel: string;
 }
 
+type CardFormat = "wide" | "story";
+
 function safeOpen(url: string) {
   window.open(url, "_blank", "noopener,noreferrer");
 }
 
-function downloadScoreCard(input: { title: string; score: number; shockLine: string; pairLabel: string }) {
+function wrapCanvasText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
+  const words = text.split(" ");
+  const lines: string[] = [];
+  let current = "";
+
+  for (const word of words) {
+    const next = current ? `${current} ${word}` : word;
+    if (ctx.measureText(next).width <= maxWidth) {
+      current = next;
+    } else {
+      if (current) lines.push(current);
+      current = word;
+    }
+  }
+
+  if (current) lines.push(current);
+  return lines;
+}
+
+function scoreBand(score: number): string {
+  if (score >= 90) return "God tier match";
+  if (score >= 75) return "Strong match";
+  if (score >= 55) return "Promising match";
+  if (score >= 35) return "Needs context";
+  return "Plot twist energy";
+}
+
+function downloadScoreCard(input: {
+  title: string;
+  score: number;
+  shockLine: string;
+  pairLabel: string;
+  format: CardFormat;
+}) {
   const canvas = document.createElement("canvas");
-  canvas.width = 1200;
-  canvas.height = 630;
+  const isStory = input.format === "story";
+  canvas.width = isStory ? 1080 : 1200;
+  canvas.height = isStory ? 1920 : 630;
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
 
-  const grd = ctx.createLinearGradient(0, 0, 1200, 630);
+  const width = canvas.width;
+  const height = canvas.height;
+  const padding = isStory ? 72 : 58;
+  const grd = ctx.createLinearGradient(0, 0, width, height);
   grd.addColorStop(0, "#0f172a");
-  grd.addColorStop(1, "#1d4ed8");
+  grd.addColorStop(0.52, "#1e3a8a");
+  grd.addColorStop(1, "#be185d");
   ctx.fillStyle = grd;
-  ctx.fillRect(0, 0, 1200, 630);
+  ctx.fillRect(0, 0, width, height);
 
+  ctx.fillStyle = "rgba(255,255,255,0.08)";
+  ctx.beginPath();
+  ctx.arc(width * 0.82, height * 0.12, isStory ? 260 : 180, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(width * 0.12, height * 0.9, isStory ? 320 : 220, 0, Math.PI * 2);
+  ctx.fill();
+
+  const cardX = padding;
+  const cardY = padding;
+  const cardW = width - padding * 2;
+  const cardH = height - padding * 2;
   ctx.fillStyle = "rgba(255,255,255,0.14)";
-  ctx.fillRect(52, 52, 1096, 526);
+  ctx.roundRect(cardX, cardY, cardW, cardH, isStory ? 44 : 32);
+  ctx.fill();
 
   ctx.fillStyle = "#ffffff";
-  ctx.font = "700 42px Arial";
-  ctx.fillText(input.pairLabel, 90, 140);
+  ctx.font = `${isStory ? 700 : 700} ${isStory ? 46 : 34}px Arial`;
+  ctx.fillText("LOVE COMPATIBILITY", cardX + 36, cardY + (isStory ? 74 : 62));
 
-  ctx.font = "800 190px Arial";
-  ctx.fillText(String(input.score), 90, 340);
+  ctx.font = `700 ${isStory ? 60 : 42}px Arial`;
+  const pairLines = wrapCanvasText(ctx, input.pairLabel, cardW - 72).slice(0, 2);
+  pairLines.forEach((line, index) => {
+    ctx.fillText(line, cardX + 36, cardY + (isStory ? 180 : 135) + index * (isStory ? 68 : 48));
+  });
 
-  ctx.font = "700 38px Arial";
-  ctx.fillText(input.title.slice(0, 44), 340, 290);
+  ctx.font = `900 ${isStory ? 260 : 185}px Arial`;
+  ctx.fillText(String(input.score), cardX + 36, cardY + (isStory ? 540 : 325));
+  ctx.font = `800 ${isStory ? 58 : 36}px Arial`;
+  ctx.fillText("/100", cardX + (isStory ? 390 : 310), cardY + (isStory ? 515 : 300));
 
-  ctx.font = "500 32px Arial";
-  const shock = input.shockLine.length > 80 ? `${input.shockLine.slice(0, 80)}...` : input.shockLine;
-  ctx.fillText(shock, 340, 350);
+  ctx.fillStyle = "rgba(255,255,255,0.92)";
+  ctx.font = `700 ${isStory ? 42 : 28}px Arial`;
+  ctx.fillText(scoreBand(input.score), cardX + 36, cardY + (isStory ? 635 : 390));
 
-  ctx.font = "600 24px Arial";
+  ctx.font = `600 ${isStory ? 38 : 27}px Arial`;
+  const titleLines = wrapCanvasText(ctx, input.title, cardW - 72).slice(0, isStory ? 2 : 1);
+  titleLines.forEach((line, index) => {
+    ctx.fillText(line, cardX + 36, cardY + (isStory ? 725 : 435) + index * (isStory ? 48 : 34));
+  });
+
+  ctx.font = `500 ${isStory ? 36 : 25}px Arial`;
+  const shockLines = wrapCanvasText(ctx, input.shockLine, cardW - 72).slice(0, isStory ? 5 : 3);
+  shockLines.forEach((line, index) => {
+    ctx.fillText(line, cardX + 36, cardY + (isStory ? 890 : 490) + index * (isStory ? 48 : 34));
+  });
+
+  const ctaY = isStory ? height - 260 : height - 118;
+  ctx.fillStyle = "rgba(255,255,255,0.96)";
+  ctx.roundRect(cardX + 36, ctaY, cardW - 72, isStory ? 112 : 58, isStory ? 28 : 18);
+  ctx.fill();
+  ctx.fillStyle = "#0f172a";
+  ctx.font = `800 ${isStory ? 34 : 22}px Arial`;
+  ctx.fillText("Try yours at lovecompatibilitycalculator.com", cardX + 62, ctaY + (isStory ? 70 : 38));
+
+  ctx.font = `600 ${isStory ? 28 : 18}px Arial`;
   ctx.fillStyle = "rgba(255,255,255,0.9)";
-  ctx.fillText("lovecompatibilitycalculator.com", 840, 560);
+  ctx.fillText("For fun and reflection", cardX + 36, height - (isStory ? 90 : 44));
 
   const dataUrl = canvas.toDataURL("image/png");
   const anchor = document.createElement("a");
   anchor.href = dataUrl;
-  anchor.download = `score-card-${input.score}.png`;
+  anchor.download = `compatibility-${input.format}-${input.score}.png`;
   anchor.click();
 }
 
@@ -210,12 +288,22 @@ export function ShareBar({ title, score, shockLine, shareUrl, pairLabel }: Share
         <button
           type="button"
           onClick={() => {
-            trackEvent("share_image", { score });
-            downloadScoreCard({ title, score, shockLine, pairLabel });
+            trackEvent("share_image_wide", { score });
+            downloadScoreCard({ title, score, shockLine, pairLabel, format: "wide" });
           }}
           className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-700"
         >
-          Download score card
+          Download wide card
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            trackEvent("share_image_story", { score });
+            downloadScoreCard({ title, score, shockLine, pairLabel, format: "story" });
+          }}
+          className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-700"
+        >
+          Download story card
         </button>
       </div>
       {copied ? <p className="mt-2 text-xs font-semibold text-emerald-700">Link copied</p> : null}
