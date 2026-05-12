@@ -4,6 +4,7 @@ import Link from "next/link";
 import { HomeQuickStart } from "@/components/HomeQuickStart";
 import { InternalLinkCluster } from "@/components/InternalLinkCluster";
 import { InternalLinks } from "@/components/InternalLinks";
+import { LiveCompatibilityBoard } from "@/components/LiveCompatibilityBoard";
 import { SeoJsonLd } from "@/components/SeoJsonLd";
 import { homeGuideLinks, homeToolsLinks } from "@/content/landing-pages";
 import { absoluteUrl, buildHubMeta } from "@/lib/seo";
@@ -226,6 +227,8 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+      <LiveCompatibilityBoard />
 
       <InternalLinks heading="Pick a Test" links={homeToolsLinks} />
       <InternalLinks heading="Quick Reads" links={homeGuideLinks} />
