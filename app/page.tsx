@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { HomeQuickStart } from "@/components/HomeQuickStart";
 import { InternalLinkCluster } from "@/components/InternalLinkCluster";
 import { InternalLinks } from "@/components/InternalLinks";
 import { SeoJsonLd } from "@/components/SeoJsonLd";
@@ -90,44 +91,43 @@ export default function HomePage() {
       <section className="rounded-3xl border border-slate-200 bg-gradient-to-br from-white via-rose-50 to-sky-50 p-8 md:p-10 shadow-[0_16px_40px_rgba(15,23,42,0.08)]">
         <div className="grid items-center gap-6 md:grid-cols-[1fr_240px]">
           <div>
-          <h1 className="text-3xl font-bold text-slate-900 md:text-4xl">
-            Love Compatibility Calculator for fun, curious relationship check-ins
-          </h1>
-          <div className="mt-4 space-y-4 text-sm leading-7 text-slate-700 md:text-base">
-            <p>
-              Start with a quick score, then keep the vibe going with extra tests, light explainers, and ideas you can
-              talk about together.
-            </p>
-            <p>
-              Whether you are checking love percentage, a crush reading, or zodiac chemistry, this is built for
-              curiosity and good conversation, not heavy labels.
-            </p>
-            <p>
-              Use each result like a conversation starter. Pick one small thing to try, come back later, and see how
-              the mood changes.
-            </p>
+            <h1 className="text-3xl font-bold text-slate-900 md:text-4xl">
+              Love Compatibility Calculator for fun, curious relationship check-ins
+            </h1>
+            <div className="mt-4 space-y-4 text-sm leading-7 text-slate-700 md:text-base">
+              <p>
+                Start with a quick score, then keep the vibe going with extra tests, light explainers, and ideas you can
+                talk about together.
+              </p>
+              <p>
+                Whether you are checking love percentage, a crush reading, or zodiac chemistry, this is built for
+                curiosity and good conversation, not heavy labels.
+              </p>
+            </div>
+            <div className="mt-5">
+              <HomeQuickStart />
+            </div>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <Link
+                href="/calculator"
+                className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+              >
+                Try the main calculator
+              </Link>
+              <Link
+                href="/tests"
+                className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
+              >
+                See all tests
+              </Link>
+              <Link
+                href="/blog/how-love-calculators-work"
+                className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
+              >
+                Read how it works
+              </Link>
+            </div>
           </div>
-          <div className="mt-5 flex flex-wrap gap-3">
-            <Link
-              href="/calculator"
-              className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
-            >
-              Try the main calculator
-            </Link>
-            <Link
-              href="/tests"
-              className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
-            >
-              See all tests
-            </Link>
-            <Link
-              href="/blog/how-love-calculators-work"
-              className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
-            >
-              Read how it works
-            </Link>
-          </div>
-        </div>
           <div className="mx-auto md:mx-0">
             <Image
               src="/brand/favicon2.png"
